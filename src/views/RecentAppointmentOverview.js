@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import format from 'date-fns/format'
 import { FiArrowRight } from 'react-icons/fi'
-import { distanceInWordsToNow, distanceInWordsStrict, distanceInWords, isToday } from 'date-fns'
+import { isToday } from 'date-fns'
 import FormFooter from '../components/FormFooter'
 
 const Container = styled('div')`

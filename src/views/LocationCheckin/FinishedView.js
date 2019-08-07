@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, Redirect } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { format, subMinutes } from 'date-fns'
 import Button from '../../components/Button'
@@ -13,7 +13,7 @@ const Wrapper = styled('div')`
 		padding-bottom: 24px;
 		margin-bottom: 24px;
 		border-bottom: 1px solid rgba(150, 150, 150, 0.5);
-		
+
 		p {
 			line-height: 1.2;
 		}

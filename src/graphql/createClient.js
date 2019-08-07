@@ -7,18 +7,18 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { ApolloLink, split } from 'apollo-link'
 import { getMainDefinition } from 'apollo-utilities'
 import { setContext } from 'apollo-link-context'
-import { matchPath } from 'react-router-dom'
 
 import pling from '../components/Pling'
 const debug = require('debug')('app:graphql')
 
 const onErrorLink = onError(({ graphQLErrors = [], networkError }) => {
-	graphQLErrors.forEach(error => {
-		pling({ message: error.message })
-	})
+	if (graphQLErrors.length > 0) {
+		return graphQLErrors.forEach(error => {
+			pling({ message: error.message })
+		})
+	}
 
 	if (networkError) {
-		console.log(networkError)
 		pling({ message: 'The app is having trouble connecting. Please try again later.' })
 	}
 

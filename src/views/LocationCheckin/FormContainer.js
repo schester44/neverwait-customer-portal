@@ -69,8 +69,6 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 			let customerInfo = data.customerInfo
 			customerInfo.appointments.upcoming = [appointment, ...customerInfo.appointments.upcoming]
 
-			console.log(customerInfo)
-			
 			cache.writeQuery({
 				query: customerInfoQuery,
 				data: {
@@ -81,7 +79,6 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 		}
 	})
 
-	const setLoading = loading => setState(prev => ({ ...prev, loading }))
 	const setSelectedService = selectedService => {
 		setState(prev => ({ ...prev, selectedService }))
 
@@ -127,25 +124,22 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 	}
 
 	const handleCreate = async () => {
-		try {
-			const { data: appointmentData } = await createAppointment({
-				variables: {
-					input: {
-						...appointment,
-						startTime: estimates.startTime,
-						endTime: estimates.endTime,
-						customerId: customer.id
-					}
+		const { data: appointmentData } = await createAppointment({
+			variables: {
+				input: {
+					...appointment,
+					startTime: estimates.startTime,
+					endTime: estimates.endTime,
+					customerId: customer.id
 				}
-			})
-			setStep(3)
+			}
+		})
+		setStep(3)
 
-			localStorage.setItem('last-appt', JSON.stringify(appointmentData.upsertAppointment.appointment))
+		console.log('here')
+		localStorage.setItem('last-appt', JSON.stringify(appointmentData.upsertAppointment.appointment))
 
-			setCreatedAppointment(appointmentData.upsertAppointment.appointment)
-		} catch (error) {
-			setLoading(false)
-		}
+		setCreatedAppointment(appointmentData.upsertAppointment.appointment)
 	}
 
 	return (
@@ -194,7 +188,7 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 						}}
 					/>
 				)}
-				{(step === 3 || createdAppt) && (
+				{((step === 3 && createdAppt) || createdAppt) && (
 					<Finished appointment={createdAppt} locationData={locationData} selectedService={state.selectedService} />
 				)}
 			</React.Suspense>

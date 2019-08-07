@@ -56,7 +56,7 @@ const Pling = ({ position = { top: 10, left: 'calc(50% - 125px)' }, pling, offse
 		}, pling.duration)
 
 		return () => window.clearTimeout(timeout)
-	}, [pling])
+	}, [pling, onDismiss])
 
 	return (
 		<Container offset={offset} position={position}>

@@ -32,11 +32,12 @@ const Container = styled('div')`
 const CustomerAuthView = ({ companyId, onLogin }) => {
 	const [createCustomer, { loading: createLoading }] = useMutation(createCustomerMutation)
 	const [login, { loading: loginLoading }] = useMutation(loginCustomerMutation)
-
-	const [{ values, visibleView, loading }, setFormState] = React.useState({
+	const [{ values, visibleView }, setFormState] = React.useState({
 		visibleView: undefined,
 		values: {}
 	})
+	
+	const isLoading = loginLoading || createLoading
 
 	const setFieldValue = (k, v) => {
 		setFormState(prev => ({ ...prev, values: { ...prev.values, [k]: v } }))
@@ -85,12 +86,18 @@ const CustomerAuthView = ({ companyId, onLogin }) => {
 					{visibleView === 'login' && (
 						<LoginForm
 							values={values}
+							loading={isLoading}
 							setFieldValue={setFieldValue}
 							handleSubmit={() => handleLogin(values.contactNumber, values.password)}
 						/>
 					)}
 					{visibleView === 'create-account' && (
-						<CreateAccountForm values={values} setFieldValue={setFieldValue} handleSubmit={handleCreateAccount} />
+						<CreateAccountForm
+							loading={isLoading}
+							values={values}
+							setFieldValue={setFieldValue}
+							handleSubmit={handleCreateAccount}
+						/>
 					)}
 				</Modal>
 			)}

@@ -13,7 +13,7 @@ const Container = styled('div')`
 	}
 `
 
-const CreateAccountForm = ({ values = {}, setFieldValue, handleSubmit }) => {
+const CreateAccountForm = ({ values = {}, setFieldValue, loading = false, handleSubmit }) => {
 	const handleChange = ({ target: { name, value } }) => setFieldValue(name, value)
 	return (
 		<Container>
@@ -43,6 +43,7 @@ const CreateAccountForm = ({ values = {}, setFieldValue, handleSubmit }) => {
 				onClick={handleSubmit}
 				style={{ width: '100%', marginTop: 24 }}
 				disabled={
+					loading ||
 					values.contactNumber.trim().length < 10 ||
 					values.password.trim().length < 4 ||
 					values.firstName.trim().length === 0

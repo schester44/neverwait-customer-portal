@@ -4,12 +4,11 @@ import { withRouter, Switch, Route, Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import Loading from './components/Loading'
 
+import { customerInfoQuery } from './graphql/queries'
 import isRecentAppointment from './utils/isRecentAppointment'
 import getCookie from './utils/getCookie'
-import CustomerAuthView from './views/CustomerAuthView'
-import { customerInfoQuery } from './graphql/queries'
 
-const Placeholder = React.lazy(() => import('./views/Placeholder'))
+const LoginPage = React.lazy(() => import('./views/Auth/LoginPage'))
 const HomeScreen = React.lazy(() => import('./views/HomeScreen'))
 const AppointmentOverview = React.lazy(() => import('./views/RecentAppointmentOverview'))
 const LocationCheckin = React.lazy(() => import('./views/LocationCheckin'))
@@ -27,7 +26,7 @@ const Container = styled('div')`
 `
 
 const App = () => {
-	const { data, loading, error, refetch } = useQuery(customerInfoQuery, {
+	const { data, loading } = useQuery(customerInfoQuery, {
 		skip: !getCookie('cusid-access')
 	})
 
@@ -74,16 +73,7 @@ const App = () => {
 					<Route
 						render={props => {
 							if (!user) {
-								return (
-									<div style={{ padding: 10, fontSize: 14 }}>
-										<CustomerAuthView
-											onLogin={async () => {
-												await refetch({ skip: false })
-												window.location.reload()
-											}}
-										/>
-									</div>
-								)
+								return <LoginPage />
 							}
 
 							return <HomeScreen locations={data.locations} user={user} />

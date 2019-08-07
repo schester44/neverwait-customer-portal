@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink, Switch, Route, Redirect } from 'react-router-dom'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 import Appointments from './UserAppointments'
 import NavFooter from './NavFooter'
@@ -12,6 +12,13 @@ const Container = styled('div')`
 	flex-direction: column;
 	background: rgba(242, 242, 242, 1);
 	color: rgba(26, 30, 32, 1);
+
+	@media (min-width: 900px) {
+		.header {
+			max-width: 898px;
+			margin-left: calc(50% - 449px);
+		}
+	}
 
 	.view {
 		height: 100vh;

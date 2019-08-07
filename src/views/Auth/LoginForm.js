@@ -13,7 +13,7 @@ const Container = styled('div')`
 	}
 `
 
-const LoginForm = ({ values = {}, setFieldValue, handleSubmit }) => {
+const LoginForm = ({ loading = false, values = {}, setFieldValue, handleSubmit }) => {
 	const handleChange = ({ target: { name, value } }) => setFieldValue(name, value)
 	return (
 		<Container>
@@ -34,7 +34,7 @@ const LoginForm = ({ values = {}, setFieldValue, handleSubmit }) => {
 			<Button
 				onClick={handleSubmit}
 				style={{ width: '100%', marginTop: 24 }}
-				disabled={values.contactNumber.trim().length < 10 || values.password.trim().length < 4}
+				disabled={values.contactNumber.trim().length < 10 || values.password.trim().length < 4 || loading}
 			>
 				Log In
 			</Button>

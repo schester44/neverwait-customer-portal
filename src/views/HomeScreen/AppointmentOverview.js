@@ -90,7 +90,7 @@ const RecentAppointmentOverview = ({ setTime, user, appointmentId, appointment: 
 			</div>
 			<div className="block times">
 				<div className="flex">
-					<div>
+					<div style={{ marginBottom: 8 }}>
 						<p>Start Time</p>
 						<h1 style={{ color: 'rgba(242, 209, 116, 1)', fontSize: 40 }}>{format(appointment.startTime, 'h:mma')}</h1>
 					</div>

@@ -10,10 +10,11 @@ const Pill = styled('div')`
 	margin-top: 10px;
 	display: inline-block;
 	border-radius: 25px;
-	background: rgba(165, 255, 144, 1);
+	background: rgba(101, 211, 110, 1.0);
 	box-sizing: border-box;
-	font-size: 12px;
-	color: rgba(26, 30, 32, 1);
+	font-size: 10px;
+	color: white;
+	font-weight: 700;
 `
 
 const Overview = ({ start }) => {

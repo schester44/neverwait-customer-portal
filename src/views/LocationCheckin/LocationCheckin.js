@@ -83,7 +83,7 @@ const LocationCheckin = ({ match, id, customerId }) => {
 	if (!loading && !location) return <Redirect to="/" />
 
 	return (
-		<div>
+		<div style={{ background: 'white', minHeight: '100vh' }}>
 			<Switch>
 				<Route
 					exact

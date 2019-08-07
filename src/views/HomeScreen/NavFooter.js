@@ -13,11 +13,7 @@ const Container = styled('div')`
 	width: 100%;
 	height: 50px;
 	background: #fff;
-
-	@media (min-width: 900px) {
-		max-width: 898px;
-		left: calc(50% - 449px);
-	}
+	box-shadow: 0 -2px 5px rgba(32, 32, 32, 0.05);
 
 	.button {
 		cursor: pointer;

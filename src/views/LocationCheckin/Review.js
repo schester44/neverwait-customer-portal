@@ -42,9 +42,8 @@ const useTimer = duration => {
 }
 
 const Wrapper = styled('div')`
-	padding: 24px 10px 80px 10px;
+	padding: 10px 10px 80px 10px;
 	width: 100%;
-
 
 	.block {
 		padding-bottom: 24px;
@@ -91,7 +90,7 @@ const Review = ({ selectedService, estimates, locationData, handleConfirm }) => 
 			</h4>
 
 			<FormFooter>
-				Expires in {time}
+				<span>Expires in {time}</span>
 				<Button style={{ width: '50%' }} onClick={handleConfirm}>
 					Confirm
 				</Button>

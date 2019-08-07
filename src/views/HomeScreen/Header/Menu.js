@@ -1,0 +1,29 @@
+import styled from 'styled-components'
+
+const Menu = styled('div')`
+	list-style: none;
+	display: flex;
+	justify-content: space-around;
+	align-items: flex-end;
+	height: 100%;
+
+	a {
+		text-decoration: none;
+		color: inherit;
+
+		&.active > div {
+			opacity: 1;
+			border-bottom: 3px solid rgba(237, 209, 129, 1);
+		}
+	}
+`
+
+Menu.Item = styled('div')`
+	height: 100%;
+	padding: 10px 20px;
+	cursor: pointer;
+	opacity: 0.8;
+	border-bottom: 3px solid transparent;
+`
+
+export default Menu

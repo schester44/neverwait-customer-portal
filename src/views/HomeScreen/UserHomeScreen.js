@@ -1,9 +1,55 @@
 import React from 'react'
-import { NavLink, Switch, Route, Redirect } from 'react-router-dom'
-import styled from 'styled-components'
+import { Switch, Route, Redirect } from 'react-router-dom'
+import styled, { css, keyframes } from 'styled-components'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 import Appointments from './UserAppointments'
 import NavFooter from './NavFooter'
+import { Header, Overview, NavBar } from './Header'
+
+import isRecentAppointment from '../../utils/isRecentAppointment'
+
+const AppointmentOverview = React.lazy(() => import('./AppointmentOverview'))
+
+const DEFAULT_HEIGHT = 80
+const SECONDARY_HEIGHT = 70
+
+const slideUp = keyframes`
+	from {
+		transform: translateY(0px);
+
+		h1 {
+			opacity: 1;
+		}
+	}
+
+	to {
+		transform: translateY(-31px);
+
+		h1 {
+			opacity: 0;
+		}
+	}
+`
+
+const heightStyles = ({ height }) =>
+	height === SECONDARY_HEIGHT &&
+	css`
+		.app-header {
+			height: ${SECONDARY_HEIGHT}px;
+			border-radius: 0;
+
+			.overview {
+				animation: ${slideUp} 0.3s ease forwards;
+			}
+
+			.title {
+				transform: translateY(-40px);
+				opacity: 0.5;
+				transition: all 0.4s ease;
+			}
+		}
+	`
 
 const Container = styled('div')`
 	width: 100%;
@@ -13,109 +59,137 @@ const Container = styled('div')`
 	background: rgba(242, 242, 242, 1);
 	color: rgba(26, 30, 32, 1);
 
-	@media (min-width: 900px) {
-		.header {
-			max-width: 898px;
-			margin-left: calc(50% - 449px);
-		}
+	.title {
+		transform: translateY(0px);
+		transition: all 0.4s ease;
+	}
+
+	div.transition-group {
+		position: relative;
+	}
+
+	${({ height }) =>
+		height === SECONDARY_HEIGHT
+			? css`
+					.fade-enter {
+						opacity: 0;
+					}
+
+					.fade-enter.fade-enter-active {
+						opacity: 1;
+					}
+			  `
+			: css`
+					.fade-enter {
+						transform: translateX(-100vw);
+					}
+
+					.fade-enter.fade-enter-active {
+						transform: translateX(0px);
+						transition: all 0.3s ease;
+					}
+			  `}
+
+	.fade-exit {
+		opacity: 1;
+		transform: translateX(0px);
+	}
+
+	.fade-exit.fade-exit-active {
+		${({ height }) =>
+			height === SECONDARY_HEIGHT
+				? css`
+						opacity: 0;
+				  `
+				: css`
+						transform: translateX(100vw);
+				  `}
+		transition: all 0.3s ease;
+	}
+
+	.app-header {
+		transition: all 0.3s ease;
+		height: ${DEFAULT_HEIGHT}px;
 	}
 
 	.view {
-		height: 100vh;
+		position: absolute;
+		top: 80px;
+		left: 0;
+		width: 100%;
 		flex: 1;
-		padding-top: 100px;
 		padding-bottom: 50px;
 	}
 
-	.header {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		min-height: 100px;
-		height: 100px;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		box-shadow: 0px 3px 10px rgba(26, 30, 32, 0.05);
-
-		background: white;
-		color: rgba(26, 30, 32, 1);
-		padding-top: 10px;
-		text-align: center;
-
-		border-bottom-left-radius: 25px;
-		border-bottom-right-radius: 25px;
-
-		h1 {
-			font-size: 18px;
-			line-height: 1.5;
-		}
-
-		h4 {
-			opacity: 0.4;
-		}
-	}
+	${heightStyles}
 `
 
-const Menu = styled('div')`
-	list-style: none;
-	display: flex;
-	justify-content: space-around;
+const UserHomeScreen = ({ user, locations, routeLocation, match }) => {
+	const height = routeLocation.pathname.indexOf('/appointments') > -1 ? DEFAULT_HEIGHT : SECONDARY_HEIGHT
 
-	a {
-		text-decoration: none;
-		color: inherit;
+	const [time, setTime] = React.useState(undefined)
 
-		&.active > div {
-			opacity: 1;
-			border-bottom: 3px solid rgba(237, 209, 129, 1);
-		}
-	}
-`
-
-Menu.Item = styled('div')`
-	height: 100%;
-	padding: 10px 20px;
-	cursor: pointer;
-	opacity: 0.8;
-	border-bottom: 3px solid transparent;
-`
-
-const UserHomeScreen = ({ user, locations }) => {
 	return (
-		<Container>
-			<div className="header">
-				<div className="name">
-					<h1>NeverWait</h1>
-				</div>
+		<Container height={height}>
+			<Header title="NeverWait">
+				{height === DEFAULT_HEIGHT ? (
+					<NavBar />
+				) : (
+					<div className="overview">
+						<Overview start={time} />
+					</div>
+				)}
+			</Header>
 
-				<Menu>
-					<NavLink to="/appointments/upcoming">
-						<Menu.Item>Upcoming</Menu.Item>
-					</NavLink>
+			<TransitionGroup className="transition-group">
+				<CSSTransition key={routeLocation.pathname} timeout={{ enter: 300, exit: 200 }} classNames="fade">
+					<React.Suspense fallback={null}>
+						<div className="view">
+							<Switch location={routeLocation}>
+								<Route
+									path="/appointments/:type"
+									render={props => {
+										const type = props.match.params.type
+										const appointments = user.appointments[type]
+										return <Appointments type={type} appointments={appointments} />
+									}}
+								/>
 
-					<NavLink to="/appointments/past">
-						<Menu.Item>Past</Menu.Item>
-					</NavLink>
-				</Menu>
-			</div>
+								<Route
+									path="/appointment/:id"
+									render={props => {
+										if (!user) return <Redirect to="/" />
 
-			<div className="view">
-				<React.Suspense fallback={null}>
-					<Switch>
-						<Route
-							path="/appointments/:type"
-							render={props => {
-								const appointments = user.appointments[props.match.params.type]
-								return <Appointments type={props.match.params.type} appointments={appointments} />
-							}}
-						/>
+										if (props.match.params.id === 'recent') {
+											const appointment = JSON.parse(localStorage.getItem('last-appt'))
+											const isRecent = isRecentAppointment(appointment)
 
-						<Redirect to="/appointments/upcoming" />
-					</Switch>
-				</React.Suspense>
-			</div>
+											if (appointment && isRecent) {
+												return (
+													<AppointmentOverview setTime={setTime} history={props.history} appointment={appointment} />
+												)
+											} else {
+												return <Redirect to="/" />
+											}
+										}
+
+										return (
+											<AppointmentOverview
+												setTime={setTime}
+												history={props.history}
+												user={user}
+												appointmentId={props.match.params.id}
+											/>
+										)
+									}}
+								/>
+
+								<Redirect to="/appointments/upcoming" />
+							</Switch>
+						</div>
+					</React.Suspense>
+				</CSSTransition>
+			</TransitionGroup>
 			<NavFooter locations={locations} />
 		</Container>
 	)

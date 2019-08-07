@@ -18,7 +18,7 @@ const Container = styled('div')`
 	width: 100%;
 	padding: 10px;
 	z-index: 1;
-	box-shadow: 0px -10px 20px rgba(32, 32, 32, 0.5);
+	box-shadow: 0px -10px 20px rgba(32, 32, 32, 0.05);
 
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
@@ -28,8 +28,8 @@ const Container = styled('div')`
 	color: rgba(25, 30, 33, 1);
 
     @media (min-width: 900px) {
-        max-width: 898px;
-        left: calc(50% - 449px);
+        max-width: 500px;
+        left: calc(50% - 250px);
     }
 
 	.title {

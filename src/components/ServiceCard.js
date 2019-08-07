@@ -21,6 +21,7 @@ const selectedStyles = ({ selected }) =>
 		  `
 		: css`
 				&:hover {
+					box-shadow: 1px 3px 8px rgba(32, 32, 32, 0.2);
 					background: rgba(57, 63, 70, 1);
 				}
 		  `
@@ -29,6 +30,7 @@ const Container = styled('div')`
 	position: relative;
 	margin-top: 10px;
 	background: rgba(37, 43, 50, 1);
+	color: white;
 	box-shadow: 1px 3px 8px rgba(32, 32, 32, 0.05);
 	padding: 20px;
 	border-radius: 5px;

@@ -24,7 +24,7 @@ function renderStepTitle({ step, loggedIn }) {
 		case 3:
 			return (
 				<span>
-					Confirmed <FiCheck />
+					Confirmed <FiCheck color="rgba(124, 191, 74, 1.0)" />
 				</span>
 			)
 		default:

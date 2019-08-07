@@ -19,7 +19,7 @@ const ServiceSelector = ({ selectedService, services, onSelect, onNext }) => {
 
 			{selectedService && (
 				<FormFooter>
-					{selectedService ? '1 service selected' : 'No services selected'}
+					<span>{selectedService ? '1 service selected' : 'No services selected'}</span>
 					<Button onClick={onNext} style={{ width: '50%' }}>
 						Book Now
 					</Button>

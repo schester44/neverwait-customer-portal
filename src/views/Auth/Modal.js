@@ -10,12 +10,12 @@ const Container = styled('div')`
 	height: 100%;
 	background: rgba(26, 30, 32, 1);
 
-    .title {
-        width: 100%;
-        text-align: center;
-        padding: 24px;
-        font-size: 22px;
-    }
+	.title {
+		width: 100%;
+		text-align: center;
+		padding: 24px;
+		font-size: 22px;
+	}
 
 	.close {
 		position: absolute;

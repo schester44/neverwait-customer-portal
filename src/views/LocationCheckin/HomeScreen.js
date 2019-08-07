@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import EmployeeList from '../../components/EmployeeList'
+import EmployeeList from './EmployeeList'
 
 const Header = styled('div')`
 	display: flex;

@@ -1,23 +1,45 @@
 import React from 'react'
 import styled from 'styled-components'
 import EmployeeList from './EmployeeList'
+import { FiChevronLeft } from 'react-icons/fi'
 
 const Header = styled('div')`
 	display: flex;
-	justify-content: center;
-	align-items: center;
 	width: 100%;
-	font-family: marguerite;
+	align-items: center;
 	padding: 24px auto;
-	color: rgba(237, 209, 129, 1);
+	padding: 10px 5px;
+	font-size: 90%;
+
+	.back {
+		position: relative;
+		top: 3px;
+		font-size: 36px;
+		line-height: 1;
+		padding-right: 16px;
+	}
 `
 
-const HomeScreen = ({ employees, locationName }) => {
+const HomeScreen = ({ history, customerId, employees, locationName }) => {
 	return (
 		<div style={{ width: '100%' }}>
 			<Header>
-				<h1>{locationName}</h1>
+				{customerId && (
+					<div
+						className="back"
+						onClick={() => {
+							history.push('/')
+						}}
+					>
+						<FiChevronLeft />
+					</div>
+				)}
+
+				<div>
+					<h1>{locationName}</h1>
+				</div>
 			</Header>
+
 			<EmployeeList employees={employees} />
 		</div>
 	)

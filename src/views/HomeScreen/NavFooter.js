@@ -56,7 +56,7 @@ const NavFooter = ({ locations }) => {
 			</div>
 			<React.Suspense fallback={null}>
 				{visible && (
-					<Drawer title="Check In">
+					<Drawer title="Select a location to check in at">
 						{locations.map(location => {
 							return (
 								<Link key={location.uuid} to={`/book/l/${location.uuid}`}>

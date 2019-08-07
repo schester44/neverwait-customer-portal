@@ -136,7 +136,6 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 		})
 		setStep(3)
 
-		console.log('here')
 		localStorage.setItem('last-appt', JSON.stringify(appointmentData.upsertAppointment.appointment))
 
 		setCreatedAppointment(appointmentData.upsertAppointment.appointment)

@@ -32,7 +32,7 @@ function renderStepTitle({ step, loggedIn }) {
 	}
 }
 
-const Header = ({ step, loggedIn, showBack = true, onBack }) => {
+const Header = ({ step, loggedIn, title, showBack = true, onBack }) => {
 	return (
 		<Container>
 			{showBack && (
@@ -43,8 +43,8 @@ const Header = ({ step, loggedIn, showBack = true, onBack }) => {
 
 			{(step !== 2 || (step === 2 && loggedIn)) && (
 				<div>
-					<span>Step {step} of 3</span>
-					<h1>{renderStepTitle({ step, loggedIn })}</h1>
+					{step && <span>Step {step} of 3</span>}
+					<h1>{title || renderStepTitle({ step, loggedIn })}</h1>
 				</div>
 			)}
 		</Container>

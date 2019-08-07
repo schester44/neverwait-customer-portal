@@ -90,7 +90,15 @@ const LocationCheckin = ({ match, id, customerId }) => {
 					path={match.path}
 					render={props => {
 						const employees = location.employees.filter(emp => emp.services.length > 0)
-						return <HomeScreen locationName={location.name} employees={employees} location={location} />
+						return (
+							<HomeScreen
+								history={props.history}
+								customerId={customerId}
+								locationName={location.name}
+								employees={employees}
+								location={location}
+							/>
+						)
 					}}
 				/>
 

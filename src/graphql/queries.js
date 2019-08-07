@@ -1,9 +1,49 @@
 import gql from 'graphql-tag'
 
-export const temporaryAccessTokenQuery = gql`
-	query tempToken($locationId: ID!) {
-		temporaryAccessToken(locationId: $locationId)
+const fragments = {
+	appointment: gql`
+		fragment appointment on Appointment {
+			id
+			startTime
+			endTime
+			duration
+			price
+			location {
+				name
+				address
+			}
+			services {
+				name
+			}
+		}
+	`
+}
+
+export const customerInfoQuery = gql`
+	{
+		locations {
+			name
+			uuid
+			address
+		}
+
+		customerInfo {
+			id
+			firstName
+			lastName
+			appointments(limit: 10) {
+				past {
+					...appointment
+				}
+
+				upcoming {
+					...appointment
+				}
+			}
+		}
 	}
+
+	${fragments.appointment}
 `
 
 export const locationDataQuery = gql`
@@ -11,6 +51,10 @@ export const locationDataQuery = gql`
 		locationByUUID(input: { uuid: $locationId }) {
 			id
 			name
+			address
+			company {
+				id
+			}
 			employees(input: { where: { bookingEnabled: true } }) {
 				id
 				firstName
@@ -33,24 +77,6 @@ export const locationDataQuery = gql`
 					id
 					startTime
 					endTime
-				}
-			}
-		}
-	}
-`
-
-export const searchCustomers = gql`
-	query searchCustomers($input: CustomerSearchInput!) {
-		searchCustomers(input: $input) {
-			id
-			firstName
-			lastName
-			appointments {
-				past {
-					id
-					services {
-						id
-					}
 				}
 			}
 		}

@@ -1,16 +1,18 @@
-import React from "react"
-import styled from "styled-components"
+import React from 'react'
+import styled, { css } from 'styled-components'
 
-const StyledBtn = styled("button")`
-	width: 100%;
-	padding: 30px 10px;
-	margin: 50px auto 15px auto;
+const sizeStyles = ({ type }) => css`
+	padding: 10px;
+	font-size: 18px;
+`
+
+const StyledBtn = styled('button')`
 	border: 0;
 	background: rgba(242, 209, 116, 1);
 	color: black;
 	border-radius: 3px;
-	font-size: 18px;
 	text-align: center;
+	cursor: pointer;
 	border: none;
 
 	&:disabled {
@@ -18,6 +20,8 @@ const StyledBtn = styled("button")`
 		cursor: not-allowed;
 		opacity: 0.2;
 	}
+
+	${sizeStyles}
 `
 
 const Button = props => {

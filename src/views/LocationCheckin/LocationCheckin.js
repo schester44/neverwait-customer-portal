@@ -1,18 +1,18 @@
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
-import { useQuery, useSubscription } from 'react-apollo-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import { startOfDay, endOfDay } from 'date-fns'
 
-import { locationDataQuery } from '../graphql/queries'
-import { appointmentsSubscription } from '../graphql/subscriptions'
-import Loading from '../components/LoadingScreen'
+import { locationDataQuery } from '../../graphql/queries'
+import { appointmentsSubscription } from '../../graphql/subscriptions'
+import Loading from '../../components/Loading'
 
 const HomeScreen = React.lazy(() => import('./HomeScreen'))
-const Form = React.lazy(() => import('./Form/FormContainer'))
+const Form = React.lazy(() => import('./FormContainer'))
 
 const debug = require('debug')('app')
 
-const LocationCheckin = ({ match, id }) => {
+const LocationCheckin = ({ match, id, customerId }) => {
 	const queryOptions = {
 		variables: { startTime: startOfDay(new Date()), endTime: endOfDay(new Date()), locationId: id }
 	}
@@ -35,9 +35,6 @@ const LocationCheckin = ({ match, id }) => {
 			if (!subscriptionData.data || !subscriptionData.data.AppointmentsChange) return
 
 			const { appointment, employeeId } = subscriptionData.data.AppointmentsChange
-
-			console.log(queryOptions)
-			console.log(queryData)
 
 			const employee = queryData.locationByUUID.employees.find(emp => +emp.id === +employeeId)
 
@@ -82,9 +79,9 @@ const LocationCheckin = ({ match, id }) => {
 
 	if (loading) return <Loading />
 
+	// TODO: This redirects when there is a network error.
 	if (!loading && !location) return <Redirect to="/" />
 
-	console.log(match)
 	return (
 		<div>
 			<Switch>
@@ -93,7 +90,7 @@ const LocationCheckin = ({ match, id }) => {
 					path={match.path}
 					render={props => {
 						const employees = location.employees.filter(emp => emp.services.length > 0)
-						return <HomeScreen employees={employees} location={location} />
+						return <HomeScreen locationName={location.name} employees={employees} location={location} />
 					}}
 				/>
 
@@ -101,7 +98,16 @@ const LocationCheckin = ({ match, id }) => {
 					path={`${match.path}/sign-in/:employeeId`}
 					render={props => {
 						const employee = location.employees.find(emp => +emp.id === +props.match.params.employeeId)
-						return <Form match={props.match} locationId={location.id} employee={employee} />
+						return (
+							<Form
+								match={props.match}
+								locationId={location.id}
+								locationData={location}
+								companyId={location.company.id}
+								customerId={customerId}
+								employee={employee}
+							/>
+						)
 					}}
 				/>
 			</Switch>

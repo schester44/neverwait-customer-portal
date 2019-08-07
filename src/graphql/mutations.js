@@ -8,14 +8,22 @@ export const authWithToken = gql`
 	}
 `
 
-export const findOrCreateCustomerMutation = gql`
-	mutation findOrCreateCustomer($input: CreateCustomerInput!) {
-		findOrCreateCustomer(input: $input) {
-			customer {
-				id
-				firstName
-				lastName
-			}
+export const createCustomerMutation = gql`
+	mutation createCustomer($input: CreateCustomerInput!) {
+		createCustomer(input: $input) {
+			id
+			contactNumber
+		}
+	}
+`
+
+export const loginCustomerMutation = gql`
+	mutation loginCustomer($input: CustomerLoginInput!) {
+		loginCustomer(input: $input) {
+			id
+			firstName
+			lastName
+			contactNumber
 		}
 	}
 `
@@ -28,8 +36,17 @@ export const sequentialUpsertMutation = gql`
 				startTime
 				endTime
 				duration
+				price
+
+				location {
+					name
+					address
+					uuid
+				}
 				services {
 					name
+					price
+					duration
 				}
 				employee {
 					firstName

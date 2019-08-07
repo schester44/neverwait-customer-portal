@@ -1,19 +1,18 @@
-import React, { useRef } from "react"
-import styled from "styled-components"
+import React, { useRef } from 'react'
+import styled from 'styled-components'
 
-const Wrapper = styled("div")`
+const Wrapper = styled('div')`
 	width: 100%;
 	text-align: left;
 	position: relative;
 
 	label {
-		position: absolute;
-		transform: translate(20px, 57px);
 		text-transform: uppercase;
-		color: rgba(250, 250, 250, 0.4);
-		font-size: 32px;
+		color: rgba(250, 250, 250, 0.6);
+		font-size: 16px;
 		font-weight: 300;
-		transition: all 0.5s ease;
+		margin: 0;
+		line-height: 1;
 	}
 
 	.input-wrapper {
@@ -31,6 +30,11 @@ const Wrapper = styled("div")`
 		outline: none;
 		padding: 20px;
 		font-weight: 400;
+
+		&:focus,
+		&:active {
+			background: rgba(58, 63, 69, 1);
+		}
 	}
 `
 
@@ -44,6 +48,7 @@ const Input = ({ value, label, style = {}, ...props }) => {
 				ref.current.focus()
 			}}
 		>
+			{label && <label>{label}</label>}
 			<div className="input-wrapper">
 				<input ref={ref} value={value} {...props} />
 			</div>

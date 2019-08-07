@@ -2,34 +2,28 @@ import React from 'react'
 import styled, { css } from 'styled-components'
 
 const selectedStyles = ({ selected }) =>
-	selected &&
-	css`
-		color: rgba(237, 209, 129, 1);
+	selected
+		? css`
+				cursor: default;
+				color: rgba(237, 209, 129, 1);
 
-		&:before {
-			position: absolute;
-			width: 22px;
-			height: 22px;
-			border-radius: 50%;
-			border: 2px solid rgba(237, 209, 129, 1);
-			z-index: 99;
-			top: calc(50% - 11px);
-			left: 18px;
-			content: '';
-		}
-
-		&:after {
-			position: absolute;
-			width: 16px;
-			height: 16px;
-			border-radius: 50%;
-			background: rgba(237, 209, 129, 1);
-			z-index: 99;
-			top: calc(50% - 6px);
-			left: 23px;
-			content: '';
-		}
-	`
+				&:after {
+					position: absolute;
+					width: 16px;
+					height: 16px;
+					border-radius: 50%;
+					background: rgba(237, 209, 129, 1);
+					z-index: 99;
+					top: calc(50% - 6px);
+					left: 23px;
+					content: '';
+				}
+		  `
+		: css`
+				&:hover {
+					background: rgba(57, 63, 70, 1);
+				}
+		  `
 
 const Container = styled('div')`
 	position: relative;
@@ -43,6 +37,19 @@ const Container = styled('div')`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	cursor: pointer;
+
+	&:before {
+		position: absolute;
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		border: 2px solid rgba(237, 209, 129, 1);
+		z-index: 99;
+		top: calc(50% - 11px);
+		left: 18px;
+		content: '';
+	}
 
 	h1 {
 		line-height: 1;

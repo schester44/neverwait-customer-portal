@@ -1,13 +1,11 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { ApolloProvider } from 'react-apollo'
-import { ApolloProvider as ApolloHooksProvider } from 'react-apollo-hooks'
+import { ApolloProvider } from '@apollo/react-hooks'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import * as Sentry from '@sentry/browser'
 
 import client from './graphql/createClient'
-
 import App from './App'
 import './index.css'
 
@@ -17,11 +15,9 @@ if (process.env.NODE_ENV === 'production') {
 
 render(
 	<ApolloProvider client={client}>
-		<ApolloHooksProvider client={client}>
-			<Router>
-				<App />
-			</Router>
-		</ApolloHooksProvider>
+		<Router>
+			<App />
+		</Router>
 	</ApolloProvider>,
 	document.getElementById('root')
 )

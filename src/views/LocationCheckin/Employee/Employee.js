@@ -10,9 +10,9 @@ const WaitTime = ({ currentWait }) => {
 	const time = timeFragmentsFromMinutes(currentWait)
 
 	return currentWait < 5 ? (
-		<h4>No Wait</h4>
+		'No Wait'
 	) : (
-		<h4>
+		<span>
 			Current Wait:{' '}
 			{time.hours > 0 ? (
 				<span>
@@ -25,7 +25,7 @@ const WaitTime = ({ currentWait }) => {
 					{time.minutes} <span className="small">minutes</span>
 				</span>
 			)}
-		</h4>
+		</span>
 	)
 }
 
@@ -38,7 +38,8 @@ const Employee = ({ employee, onClick }) => {
 		<Container onClick={onClick}>
 			<div>
 				<h1>{employee.firstName}</h1>
-				{waitTime === undefined ? null : <WaitTime currentWait={waitTime} />}
+
+				<p>{waitTime === undefined ? null : <WaitTime currentWait={waitTime} />}</p>
 			</div>
 
 			<div className="right">

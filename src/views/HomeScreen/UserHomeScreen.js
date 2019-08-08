@@ -137,7 +137,7 @@ const Container = styled('div')`
 const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 	const height = routeLocation.pathname.indexOf('/appointments') > -1 ? DEFAULT_HEIGHT : SECONDARY_HEIGHT
 
-	const [time, setTime] = React.useState(undefined)
+	const [activeInfo, setInfo] = React.useState({ time: undefined, employee: undefined })
 
 	return (
 		<Container height={height}>
@@ -146,7 +146,7 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 					<NavBar />
 				) : (
 					<div className="overview">
-						<Overview start={time} onBack={() => history.push('/')} />
+						<Overview info={activeInfo} onBack={() => history.push('/')} />
 					</div>
 				)}
 			</Header>
@@ -176,7 +176,13 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 
 											if (appointment && isRecent) {
 												return (
-													<AppointmentOverview setTime={setTime} history={props.history} appointment={appointment} />
+													<AppointmentOverview
+														setTime={(time, employee) => {
+															setInfo({ time, employee })
+														}}
+														history={props.history}
+														appointment={appointment}
+													/>
 												)
 											} else {
 												return <Redirect to="/" />
@@ -185,7 +191,9 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 
 										return (
 											<AppointmentOverview
-												setTime={setTime}
+												setTime={(time, employee) => {
+													setInfo({ time, employee })
+												}}
 												history={props.history}
 												user={user}
 												appointmentId={props.match.params.id}

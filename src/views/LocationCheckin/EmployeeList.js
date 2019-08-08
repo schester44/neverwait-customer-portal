@@ -5,7 +5,6 @@ import Employee from './Employee/Employee'
 
 const Wrapper = styled('div')`
 	height: 100%;
-	margin-top: 50px;
 	padding: 10px;
 `
 

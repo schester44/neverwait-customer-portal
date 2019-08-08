@@ -1,4 +1,5 @@
 import React from 'react'
+import omit from 'lodash/omit'
 import styled from 'styled-components'
 import Button from '../components/Button'
 
@@ -58,7 +59,7 @@ const CustomerAuthView = ({ companyId, onLogin }) => {
 			data: { createCustomer: response }
 		} = await createCustomer({
 			variables: {
-				input: values
+				input: omit(values, ['confirmPassword'])
 			}
 		})
 
@@ -107,7 +108,8 @@ const CustomerAuthView = ({ companyId, onLogin }) => {
 							firstName: '',
 							lastName: '',
 							contactNumber: '',
-							password: ''
+							password: '',
+							confirmPassword: ''
 						}
 					})
 				}}

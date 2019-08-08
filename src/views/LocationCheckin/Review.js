@@ -70,6 +70,7 @@ const Review = ({ selectedService, estimates, locationData, handleConfirm }) => 
 			<div className="block location">
 				<h3>{locationData.name}</h3>
 				<h5>{locationData.address}</h5>
+				<h5>{locationData.contactNumber}</h5>
 			</div>
 
 			<div className="block service">

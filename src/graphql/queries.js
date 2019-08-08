@@ -8,9 +8,13 @@ const fragments = {
 			endTime
 			duration
 			price
+			employee {
+				firstName
+			}
 			location {
 				name
 				address
+				contactNumber
 			}
 			services {
 				name

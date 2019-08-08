@@ -27,7 +27,7 @@ const CreateAccountForm = ({ values = {}, setFieldValue, loading = false, handle
 
 			<div className="form-input">
 				<Input
-					type="text"
+					type="tel"
 					value={values.contactNumber}
 					name="contactNumber"
 					label="Phone Number"
@@ -36,7 +36,14 @@ const CreateAccountForm = ({ values = {}, setFieldValue, loading = false, handle
 			</div>
 
 			<div className="form-input">
-				<Input type="text" value={values.password} name="password" label="Password" onChange={handleChange} />
+				<Input type="password" value={values.password} name="password" label="Password" onChange={handleChange} />
+				<Input
+					type="password"
+					value={values.confirmPassword}
+					name="confirmPassword"
+					label="Confirm Password"
+					onChange={handleChange}
+				/>
 			</div>
 
 			<Button
@@ -46,6 +53,7 @@ const CreateAccountForm = ({ values = {}, setFieldValue, loading = false, handle
 					loading ||
 					values.contactNumber.trim().length < 10 ||
 					values.password.trim().length < 4 ||
+					values.password.trim() !== values.confirmPassword.trim() ||
 					values.firstName.trim().length === 0
 				}
 			>

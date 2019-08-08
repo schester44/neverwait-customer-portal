@@ -4,15 +4,14 @@ import EmployeeList from './EmployeeList'
 import { FiChevronLeft } from 'react-icons/fi'
 
 const Header = styled('div')`
-	display: flex;
 	width: 100%;
-	align-items: center;
 	padding: 24px auto;
 	padding: 10px 5px;
 	font-size: 90%;
 
+	span,
 	.header-title {
-		padding: 10px;
+		padding-left: 10px;
 	}
 
 	.back {
@@ -40,6 +39,7 @@ const HomeScreen = ({ history, customerId, employees, locationName }) => {
 				)}
 
 				<h1 className="header-title">{locationName}</h1>
+				<span>Select a staff member</span>
 			</Header>
 
 			<EmployeeList employees={employees} />

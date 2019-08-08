@@ -16,28 +16,32 @@ const Container = styled('div')`
 	}
 `
 
+const styles = ({ theme }) => `
+	color: ${theme.colors.bodyBg};
+	background: ${theme.colors.success};
+	border-radius: ${theme.borderRadius.large};
+`
+
 const Pill = styled('div')`
 	padding: 3px 6px;
 	margin-top: 10px;
 	display: inline-block;
-	border-radius: 25px;
-	background: rgba(101, 211, 110, 1);
 	box-sizing: border-box;
 	font-size: 10px;
-	color: white;
 	font-weight: 700;
+	${styles};
 `
 
-const Overview = ({ start, onBack }) => {
+const Overview = ({ info, onBack }) => {
 	return (
 		<Container>
 			<div className="back" onClick={onBack}>
 				<FiChevronLeft />
 			</div>
 
-			{start && (
+			{info.time && (
 				<h3 className="subtitle">
-					{isToday(start) ? 'Today' : format(start, 'MMMM Do')} at {format(start, 'h:mma')}
+					{isToday(info.time) ? 'Today' : format(info.time, 'MMMM Do')} at {format(info.time, 'h:mma')}
 				</h3>
 			)}
 			<Pill>Confirmed</Pill>

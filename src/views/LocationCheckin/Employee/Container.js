@@ -21,12 +21,14 @@ export default styled('div')`
 	}
 
 	h1 {
-		font-size: 28px;
+		line-height: 1;
+		font-size: 24px;
 	}
 
-	h4 {
-		font-size: 14px;
-		font-weight: 400;
+	p {
+		font-size: 16px;
+		padding-top: 5px;
+		opacity: 0.5;
 	}
 
 	button {
@@ -35,7 +37,7 @@ export default styled('div')`
 		padding: 8px 12px;
 		font-size: 16px;
 		background: rgba(242, 209, 116, 1);
-		color: rgba(38, 43, 49, 1.0);
+		color: rgba(38, 43, 49, 1);
 		box-shadow: 2px 3px 3px rgba(32, 32, 32, 0.3);
 		line-height: 1;
 		display: flex;

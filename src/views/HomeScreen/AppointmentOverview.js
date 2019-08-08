@@ -32,6 +32,12 @@ const Container = styled('div')`
 		}
 	}
 
+	.flex {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
 	.block {
 		margin-top: 8px;
 		margin-bottom: 16px;
@@ -69,7 +75,7 @@ const RecentAppointmentOverview = ({ setTime, user, appointmentId, appointment: 
 
 	React.useEffect(() => {
 		if (appointment) {
-			setTime(appointment.startTime)
+			setTime(appointment.startTime, appointment.employee.firstName)
 		}
 	}, [appointment, setTime])
 
@@ -80,25 +86,25 @@ const RecentAppointmentOverview = ({ setTime, user, appointmentId, appointment: 
 			<div className="block location">
 				<h3>{appointment.location.name}</h3>
 				<h5>{appointment.location.address}</h5>
+				<h5>{appointment.location.contactNumber}</h5>
 			</div>
-			<div className="block flex">
-				<div>
+			<div className="block">
+				<div className="flex">
 					<h4>{appointment.services[0].name}</h4>
+					<h5>with {appointment.employee.firstName}</h5>
 				</div>
 
 				<h3>${appointment.price}</h3>
 			</div>
 			<div className="block times">
-				<div className="flex">
-					<div style={{ marginBottom: 8 }}>
-						<p>Start Time</p>
-						<h1 style={{ color: 'rgba(242, 209, 116, 1)', fontSize: 40 }}>{format(appointment.startTime, 'h:mma')}</h1>
-					</div>
+				<div style={{ marginBottom: 8 }}>
+					<p>Start Time</p>
+					<h1 style={{ color: 'rgba(242, 209, 116, 1)', fontSize: 40 }}>{format(appointment.startTime, 'h:mma')}</h1>
+				</div>
 
-					<div>
-						<p>End Time</p>
-						<h1 style={{ color: 'rgba(242, 209, 116, 1)', fontSize: 40 }}>{format(appointment.endTime, 'h:mma')}</h1>
-					</div>
+				<div>
+					<p>End Time</p>
+					<h1 style={{ color: 'rgba(242, 209, 116, 1)', fontSize: 40 }}>{format(appointment.endTime, 'h:mma')}</h1>
 				</div>
 			</div>
 		</Container>

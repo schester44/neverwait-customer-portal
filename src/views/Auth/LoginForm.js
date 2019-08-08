@@ -19,7 +19,7 @@ const LoginForm = ({ loading = false, values = {}, setFieldValue, handleSubmit }
 		<Container>
 			<div className="form-input">
 				<Input
-					type="text"
+					type="tel"
 					value={values.contactNumber}
 					name="contactNumber"
 					label="Phone Number"
@@ -28,7 +28,7 @@ const LoginForm = ({ loading = false, values = {}, setFieldValue, handleSubmit }
 			</div>
 
 			<div className="form-input">
-				<Input type="text" value={values.password} name="password" label="Password" onChange={handleChange} />
+				<Input type="password" value={values.password} name="password" label="Password" onChange={handleChange} />
 			</div>
 
 			<Button

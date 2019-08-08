@@ -25,6 +25,7 @@ const LocationCheckin = ({ match, id, customerId }) => {
 	const client = useApolloClient()
 	const location = data.locationByUUID
 
+	// Effect is needed because this component initializes without a locationId to subscribe to and there is no skip property to prevent from subscribing with an empty location
 	React.useEffect(() => {
 		if (!location) return
 

@@ -3,33 +3,41 @@ import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import format from 'date-fns/format'
 
+const themeStyles = ({ theme }) => `
+	background: ${theme.colors.headerBg};
+	box-shadow: 0px 4px 3px ${theme.colors.shadow};
+	font-size: ${theme.typography.text.medium.fontSize};
+	border-radius: ${theme.borderRadius.medium};
+
+
+	.times {
+		h1 {
+			font-size: 40px;
+			color: ${theme.colors.p500};
+		}
+	}
+
+	.block {
+		margin-top: 8px;
+		margin-bottom: 16px;
+		padding-bottom: 16px;
+
+		&:not(:last-of-type) {
+			border-bottom: 1px solid ${theme.colors.n500};
+		}
+	}
+`
+
 const Container = styled('div')`
 	padding: 10px;
 	margin: 10px;
-	background: white;
 	width: calc(100% - 20px);
-	box-shadow: 0px 4px 3px rgba(32, 32, 32, 0.02);
-
-	border-radius: 8px;
 	padding: 15px;
-	font-size: 15px;
 
 	@media (min-width: 900px) {
 		width: calc(33% - 10px);
 		min-width: 350px;
 		margin: 10px 5px;
-	}
-
-	.time {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		color: rgba(233, 209, 140, 1);
-
-		h4 {
-			margin-right: 8px;
-			font-size: 18px;
-		}
 	}
 
 	.flex {
@@ -42,10 +50,6 @@ const Container = styled('div')`
 		margin-top: 8px;
 		margin-bottom: 16px;
 		padding-bottom: 16px;
-
-		&:not(:last-of-type) {
-			border-bottom: 1px solid rgba(242, 242, 242, 1);
-		}
 	}
 
 	.details {
@@ -62,6 +66,8 @@ const Container = styled('div')`
 			}
 		}
 	}
+
+	${themeStyles}
 `
 
 const RecentAppointmentOverview = ({ setTime, user, appointmentId, appointment: passedInAppointment }) => {
@@ -99,12 +105,12 @@ const RecentAppointmentOverview = ({ setTime, user, appointmentId, appointment: 
 			<div className="block times">
 				<div style={{ marginBottom: 8 }}>
 					<p>Start Time</p>
-					<h1 style={{ color: 'rgba(242, 209, 116, 1)', fontSize: 40 }}>{format(appointment.startTime, 'h:mma')}</h1>
+					<h1>{format(appointment.startTime, 'h:mma')}</h1>
 				</div>
 
 				<div>
 					<p>End Time</p>
-					<h1 style={{ color: 'rgba(242, 209, 116, 1)', fontSize: 40 }}>{format(appointment.endTime, 'h:mma')}</h1>
+					<h1>{format(appointment.endTime, 'h:mma')}</h1>
 				</div>
 			</div>
 		</Container>

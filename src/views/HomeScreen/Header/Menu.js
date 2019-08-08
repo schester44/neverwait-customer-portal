@@ -13,6 +13,7 @@ const Menu = styled('div')`
 
 		&.active > div {
 			opacity: 1;
+			/* FIXME: Move to theme */
 			border-bottom: 3px solid rgba(237, 209, 129, 1);
 		}
 	}

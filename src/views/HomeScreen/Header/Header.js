@@ -1,6 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
 
+const themeStyles = ({ theme }) => `
+	background: ${theme.colors.headerBg};
+	color: ${theme.colors.headerColor};
+	box-shadow: 0px 3px 10px ${theme.colors.shadow};
+	border-bottom-left-radius: ${theme.borderRadius.large};
+	border-bottom-right-radius: ${theme.borderRadius.large};
+`
+
 const Container = styled('div')`
 	position: fixed;
 	top: 0;
@@ -10,7 +18,6 @@ const Container = styled('div')`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	box-shadow: 0px 3px 10px rgba(26, 30, 32, 0.05);
 	overflow: hidden;
 	transition: height 0.3s ease;
 	height: 100%;
@@ -18,15 +25,10 @@ const Container = styled('div')`
 	flex-direction: column;
 	justify-content: space-between;
 	z-index: 2;
-	background: white;
-	color: rgba(26, 30, 32, 1);
 	padding-top: 10px;
 	text-align: center;
 
-	border-bottom-left-radius: 25px;
-	border-bottom-right-radius: 25px;
-
-
+	${themeStyles};
 
 	@media (min-width: 900px) {
 		border-radius: 0;

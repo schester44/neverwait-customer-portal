@@ -1,7 +1,6 @@
 import { createGlobalStyle } from 'styled-components'
 
 export const createStyles = ({ theme, custom = '' }) => {
-    console.log('called', theme);
 	return createGlobalStyle`
         @import url('https://fonts.googleapis.com/css?family=Lato');
 

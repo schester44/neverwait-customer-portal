@@ -31,32 +31,25 @@ export const loginCustomerMutation = gql`
 export const sequentialUpsertMutation = gql`
 	mutation upsert($input: AppointmentInput!) {
 		upsertAppointment(input: $input) {
-			appointment {
-				id
-				startTime
-				endTime
-				duration
+			id
+			startTime
+			endTime
+			duration
+			price
+			location {
+				name
+				address
+				uuid
+				contactNumber
+			}
+			services {
+				name
 				price
-
-				location {
-					name
-					address
-					uuid
-				}
-				services {
-					name
-					price
-					duration
-				}
-				employee {
-					firstName
-					lastName
-				}
-				customer {
-					id
-					firstName
-					lastName
-				}
+				duration
+			}
+			employee {
+				firstName
+				lastName
 			}
 		}
 	}

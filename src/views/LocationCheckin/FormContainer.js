@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { withRouter } from 'react-router-dom'
 import { addMinutes } from 'date-fns'
 import { useMutation } from '@apollo/react-hooks'
-import omit from 'lodash/omit'
 import determineStartTime from './utils/determineStartTime'
 import getLastAppointment from './utils/getLastAppointment'
 import Review from './Review'
@@ -64,10 +63,8 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 				query: customerInfoQuery
 			})
 
-			const appointment = omit(upsertAppointment.appointment, ['employee', 'customer'])
-
 			let customerInfo = data.customerInfo
-			customerInfo.appointments.upcoming = [appointment, ...customerInfo.appointments.upcoming]
+			customerInfo.appointments.upcoming = [upsertAppointment, ...customerInfo.appointments.upcoming]
 
 			cache.writeQuery({
 				query: customerInfoQuery,
@@ -124,7 +121,7 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 	}
 
 	const handleCreate = async () => {
-		const { data: appointmentData } = await createAppointment({
+		const { data } = await createAppointment({
 			variables: {
 				input: {
 					...appointment,
@@ -136,9 +133,9 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 		})
 		setStep(3)
 
-		localStorage.setItem('last-appt', JSON.stringify(appointmentData.upsertAppointment.appointment))
+		localStorage.setItem('last-appt', JSON.stringify(data.upsertAppointment))
 
-		setCreatedAppointment(appointmentData.upsertAppointment.appointment)
+		setCreatedAppointment(data.upsertAppointment)
 	}
 
 	return (

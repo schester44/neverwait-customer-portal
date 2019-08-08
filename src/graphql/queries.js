@@ -77,11 +77,6 @@ export const locationDataQuery = gql`
 					startTime
 					endTime
 				}
-				blockedTimes(input: { where: { startTime: { gte: $startTime }, endTime: { lte: $endTime } } }) {
-					id
-					startTime
-					endTime
-				}
 			}
 		}
 	}

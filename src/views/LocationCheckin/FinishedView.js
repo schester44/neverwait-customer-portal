@@ -26,6 +26,8 @@ const Wrapper = styled('div')`
 	}
 `
 const Finished = ({ appointment, locationData, selectedService }) => {
+	console.log(appointment)
+
 	return (
 		<Wrapper>
 			<div className="block location">

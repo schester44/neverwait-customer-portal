@@ -9,20 +9,23 @@ import { getMainDefinition } from 'apollo-utilities'
 import { setContext } from 'apollo-link-context'
 
 import pling from '../components/Pling'
-const debug = require('debug')('app:graphql')
+import { logError } from '../utils/logging'
 
 const onErrorLink = onError(({ graphQLErrors = [], networkError }) => {
 	if (graphQLErrors.length > 0) {
 		return graphQLErrors.forEach(error => {
 			pling({ message: error.message })
+			logError(error)
 		})
+	}
+
+	if (networkError && networkError.result && networkError.result.errors) {
+		networkError.result.errors.forEach(logError)
 	}
 
 	if (networkError) {
 		pling({ message: 'The app is having trouble connecting. Please try again later.' })
 	}
-
-	debug({ graphQLErrors, networkError })
 })
 
 const baseLink = setContext(() => {

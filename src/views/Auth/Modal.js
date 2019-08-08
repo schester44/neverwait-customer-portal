@@ -8,7 +8,11 @@ const Container = styled('div')`
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: rgba(26, 30, 32, 1);
+	background: white;
+	display: flex;
+	flex-direction: column;
+	overflow: scroll;
+	padding: 10px;
 
 	.title {
 		width: 100%;
@@ -18,16 +22,24 @@ const Container = styled('div')`
 	}
 
 	.close {
-		position: absolute;
+		position: fixed;
 		top: 10px;
 		right: 10px;
 		cursor: pointer;
 		font-size: 24px;
 	}
 
+	@media (min-width: 1200px) {
+		.close {
+			left: 1160px;
+		}
+	}
+
 	.contents {
 		margin-top: 28px;
 		width: 100%;
+		flex: 1;
+		padding-bottom: 20px;
 	}
 `
 

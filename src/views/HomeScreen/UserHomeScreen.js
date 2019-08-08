@@ -17,18 +17,23 @@ const SECONDARY_HEIGHT = 70
 const slideUp = keyframes`
 	from {
 		transform: translateY(0px);
-
-		h1 {
-			opacity: 1;
-		}
 	}
 
 	to {
 		transform: translateY(-31px);
+	}
+`
 
-		h1 {
-			opacity: 0;
-		}
+const fadeIn = keyframes`
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0px);
 	}
 `
 
@@ -38,6 +43,11 @@ const heightStyles = ({ height }) =>
 		.app-header {
 			height: ${SECONDARY_HEIGHT}px;
 			border-radius: 0;
+
+			.back {
+				opacity: 0;
+				animation: ${fadeIn} 0.5s 0.2s ease forwards;
+			}
 
 			.overview {
 				animation: ${slideUp} 0.3s ease forwards;
@@ -124,7 +134,7 @@ const Container = styled('div')`
 	${heightStyles}
 `
 
-const UserHomeScreen = ({ user, locations, routeLocation, match }) => {
+const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 	const height = routeLocation.pathname.indexOf('/appointments') > -1 ? DEFAULT_HEIGHT : SECONDARY_HEIGHT
 
 	const [time, setTime] = React.useState(undefined)
@@ -136,7 +146,7 @@ const UserHomeScreen = ({ user, locations, routeLocation, match }) => {
 					<NavBar />
 				) : (
 					<div className="overview">
-						<Overview start={time} />
+						<Overview start={time} onBack={() => history.push('/')} />
 					</div>
 				)}
 			</Header>

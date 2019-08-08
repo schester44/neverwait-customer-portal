@@ -8,7 +8,6 @@ const Wrapper = styled('div')`
 
 	label {
 		text-transform: uppercase;
-		color: rgba(250, 250, 250, 0.6);
 		font-size: 16px;
 		font-weight: 300;
 		margin: 0;
@@ -22,8 +21,7 @@ const Wrapper = styled('div')`
 
 	input {
 		font-size: 16px;
-		background: rgba(38, 43, 49, 1);
-		color: white;
+		background: rgba(240, 240, 240, 1);
 		border: 0;
 		border-radius: 5px;
 		width: 100%;
@@ -33,7 +31,7 @@ const Wrapper = styled('div')`
 
 		&:focus,
 		&:active {
-			background: rgba(58, 63, 69, 1);
+			background: rgba(230, 230, 230, 1);
 		}
 	}
 `

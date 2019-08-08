@@ -22,6 +22,10 @@ const StyledBtn = styled('button')`
 	}
 
 	${sizeStyles}
+
+	@media (min-width: 1200px) {
+		padding: 20px;
+	}
 `
 
 const Button = props => {

@@ -11,9 +11,13 @@ const Header = styled('div')`
 	padding: 10px 5px;
 	font-size: 90%;
 
+	.header-title {
+		padding: 10px;
+	}
+
 	.back {
+		padding-left: 10px;
 		position: relative;
-		top: 3px;
 		font-size: 36px;
 		line-height: 1;
 		padding-right: 16px;
@@ -35,9 +39,7 @@ const HomeScreen = ({ history, customerId, employees, locationName }) => {
 					</div>
 				)}
 
-				<div>
-					<h1>{locationName}</h1>
-				</div>
+				<h1 className="header-title">{locationName}</h1>
 			</Header>
 
 			<EmployeeList employees={employees} />

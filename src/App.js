@@ -51,7 +51,12 @@ const App = () => {
 							}
 
 							return (
-								<HomeScreen routeLocation={props.location} match={props.match} locations={data.locations} user={user} />
+								<HomeScreen
+									routeLocation={props.location}
+									history={props.history}
+									locations={data.locations}
+									user={user}
+								/>
 							)
 						}}
 					/>

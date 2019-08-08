@@ -8,24 +8,17 @@ import CreateAccountForm from './Auth/CreateAccountForm'
 import { useMutation } from '@apollo/react-hooks'
 import { createCustomerMutation, loginCustomerMutation } from '../graphql/mutations'
 
-const Link = styled('span')`
-	cursor: pointer;
-	color: rgba(237, 209, 129, 1);
-	font-weight: 500;
-`
-
 const Container = styled('div')`
 	width: 100%;
 	text-align: center;
 	margin-top: 24px;
 
-	h3 {
+	h4 {
 		margin: 24px 0;
 	}
 
 	p {
-		margin: 14px 0;
-		color: rgba(240, 240, 240, 1);
+		margin: 24px 0;
 	}
 `
 
@@ -36,7 +29,7 @@ const CustomerAuthView = ({ companyId, onLogin }) => {
 		visibleView: undefined,
 		values: {}
 	})
-	
+
 	const isLoading = loginLoading || createLoading
 
 	const setFieldValue = (k, v) => {
@@ -102,7 +95,7 @@ const CustomerAuthView = ({ companyId, onLogin }) => {
 				</Modal>
 			)}
 
-			<h3>Create an account or login to continue.</h3>
+			<h4>Create an account or login to continue.</h4>
 			<Button
 				style={{ width: '100%' }}
 				onClick={() => {
@@ -121,23 +114,22 @@ const CustomerAuthView = ({ companyId, onLogin }) => {
 			>
 				Create an account
 			</Button>
-			<p>
-				Already have a NeverWait account?{' '}
-				<Link
-					onClick={() => {
-						setFormState({
-							loading: false,
-							visibleView: 'login',
-							values: {
-								contactNumber: '',
-								password: ''
-							}
-						})
-					}}
-				>
-					Log In
-				</Link>
-			</p>
+			<p style={{ marginTop: '10%' }}>Already have an account?</p>
+			<Button
+				style={{ width: '100%' }}
+				onClick={() => {
+					setFormState({
+						loading: false,
+						visibleView: 'login',
+						values: {
+							contactNumber: '',
+							password: ''
+						}
+					})
+				}}
+			>
+				Sign In
+			</Button>
 		</Container>
 	)
 }

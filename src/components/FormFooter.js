@@ -26,10 +26,6 @@ const FormFooter = styled('div')`
 		span {
 			font-size: 20px;
 		}
-
-		button {
-			padding: 20px;
-		}
 	}
 `
 

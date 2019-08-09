@@ -8,13 +8,9 @@ const Menu = styled('div')`
 	height: 100%;
 
 	a {
-		text-decoration: none;
-		color: inherit;
-
 		&.active > div {
 			opacity: 1;
-			/* FIXME: Move to theme */
-			border-bottom: 3px solid rgba(237, 209, 129, 1);
+			border-bottom: 3px solid ${({ theme }) => theme.colors.p500};
 		}
 	}
 `

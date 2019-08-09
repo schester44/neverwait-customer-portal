@@ -25,6 +25,11 @@ export const createStyles = ({ theme, custom = '' }) => {
             font-family: ${theme.fontStack.default};
         }
 
+        a {
+		    text-decoration: none;
+		    color: inherit;
+	    }
+
         ${custom}
     `
 }

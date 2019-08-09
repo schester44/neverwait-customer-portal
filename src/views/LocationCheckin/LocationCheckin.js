@@ -11,7 +11,7 @@ import format from 'date-fns/format'
 const HomeScreen = React.lazy(() => import('./HomeScreen'))
 const Form = React.lazy(() => import('./FormContainer'))
 
-const LocationCheckin = ({ match, id, customerId }) => {
+const LocationCheckin = ({ match, uuid, customerId }) => {
 	const startTime = startOfDay(new Date())
 	const endTime = endOfDay(new Date())
 
@@ -22,10 +22,10 @@ const LocationCheckin = ({ match, id, customerId }) => {
 				endDate: format(endTime, 'YYYY-MM-DD'),
 				startTime,
 				endTime,
-				locationId: id
+				uuid
 			}
 		}
-	}, [startTime, endTime, id])
+	}, [startTime, endTime, uuid])
 
 	// TODO: We really don't care about the Location's appointments until the Review page
 	const { data = {}, loading } = useQuery(locationDataQuery, queryOptions)
@@ -100,7 +100,7 @@ const LocationCheckin = ({ match, id, customerId }) => {
 	if (!loading && !location) return <Redirect to="/" />
 
 	return (
-		<div style={{ background: 'white', minHeight: '100vh' }}>
+		<div style={{ minHeight: '100vh' }}>
 			<Switch>
 				<Route
 					exact

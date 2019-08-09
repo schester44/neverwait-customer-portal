@@ -7,7 +7,7 @@ import { ThemeProvider } from 'styled-components'
 import client from './graphql/createClient'
 import App from './App'
 
-import { light as theme } from './themes'
+import { dark as theme } from './themes'
 import { createStyles } from './themes/global-styles'
 
 import * as Sentry from '@sentry/browser'

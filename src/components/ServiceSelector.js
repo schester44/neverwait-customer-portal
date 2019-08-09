@@ -5,7 +5,7 @@ import Button from './Button'
 
 const ServiceSelector = ({ selectedService, services, onSelect, onNext }) => {
 	return (
-		<div style={{ width: '100%', marginBottom: 100 }}>
+		<div style={{ width: '100%', paddingBottom: 100 }}>
 			{services.map(service => {
 				return (
 					<Service

@@ -1,7 +1,8 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { generatePath, Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { FiMapPin, FiX } from 'react-icons/fi'
+import { WAITLIST_LOCATION } from '../../routes'
 
 const Drawer = React.lazy(() => import('./Drawer'))
 
@@ -11,7 +12,7 @@ const themeStyles = ({ theme }) => `
 
 	.button {
 		background: ${theme.colors.p500};
-		color: ${theme.colors.n100};
+		color: ${theme.colors.n500};
 		box-shadow: 0px -2px 3px ${theme.colors.shadow};
 	}
 `
@@ -76,7 +77,7 @@ const NavFooter = ({ disableCheckins = false, locations }) => {
 					<Drawer onClose={() => setVisible(false)} title="Select a location to check in at">
 						{locations.map(location => {
 							return (
-								<Link key={location.uuid} to={`/book/l/${location.uuid}`}>
+								<Link key={location.uuid} to={generatePath(WAITLIST_LOCATION, { uuid: location.uuid })}>
 									<Location>
 										<h4>{location.name}</h4>
 										<h5>{location.address}</h5>

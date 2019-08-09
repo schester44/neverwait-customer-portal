@@ -6,6 +6,7 @@ const Container = styled('div')`
 	width: 100%;
 	padding: 10px 5px;
 	font-size: 90%;
+	color: ${({ theme }) => theme.colors.n100};
 
 	.back {
 		font-size: 36px;

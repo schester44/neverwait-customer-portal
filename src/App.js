@@ -6,6 +6,7 @@ import Loading from './components/Loading'
 
 import { customerInfoQuery } from './graphql/queries'
 import getCookie from './utils/getCookie'
+import { WAITLIST_LOCATION } from './routes'
 
 const LoginPage = React.lazy(() => import('./views/Auth/LoginPage'))
 const HomeScreen = React.lazy(() => import('./views/HomeScreen'))
@@ -33,12 +34,12 @@ const App = () => {
 			<Container>
 				<Switch>
 					<Route
-						path="/book/l/:id"
+						path={WAITLIST_LOCATION}
 						render={props => {
 							return (
 								<LocationCheckin
 									customerId={user ? user.id : undefined}
-									id={props.match.params.id}
+									uuid={props.match.params.uuid}
 									match={props.match}
 								/>
 							)

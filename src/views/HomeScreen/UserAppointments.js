@@ -7,40 +7,51 @@ import Swipe from 'react-easy-swipe'
 const Container = styled('div')`
 	padding: 16px 10px;
 	height: 100%;
-
-	@media (min-width: 900px) {
-		display: flex;
-		flex-wrap: wrap;
-	}
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-content: flex-start;
 
 	a {
-		text-decoration: none;
-		color: inherit;
+		display: block;
+		width: 100%;
+
+		@media (min-width: 640px) and (max-width: 768px) {
+			width: calc(50% - 10px);
+			margin: 10px 5px;
+		}
+
+		@media (min-width: 768px) {
+			width: calc(33% - 10px);
+			margin: 10px 5px;
+		}
+	}
+`
+
+const appointmentThemeStyles = ({ theme }) => `
+	background: ${theme.colors.headerBg};
+	color: ${theme.colors.headerColor};
+	border-radius: ${theme.borderRadius.medium};
+	box-shadow: 0px 4px 3px ${theme.colors.shadow};
+
+	.time {
+		h4 {
+			color: ${theme.colors.s500}
+		}
 	}
 `
 
 const Appointment = styled('div')`
 	width: 100%;
 
-	background: white;
-	color: rgba(38, 43, 49, 1);
-	border-radius: 8px;
 	margin-bottom: 10px;
-	box-shadow: 0px 4px 3px rgba(32, 32, 32, 0.02);
 	padding: 15px;
 	font-size: 14px;
-
-	@media (min-width: 900px) {
-		width: calc(33% - 10px);
-		min-width: 350px;
-		margin: 10px 5px;
-	}
 
 	.time {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		color: rgba(233, 209, 140, 1);
 
 		h4 {
 			margin-right: 8px;
@@ -66,6 +77,7 @@ const Appointment = styled('div')`
 			}
 		}
 	}
+	${appointmentThemeStyles};
 `
 
 const Placeholder = styled('div')`

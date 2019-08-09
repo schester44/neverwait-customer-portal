@@ -52,8 +52,8 @@ export const customerInfoQuery = gql`
 
 // FIXME: Should need extra variables.. problem with inconsistent types
 export const locationDataQuery = gql`
-	query Location($locationId: String!, $startTime: String!, $endTime: String!, $startDate: Date!, $endDate: Date!) {
-		locationByUUID(input: { uuid: $locationId }) {
+	query Location($uuid: String!, $startTime: String!, $endTime: String!, $startDate: Date!, $endDate: Date!) {
+		locationByUUID(input: { uuid: $uuid }) {
 			id
 			name
 			address

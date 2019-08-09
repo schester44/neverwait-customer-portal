@@ -1,5 +1,5 @@
 import React from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { generatePath, Switch, Route, Redirect } from 'react-router-dom'
 import styled, { css, keyframes } from 'styled-components'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import Appointments from './UserAppointments'
@@ -7,6 +7,7 @@ import NavFooter from './NavFooter'
 import { Header, Overview, NavBar } from './Header'
 
 import isRecentAppointment from '../../utils/isRecentAppointment'
+import { USER_APPOINTMENTS, APPOINTMENT_OVERVIEW, USER_DASHBOARD } from '../../routes'
 
 const AppointmentOverview = React.lazy(() => import('./AppointmentOverview'))
 
@@ -61,13 +62,16 @@ const heightStyles = ({ containerHeight }) =>
 		}
 	`
 
+const themeStyles = ({ theme }) => `
+	background: ${theme.colors.bodyBg};
+	color: ${theme.colors.bodyColor};
+`
+
 const Container = styled('div')`
 	width: 100%;
 	min-height: 100%;
 	display: flex;
 	flex-direction: column;
-	background: rgba(242, 242, 242, 1);
-	color: rgba(26, 30, 32, 1);
 
 	.title {
 		transform: translateY(0px);
@@ -80,8 +84,8 @@ const Container = styled('div')`
 		height: 100vh;
 	}
 
-	${({ height }) =>
-		height === SECONDARY_HEIGHT
+	${({ containerHeight }) =>
+		containerHeight === SECONDARY_HEIGHT
 			? css`
 					.fade-enter {
 						opacity: 0;
@@ -108,8 +112,8 @@ const Container = styled('div')`
 	}
 
 	.fade-exit.fade-exit-active {
-		${({ height }) =>
-			height === SECONDARY_HEIGHT
+		${({ containerHeight }) =>
+			containerHeight === SECONDARY_HEIGHT
 				? css`
 						opacity: 0;
 				  `
@@ -145,9 +149,11 @@ const Container = styled('div')`
 	}
 
 	${heightStyles}
+	${themeStyles}
 `
 
 const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
+	// TODO: Wont scale as routes are added.
 	const height = routeLocation.pathname.indexOf('/appointments') > -1 ? DEFAULT_HEIGHT : SECONDARY_HEIGHT
 
 	const [activeInfo, setInfo] = React.useState({ time: undefined, employee: undefined })
@@ -170,7 +176,7 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 						<div className="view">
 							<Switch location={routeLocation}>
 								<Route
-									path="/appointments/:type"
+									path={USER_APPOINTMENTS}
 									render={props => {
 										const type = props.match.params.type
 										const appointments = user.appointments[type]
@@ -179,9 +185,9 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 								/>
 
 								<Route
-									path="/appointment/:id"
+									path={APPOINTMENT_OVERVIEW}
 									render={props => {
-										if (!user) return <Redirect to="/" />
+										if (!user) return <Redirect to={USER_DASHBOARD} />
 
 										if (props.match.params.id === 'recent') {
 											const appointment = JSON.parse(localStorage.getItem('last-appt'))
@@ -198,7 +204,7 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 													/>
 												)
 											} else {
-												return <Redirect to="/" />
+												return <Redirect to={USER_DASHBOARD} />
 											}
 										}
 
@@ -215,7 +221,7 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 									}}
 								/>
 
-								<Redirect to="/appointments/upcoming" />
+								<Redirect to={generatePath(USER_APPOINTMENTS, { type: 'upcoming' })} />
 							</Switch>
 						</div>
 					</React.Suspense>

@@ -15,9 +15,8 @@ const FormFooter = styled('div')`
 	margin: 0 auto;
 	z-index: 99;
 
-	background: white;
-	border-top-left-radius: 8px;
-	border-top-right-radius: 8px;
+	background: ${({ theme }) => theme.colors.headerBg};
+	color: ${({ theme }) => theme.colors.headerColor};
 
 	@media (min-width: 1200px) {
 		left: calc(50% - 600px);

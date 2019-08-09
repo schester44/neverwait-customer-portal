@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { format } from 'date-fns'
 import { Link } from 'react-router-dom'
+import Swipe from 'react-easy-swipe'
 
 const Container = styled('div')`
 	padding: 16px 10px;
@@ -81,35 +82,49 @@ const placeholder = type => (
 	</Placeholder>
 )
 
-const UserAppointments = ({ type, appointments = [] }) => {
+const UserAppointments = ({ type, appointments = [], history }) => {
+	const onSwipeRight = () => {
+		if (type !== 'upcoming') {
+			history.push('/appointments/upcoming')
+		}
+	}
+
+	const onSwipeLeft = () => {
+		if (type !== 'past') {
+			history.push('/appointments/past')
+		}
+	}
+
 	return (
-		<Container>
-			{appointments.length === 0
-				? placeholder(type)
-				: appointments.map((appointment, index) => {
-						return (
-							<Link to={`/appointment/${appointment.id}`} key={index}>
-								<Appointment key={index}>
-									<div className="time">
-										<h4>{format(appointment.startTime, 'h:mma')}</h4>
-										<h4>{format(appointment.startTime, 'MMM Do')}</h4>
-									</div>
-									<div className="location">
-										<h4>{appointment.location.name}</h4>
-										<h5>{appointment.location.address}</h5>
-									</div>
-									<div className="details">
-										<ul>
-											<li>
-												${appointment.price} - {appointment.services[0].name}
-											</li>
-										</ul>
-									</div>
-								</Appointment>
-							</Link>
-						)
-				  })}
-		</Container>
+		<Swipe className="swipe-container" onSwipeLeft={onSwipeLeft} onSwipeRight={onSwipeRight}>
+			<Container>
+				{appointments.length === 0
+					? placeholder(type)
+					: appointments.map((appointment, index) => {
+							return (
+								<Link to={`/appointment/${appointment.id}`} key={index}>
+									<Appointment key={index}>
+										<div className="time">
+											<h4>{format(appointment.startTime, 'h:mma')}</h4>
+											<h4>{format(appointment.startTime, 'MMM Do')}</h4>
+										</div>
+										<div className="location">
+											<h4>{appointment.location.name}</h4>
+											<h5>{appointment.location.address}</h5>
+										</div>
+										<div className="details">
+											<ul>
+												<li>
+													${appointment.price} - {appointment.services[0].name}
+												</li>
+											</ul>
+										</div>
+									</Appointment>
+								</Link>
+							)
+					  })}
+			</Container>
+		</Swipe>
 	)
 }
 

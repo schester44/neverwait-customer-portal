@@ -2,7 +2,6 @@ import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import styled, { css, keyframes } from 'styled-components'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
-
 import Appointments from './UserAppointments'
 import NavFooter from './NavFooter'
 import { Header, Overview, NavBar } from './Header'
@@ -39,8 +38,8 @@ const fadeIn = keyframes`
 	}
 `
 
-const heightStyles = ({ height }) =>
-	height === SECONDARY_HEIGHT &&
+const heightStyles = ({ containerHeight }) =>
+	containerHeight === SECONDARY_HEIGHT &&
 	css`
 		.app-header {
 			height: ${SECONDARY_HEIGHT}px;
@@ -77,6 +76,8 @@ const Container = styled('div')`
 
 	div.transition-group {
 		position: relative;
+		width: 100%;
+		height: 100vh;
 	}
 
 	${({ height }) =>
@@ -129,11 +130,18 @@ const Container = styled('div')`
 
 	.view {
 		position: absolute;
-		top: 80px;
+		top: 0;
 		left: 0;
 		width: 100%;
+		height: 100%;
+		padding-top: 80px;
 		flex: 1;
 		padding-bottom: 50px;
+
+		.swipe-container {
+			width: 100%;
+			height: 100%;
+		}
 	}
 
 	${heightStyles}
@@ -145,7 +153,7 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 	const [activeInfo, setInfo] = React.useState({ time: undefined, employee: undefined })
 
 	return (
-		<Container height={height}>
+		<Container containerHeight={height}>
 			<Header title="NeverWait">
 				{height === DEFAULT_HEIGHT ? (
 					<NavBar />
@@ -166,7 +174,7 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 									render={props => {
 										const type = props.match.params.type
 										const appointments = user.appointments[type]
-										return <Appointments type={type} appointments={appointments} />
+										return <Appointments history={props.history} type={type} appointments={appointments} />
 									}}
 								/>
 

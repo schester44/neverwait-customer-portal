@@ -26,6 +26,7 @@
     "react": "^16.8.6",
     "react-apollo": "^2.5.8",
     "react-dom": "^16.8.6",
+    "react-easy-swipe": "^0.0.18",
     "react-hot-loader": "^4.3.4",
     "react-icons": "^3.7.0",
     "react-input-mask": "^2.0.4",

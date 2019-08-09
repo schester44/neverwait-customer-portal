@@ -2,6 +2,7 @@ import React from 'react'
 import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import format from 'date-fns/format'
+import Swipe from 'react-easy-swipe'
 
 const themeStyles = ({ theme }) => `
 	background: ${theme.colors.headerBg};
@@ -70,7 +71,7 @@ const Container = styled('div')`
 	${themeStyles}
 `
 
-const RecentAppointmentOverview = ({ setTime, user, appointmentId, appointment: passedInAppointment }) => {
+const RecentAppointmentOverview = ({ history, user, appointmentId, appointment: passedInAppointment, setTime }) => {
 	const appointment = React.useMemo(() => {
 		if (passedInAppointment) return passedInAppointment
 
@@ -87,33 +88,37 @@ const RecentAppointmentOverview = ({ setTime, user, appointmentId, appointment: 
 
 	if (!appointment) return <Redirect to="/" />
 
+	const onSwipeRight = () => history.goBack()
+
 	return (
-		<Container>
-			<div className="block location">
-				<h3>{appointment.location.name}</h3>
-				<h5>{appointment.location.address}</h5>
-				<h5>{appointment.location.contactNumber}</h5>
-			</div>
-			<div className="block">
-				<div className="flex">
-					<h4>{appointment.services[0].name}</h4>
-					<h5>with {appointment.employee.firstName}</h5>
+		<Swipe className="swipe-container" onSwipeRight={onSwipeRight}>
+			<Container>
+				<div className="block location">
+					<h3>{appointment.location.name}</h3>
+					<h5>{appointment.location.address}</h5>
+					<h5>{appointment.location.contactNumber}</h5>
 				</div>
+				<div className="block">
+					<div className="flex">
+						<h4>{appointment.services[0].name}</h4>
+						<h5>with {appointment.employee.firstName}</h5>
+					</div>
 
-				<h3>${appointment.price}</h3>
-			</div>
-			<div className="block times">
-				<div style={{ marginBottom: 8 }}>
-					<p>Start Time</p>
-					<h1>{format(appointment.startTime, 'h:mma')}</h1>
+					<h3>${appointment.price}</h3>
 				</div>
+				<div className="block times">
+					<div style={{ marginBottom: 8 }}>
+						<p>Start Time</p>
+						<h1>{format(appointment.startTime, 'h:mma')}</h1>
+					</div>
 
-				<div>
-					<p>End Time</p>
-					<h1>{format(appointment.endTime, 'h:mma')}</h1>
+					<div>
+						<p>End Time</p>
+						<h1>{format(appointment.endTime, 'h:mma')}</h1>
+					</div>
 				</div>
-			</div>
-		</Container>
+			</Container>
+		</Swipe>
 	)
 }
 

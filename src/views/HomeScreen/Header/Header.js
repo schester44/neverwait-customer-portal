@@ -1,5 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
+import { FiMenu } from 'react-icons/fi'
+
+import UserSettingsMenu from './UserSettingsMenu'
 
 const themeStyles = ({ theme }) => `
 	background: ${theme.colors.headerBg};
@@ -26,6 +29,13 @@ const Container = styled('div')`
 	padding-top: 10px;
 	text-align: center;
 
+	.menu {
+		position: absolute;
+		top: 5px;
+		right: 10px;
+		cursor: pointer;
+	}
+
 	${themeStyles};
 
 	@media (min-width: 900px) {
@@ -45,10 +55,20 @@ const Container = styled('div')`
 `
 
 const Header = ({ title, children }) => {
+	const [visible, setVisible] = React.useState({
+		userMenu: true
+	})
+
 	return (
 		<Container className="app-header">
 			{title && <h1 className="title">{title}</h1>}
 			{children}
+
+			<div className="menu" onClick={() => setVisible(prev => ({ userMenu: !prev.userMenu }))}>
+				<FiMenu size="28" />
+			</div>
+
+			{visible.userMenu && <UserSettingsMenu onClose={() => setVisible(prev => ({ userMenu: false }))} />}
 		</Container>
 	)
 }

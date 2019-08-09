@@ -19,7 +19,10 @@ const themeStyles = ({ theme }) => `
 
 const Container = styled('div')`
 	position: fixed;
-
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	padding: 10px;
 	bottom: 0;
 	left: 0;
 	width: 100%;
@@ -63,18 +66,18 @@ const Location = styled('div')`
 `
 
 const NavFooter = ({ disableCheckins = false, locations }) => {
-	const [visible, setVisible] = React.useState(false)
+	const [visible, setVisible] = React.useState({ locations: undefined })
 
 	if (disableCheckins) return null
 
 	return (
 		<Container>
-			<div className="button" onClick={() => setVisible(p => !p)}>
-				{!visible ? <FiMapPin /> : <FiX />}
+			<div className="button" onClick={() => setVisible(prev => ({ locations: !prev.locations }))}>
+				{!visible.locations ? <FiMapPin /> : <FiX />}
 			</div>
 			<React.Suspense fallback={null}>
-				{visible && (
-					<Drawer onClose={() => setVisible(false)} title="Select a location to check in at">
+				{visible.locations && (
+					<Drawer onClose={() => setVisible({ locations: undefined })} title="Select a location to join waitlist">
 						{locations.map(location => {
 							return (
 								<Link key={location.uuid} to={generatePath(WAITLIST_LOCATION, { uuid: location.uuid })}>

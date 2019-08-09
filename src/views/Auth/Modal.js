@@ -14,6 +14,7 @@ const Container = styled('div')`
 	flex-direction: column;
 	overflow: scroll;
 	padding: 10px;
+	z-index: 999;
 
 	.title {
 		width: 100%;

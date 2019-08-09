@@ -28,6 +28,12 @@ export const loginCustomerMutation = gql`
 	}
 `
 
+export const customerLogout = gql`
+	mutation logout {
+		logout
+	}
+`
+
 export const sequentialUpsertMutation = gql`
 	mutation upsert($input: AppointmentInput!) {
 		upsertAppointment(input: $input) {

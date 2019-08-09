@@ -26,7 +26,9 @@ const misc = {
 	bodyColor: neutrals.n100,
 	success: greens.g500,
 	headerBg: neutrals.n500,
-	headerColor: neutrals.n100
+	headerColor: neutrals.n100,
+	inputBg: neutrals.n100,
+	inputColor: neutrals.n700
 }
 
 export const borderRadius = {

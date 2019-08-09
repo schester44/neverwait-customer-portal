@@ -1,5 +1,17 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
+import { shade } from 'polished'
+
+const themeStyles = ({ theme }) => `
+	input {
+		background: ${theme.colors.inputBg};
+		color: ${theme.colors.inputColor};
+
+		&:focus,&:active,&:hover {
+			background: ${shade(0.05, theme.colors.inputBg)};
+		}
+	}
+`
 
 const Wrapper = styled('div')`
 	width: 100%;
@@ -12,6 +24,7 @@ const Wrapper = styled('div')`
 		font-weight: 300;
 		margin: 0;
 		line-height: 1;
+		opacity: 0.6;
 	}
 
 	.input-wrapper {
@@ -21,19 +34,15 @@ const Wrapper = styled('div')`
 
 	input {
 		font-size: 16px;
-		background: rgba(240, 240, 240, 1);
 		border: 0;
 		border-radius: 5px;
 		width: 100%;
 		outline: none;
 		padding: 20px;
 		font-weight: 400;
-
-		&:focus,
-		&:active {
-			background: rgba(230, 230, 230, 1);
-		}
 	}
+
+	${themeStyles};
 `
 
 const Input = ({ value, label, style = {}, ...props }) => {

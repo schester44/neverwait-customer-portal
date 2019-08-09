@@ -39,7 +39,7 @@ const Container = styled('div')`
 	left: 0;
 	width: 100%;
 	padding: 10px;
-	z-index: 1;
+	z-index: 3;
 	height: 80vh;
 	max-height: 250px;
 	animation: ${slideUp} 0.3s ease forwards;
@@ -52,10 +52,21 @@ const Container = styled('div')`
 	.title {
 		text-align: center;
 		margin-bottom: 16px;
+		font-size: 500;
+		font-size: 18px;
 	}
 
 	${themeStyles}
 	${leaveStyles}
+`
+
+const Mask = styled('div')`
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 2;
 `
 
 const Drawer = ({ onClose, title, children }) => {
@@ -72,10 +83,13 @@ const Drawer = ({ onClose, title, children }) => {
 	useOutsideClick(ref, handleOutsideClick)
 
 	return (
-		<Container leave={leave} ref={ref}>
-			{title && <div className="title">{title}</div>}
-			{children}
-		</Container>
+		<>
+			<Container leave={leave} ref={ref}>
+				{title && <div className="title">{title}</div>}
+				{children}
+			</Container>
+			<Mask />
+		</>
 	)
 }
 

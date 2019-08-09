@@ -3,6 +3,9 @@ import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import format from 'date-fns/format'
 import Swipe from 'react-easy-swipe'
+import { isAfter } from 'date-fns'
+import Button from '../../components/Button'
+import { MobileView } from 'react-device-detect'
 
 const themeStyles = ({ theme }) => `
 	background: ${theme.colors.headerBg};
@@ -80,6 +83,10 @@ const RecentAppointmentOverview = ({ history, user, appointmentId, appointment: 
 		return user.appointments.upcoming.find(compare) || user.appointments.past.find(compare)
 	}, [user, appointmentId, passedInAppointment])
 
+	const isUpcoming = isAfter(appointment.endTime, new Date())
+
+	console.log(isUpcoming)
+
 	React.useEffect(() => {
 		if (appointment) {
 			setTime(appointment.startTime, appointment.employee.firstName)
@@ -117,6 +124,12 @@ const RecentAppointmentOverview = ({ history, user, appointmentId, appointment: 
 						<h1>{format(appointment.endTime, 'h:mma')}</h1>
 					</div>
 				</div>
+
+				<MobileView>
+					<a href={`tel:${appointment.location.contactNumber}`}>
+						<Button style={{ width: '100%', fontSize: 12 }}>Call {appointment.location.name}</Button>
+					</a>
+				</MobileView>
 			</Container>
 		</Swipe>
 	)

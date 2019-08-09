@@ -158,6 +158,8 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 
 	const [activeInfo, setInfo] = React.useState({ time: undefined, employee: undefined })
 
+	const onSetTime = React.useCallback((time, employee) => setInfo({ time, employee }), [setInfo])
+
 	return (
 		<Container containerHeight={height}>
 			<Header title="NeverWait">
@@ -195,13 +197,7 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 
 											if (appointment && isRecent) {
 												return (
-													<AppointmentOverview
-														setTime={(time, employee) => {
-															setInfo({ time, employee })
-														}}
-														history={props.history}
-														appointment={appointment}
-													/>
+													<AppointmentOverview setTime={onSetTime} history={props.history} appointment={appointment} />
 												)
 											} else {
 												return <Redirect to={USER_DASHBOARD} />
@@ -210,9 +206,7 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 
 										return (
 											<AppointmentOverview
-												setTime={(time, employee) => {
-													setInfo({ time, employee })
-												}}
+												setTime={onSetTime}
 												history={props.history}
 												user={user}
 												appointmentId={props.match.params.id}

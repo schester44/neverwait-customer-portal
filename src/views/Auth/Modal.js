@@ -8,7 +8,8 @@ const Container = styled('div')`
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: ${({ theme }) => theme.colors.headerColor};
+	background: ${({ theme }) => theme.colors.headerBg};
+	color: ${({ theme }) => theme.colors.headerColor};
 	display: flex;
 	flex-direction: column;
 	overflow: scroll;

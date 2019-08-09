@@ -55,18 +55,22 @@ const CustomerAuthView = ({ companyId, onLogin }) => {
 	}
 
 	const handleCreateAccount = async () => {
-		const {
-			data: { createCustomer: response }
-		} = await createCustomer({
-			variables: {
-				input: omit(values, ['confirmPassword'])
-			}
-		})
+		try {
+			const {
+				data: { createCustomer: response }
+			} = await createCustomer({
+				variables: {
+					input: omit(values, ['confirmPassword'])
+				}
+			})
 
-		if (response && response.id) {
-			handleLogin(values.contactNumber, values.password)
-		} else {
-			alert('Failed to create an account.')
+			if (response && response.id) {
+				handleLogin(values.contactNumber, values.password)
+			} else {
+				alert('Failed to create an account.')
+			}
+		} catch (error) {
+			console.log(error)
 		}
 	}
 

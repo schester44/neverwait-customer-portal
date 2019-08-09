@@ -9,18 +9,13 @@ import { getMainDefinition } from 'apollo-utilities'
 import { setContext } from 'apollo-link-context'
 
 import pling from '../components/Pling'
-import { logError } from '../utils/logging'
 
 const onErrorLink = onError(({ graphQLErrors = [], networkError }) => {
 	if (graphQLErrors.length > 0) {
-		return graphQLErrors.forEach(error => {
+		for (let error of graphQLErrors) {
+			console.log(error)
 			pling({ message: error.message })
-			logError(error)
-		})
-	}
-
-	if (networkError && networkError.result && networkError.result.errors) {
-		networkError.result.errors.forEach(logError)
+		}
 	}
 
 	if (networkError) {

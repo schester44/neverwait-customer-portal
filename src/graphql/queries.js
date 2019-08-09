@@ -50,8 +50,9 @@ export const customerInfoQuery = gql`
 	${fragments.appointment}
 `
 
+// FIXME: Should need extra variables.. problem with inconsistent types
 export const locationDataQuery = gql`
-	query Location($locationId: String!, $startTime: String!, $endTime: String!) {
+	query Location($locationId: String!, $startTime: String!, $endTime: String!, $startDate: Date!, $endDate: Date!) {
 		locationByUUID(input: { uuid: $locationId }) {
 			id
 			name
@@ -62,6 +63,16 @@ export const locationDataQuery = gql`
 			employees(input: { where: { bookingEnabled: true } }) {
 				id
 				firstName
+				schedule_ranges(input: { where: { start_date: $startDate, end_date: $endDate } }) {
+					start_date
+					end_date
+					day_of_week
+					schedule_shifts {
+						start_time
+						end_time
+					}
+				}
+
 				services {
 					id
 					name

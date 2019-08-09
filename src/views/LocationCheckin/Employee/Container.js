@@ -9,11 +9,18 @@ export default styled('div')`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	cursor: pointer;
+	opacity: 0.3;
 
+	${({ noHover }) =>
+		!noHover &&
+		`
+	
+	cursor: pointer;
+	opacity: 1;
 	&:hover {
 		background: rgba(57, 63, 70, 1);
 	}
+	`}
 
 	.right {
 		display: flex;

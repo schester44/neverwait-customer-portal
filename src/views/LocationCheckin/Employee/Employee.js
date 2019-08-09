@@ -3,13 +3,15 @@ import Container from './Container'
 import { FiChevronRight } from 'react-icons/fi'
 import timeFragmentsFromMinutes from './utils/timeFragments'
 import { useWaitTime } from '../../../graphql/hooks'
+import isWorking from './utils/isWorking'
+import Modal from '../../Auth/Modal'
 
-const debug = require('debug')('app:employee')
-
-const WaitTime = ({ currentWait }) => {
+const WaitTime = ({ canSchedule, currentWait }) => {
 	const time = timeFragmentsFromMinutes(currentWait)
 
-	return currentWait < 5 ? (
+	if (!canSchedule) return 'Not Working'
+
+	return currentWait < 15 ? (
 		'No Wait'
 	) : (
 		<span>
@@ -31,23 +33,40 @@ const WaitTime = ({ currentWait }) => {
 
 const Employee = ({ employee, onClick }) => {
 	const waitTime = useWaitTime(employee)
+	const canSchedule = React.useMemo(() => isWorking(employee, new Date()), [employee])
+	const [show, set] = React.useState(false)
 
-	debug(employee.firstName, 'wait time:', waitTime)
+	const handleClick = e => {
+		if (canSchedule) {
+			if (waitTime >= 15) {
+				onClick(e)
+			} else {
+				set(true)
+			}
+		}
+	}
 
 	return (
-		<Container onClick={onClick}>
-			<div>
-				<h1>{employee.firstName}</h1>
+		<>
+			{show && (
+				<Modal title="Great News!" onClose={() => set(false)}>
+					<h3 style={{ textAlign: 'center' }}>There is no need to checkin because there is no wait!</h3>
+				</Modal>
+			)}
+			<Container noHover={!canSchedule} onClick={handleClick}>
+				<div>
+					<h1>{employee.firstName}</h1>
 
-				<p>{waitTime === undefined ? null : <WaitTime currentWait={waitTime} />}</p>
-			</div>
+					<p>{waitTime === undefined ? null : <WaitTime canSchedule={canSchedule} currentWait={waitTime} />}</p>
+				</div>
 
-			<div className="right">
-				<button>
-					<FiChevronRight />
-				</button>
-			</div>
-		</Container>
+				<div className="right">
+					<button>
+						<FiChevronRight />
+					</button>
+				</div>
+			</Container>
+		</>
 	)
 }
 

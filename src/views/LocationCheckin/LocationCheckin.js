@@ -6,6 +6,7 @@ import { startOfDay, endOfDay } from 'date-fns'
 import { locationDataQuery } from '../../graphql/queries'
 import { appointmentsSubscription } from '../../graphql/subscriptions'
 import Loading from '../../components/Loading'
+import format from 'date-fns/format'
 
 const HomeScreen = React.lazy(() => import('./HomeScreen'))
 const Form = React.lazy(() => import('./FormContainer'))
@@ -16,7 +17,13 @@ const LocationCheckin = ({ match, id, customerId }) => {
 
 	const queryOptions = React.useMemo(() => {
 		return {
-			variables: { startTime, endTime, locationId: id }
+			variables: {
+				startDate: format(startTime, 'YYYY-MM-DD'),
+				endDate: format(endTime, 'YYYY-MM-DD'),
+				startTime,
+				endTime,
+				locationId: id
+			}
 		}
 	}, [startTime, endTime, id])
 
@@ -99,7 +106,11 @@ const LocationCheckin = ({ match, id, customerId }) => {
 					exact
 					path={match.path}
 					render={props => {
-						const employees = location.employees.filter(emp => emp.services.length > 0)
+						const employees = location.employees.filter(employee => {
+							if (employee.services.length === 0) return false
+
+							return true
+						})
 						return (
 							<HomeScreen
 								history={props.history}

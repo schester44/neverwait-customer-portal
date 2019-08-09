@@ -34,10 +34,10 @@ const Container = styled('div')`
 	width: calc(100% - 20px);
 	padding: 15px;
 
-	@media (min-width: 900px) {
-		width: calc(33% - 10px);
+	@media (min-width: 768px) {
+		width: 740px;
 		min-width: 350px;
-		margin: 10px 5px;
+		margin: 10px auto;
 	}
 
 	.flex {

@@ -5,7 +5,7 @@ import { FiChevronLeft } from 'react-icons/fi'
 
 const Header = styled('div')`
 	width: 100%;
-	padding: 24px auto;
+	padding: 24px 10px;
 	padding: 10px 5px;
 	font-size: 90%;
 

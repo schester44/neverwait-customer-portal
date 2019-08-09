@@ -5,8 +5,6 @@ const themeStyles = ({ theme }) => `
 	background: ${theme.colors.headerBg};
 	color: ${theme.colors.headerColor};
 	box-shadow: 0px 3px 10px ${theme.colors.shadow};
-	border-bottom-left-radius: ${theme.borderRadius.large};
-	border-bottom-right-radius: ${theme.borderRadius.large};
 `
 
 const Container = styled('div')`

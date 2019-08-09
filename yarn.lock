@@ -1170,6 +1170,11 @@
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
 
+"@rooks/use-outside-click@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@rooks/use-outside-click/-/use-outside-click-3.2.1.tgz#19f731101ab605e3cae61ee92b783a70c381f8ee"
+  integrity sha512-Pr/CBYja0VAlOF1e6dDL6blVoAXL+SiwWMHhFGsVYROzD/bpQWJNLZiSAKm+zaOIruDTL47CGTkU2HSd5wUI4g==
+
 "@sentry/browser@^5.5.0":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-5.5.0.tgz#ec99ea6897d23affc46d58e6ada32016b27721b5"

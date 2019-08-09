@@ -4,7 +4,7 @@ import Menu from './Menu'
 
 const NavBar = () => {
 	return (
-		<Menu>
+		<Menu className="app-header__menu">
 			<NavLink to="/appointments/upcoming">
 				<Menu.Item>Upcoming</Menu.Item>
 			</NavLink>

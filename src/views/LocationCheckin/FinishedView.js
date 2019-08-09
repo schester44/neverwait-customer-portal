@@ -26,8 +26,6 @@ const Wrapper = styled('div')`
 	}
 `
 const Finished = ({ appointment, locationData, selectedService }) => {
-	console.log(appointment)
-
 	return (
 		<Wrapper>
 			<div className="block location">
@@ -52,7 +50,7 @@ const Finished = ({ appointment, locationData, selectedService }) => {
 				<p>
 					Please arrive 15 minutes early ({format(subMinutes(appointment.startTime, 15), 'h:mma')}).
 					<br />
-					To cancel, please call 724-565-5344.
+					To cancel, please call {appointment.location.contactNumber}.
 				</p>
 			</div>
 

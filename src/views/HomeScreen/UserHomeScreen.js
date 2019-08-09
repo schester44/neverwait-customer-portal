@@ -12,14 +12,16 @@ import isRecentAppointment from '../../utils/isRecentAppointment'
 const AppointmentOverview = React.lazy(() => import('./AppointmentOverview'))
 
 const DEFAULT_HEIGHT = 80
-const SECONDARY_HEIGHT = 70
+const SECONDARY_HEIGHT = 60
 
 const slideUp = keyframes`
 	from {
+		opacity: 0;
 		transform: translateY(0px);
 	}
 
 	to {
+		opacity: 1;
 		transform: translateY(-31px);
 	}
 `
@@ -42,7 +44,6 @@ const heightStyles = ({ height }) =>
 	css`
 		.app-header {
 			height: ${SECONDARY_HEIGHT}px;
-			border-radius: 0;
 
 			.back {
 				opacity: 0;
@@ -50,11 +51,11 @@ const heightStyles = ({ height }) =>
 			}
 
 			.overview {
-				animation: ${slideUp} 0.3s ease forwards;
+				animation: ${slideUp} 0.3s 0.1s ease forwards;
 			}
 
 			.title {
-				transform: translateY(-40px);
+				transform: translateY(-50px);
 				opacity: 0.5;
 				transition: all 0.4s ease;
 			}
@@ -120,6 +121,10 @@ const Container = styled('div')`
 	.app-header {
 		transition: all 0.3s ease;
 		height: ${DEFAULT_HEIGHT}px;
+
+		.overview {
+			opacity: 0;
+		}
 	}
 
 	.view {
@@ -208,7 +213,7 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 					</React.Suspense>
 				</CSSTransition>
 			</TransitionGroup>
-			<NavFooter locations={locations} />
+			<NavFooter disableCheckins={user.appointments.upcoming.length >= 5} locations={locations} />
 		</Container>
 	)
 }

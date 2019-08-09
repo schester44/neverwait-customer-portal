@@ -12,7 +12,7 @@ const Container = styled('div')`
 		font-size: 36px;
 		line-height: 1;
 		left: 10px;
-		top: 10px;
+		top: 6px;
 	}
 `
 
@@ -24,7 +24,7 @@ const styles = ({ theme }) => `
 
 const Pill = styled('div')`
 	padding: 3px 6px;
-	margin-top: 10px;
+	margin-top: 5px;
 	display: inline-block;
 	box-sizing: border-box;
 	font-size: 10px;

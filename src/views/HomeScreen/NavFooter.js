@@ -61,8 +61,10 @@ const Location = styled('div')`
 	${locationThemeStyles};
 `
 
-const NavFooter = ({ locations }) => {
+const NavFooter = ({ disableCheckins = false, locations }) => {
 	const [visible, setVisible] = React.useState(false)
+
+	if (disableCheckins) return null
 
 	return (
 		<Container>
@@ -71,7 +73,7 @@ const NavFooter = ({ locations }) => {
 			</div>
 			<React.Suspense fallback={null}>
 				{visible && (
-					<Drawer title="Select a location to check in at">
+					<Drawer onClose={() => setVisible(false)} title="Select a location to check in at">
 						{locations.map(location => {
 							return (
 								<Link key={location.uuid} to={`/book/l/${location.uuid}`}>

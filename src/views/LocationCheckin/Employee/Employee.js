@@ -1,6 +1,7 @@
 import React from 'react'
-import Container from './Container'
+import addMinutes from 'date-fns/add_minutes'
 import { FiChevronRight } from 'react-icons/fi'
+import Container from './Container'
 import timeFragmentsFromMinutes from './utils/timeFragments'
 import { useWaitTime } from '../../../graphql/hooks'
 import isWorking from './utils/isWorking'
@@ -33,7 +34,12 @@ const WaitTime = ({ canSchedule, currentWait }) => {
 
 const Employee = ({ employee, onClick }) => {
 	const waitTime = useWaitTime(employee)
-	const canSchedule = React.useMemo(() => isWorking(employee, new Date()), [employee])
+
+	const canSchedule = React.useMemo(() => isWorking(employee, addMinutes(new Date(), waitTime || 0)), [
+		employee,
+		waitTime
+	])
+
 	const [show, set] = React.useState(false)
 
 	const handleClick = e => {

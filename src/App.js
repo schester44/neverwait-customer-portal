@@ -2,7 +2,9 @@ import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { withRouter, Switch, Route } from 'react-router-dom'
 import styled from 'styled-components'
+
 import Loading from './components/Loading'
+import AddToHomeScreen from './components/AddToHomeScreen'
 
 import { customerInfoQuery } from './graphql/queries'
 import getCookie from './utils/getCookie'
@@ -32,6 +34,7 @@ const App = () => {
 	return (
 		<React.Suspense fallback={<Loading />}>
 			<Container>
+				<AddToHomeScreen />
 				<Switch>
 					<Route
 						path={WAITLIST_LOCATION}

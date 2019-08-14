@@ -39,6 +39,7 @@ export const wsLink = new WebSocketLink({
 		lazy: true,
 		connectionParams: {
 			// Let the backend know that this request comes from us. really shitty, bypassable way to let the API know that the requester at least is aware of the requirements to make the request.
+			// FIXME: We can remove this by not subscribing until the user has logged in. Once logged in, we can pass authenticated user info/token along
 			'X-ici': true
 		}
 	}

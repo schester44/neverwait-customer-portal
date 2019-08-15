@@ -76,8 +76,11 @@ export const locationDataQuery = gql`
 				services {
 					id
 					name
-					price
-					duration
+					sources(input: { where: { type: "onlineappointment" } }) {
+						price
+						duration
+						serviceId
+					}
 				}
 				appointments(
 					input: { where: { status: { not: "completed" }, startTime: { gte: $startTime }, endTime: { lte: $endTime } } }

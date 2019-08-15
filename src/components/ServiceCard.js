@@ -73,8 +73,8 @@ const ServiceCard = ({ selected, service, onClick }) => {
 			<div>
 				<h1>{service.name}</h1>
 				<p>
-					${service.price || 0}
-					{service.duration > 0 && <span> - {service.duration} minutes</span>}
+					{service.sources.length > 0 && `$${service.sources[0].price}`}
+					{service.sources.length > 0 && <span> - {service.sources[0].duration} minutes</span>}
 				</p>
 			</div>
 		</Container>

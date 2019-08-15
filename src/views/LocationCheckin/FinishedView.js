@@ -36,9 +36,9 @@ const Finished = ({ appointment, locationData, selectedService }) => {
 			<div className="block service">
 				<div>
 					<h3>{selectedService.name}</h3>
-					<h5>{selectedService.duration} minutes</h5>
+					<h5>{selectedService.sources[0].duration} minutes</h5>
 				</div>
-				<h3>${selectedService.price}</h3>
+				<h3>${selectedService.sources[0].price}</h3>
 			</div>
 			<div className="block">
 				<p>You're all set for:</p>

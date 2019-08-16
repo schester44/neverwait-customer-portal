@@ -5,6 +5,7 @@ import setMinutes from 'date-fns/set_minutes'
 import format from 'date-fns/format'
 import isSameDay from 'date-fns/is_same_day'
 import isAfter from 'date-fns/is_after'
+import addMinutes from 'date-fns/add_minutes'
 
 function dateFromTimeString(time, date) {
 	const [hours, minutes] = time.split(':')
@@ -38,6 +39,12 @@ const isWorking = (employee, date) => {
 	const range = getScheduleRangeByDate(employee.schedule_ranges, date)
 
 	if (!range) return false
+
+	// TODO: This assumes the first scheduleshift is always the earliest shift.
+	// Check if we're within that first 30 minutes of a shift and return false. give the walkin customers time to schedule.
+	if (isAfter(addMinutes(dateFromTimeString(range.schedule_shifts?.[0].start_time, new Date()), 30), new Date())) {
+		return false
+	}
 
 	return range.schedule_shifts.some(shift => {
 		return isWithinRange(

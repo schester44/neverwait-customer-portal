@@ -10,16 +10,12 @@ import { setContext } from 'apollo-link-context'
 
 import pling from '../components/Pling'
 
-const onErrorLink = onError(({ graphQLErrors = [], networkError }) => {
+const onErrorLink = onError(({ graphQLErrors = [] }) => {
 	if (graphQLErrors.length > 0) {
 		for (let error of graphQLErrors) {
 			console.log(error)
 			pling({ message: error.message })
 		}
-	}
-
-	if (networkError) {
-		pling({ message: 'The app is having trouble connecting. Please try again later.' })
 	}
 })
 

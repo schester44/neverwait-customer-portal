@@ -23,10 +23,10 @@
     "memoize-one": "^4.0.0",
     "polished": "^3.4.1",
     "prop-types": "^15.6.1",
-    "react": "^16.8.6",
+    "react": "^16.9.0",
     "react-apollo": "^2.5.8",
     "react-device-detect": "^1.7.5",
-    "react-dom": "^16.8.6",
+    "react-dom": "^16.9.0",
     "react-easy-swipe": "^0.0.18",
     "react-hot-loader": "^4.3.4",
     "react-icons": "^3.7.0",
@@ -40,11 +40,11 @@
     "subscriptions-transport-ws": "^0.9.11"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "eject": "react-scripts eject"
+    "eject": "react-app-rewired eject"
   },
   "browserslist": {
     "production": [
@@ -57,5 +57,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.2.0",
+    "customize-cra": "^0.5.0",
+    "react-app-rewired": "^2.1.3"
   }
 }

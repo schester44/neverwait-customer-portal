@@ -30,6 +30,10 @@ const Wrapper = styled('div')`
 	}
 `
 
+const getAppointmentDuration = (appointment, services) => {
+	return appointment.services.reduce((acc, id) => acc + services[id].sources?.[0]?.duration, 0)
+}
+
 const RootContainer = ({ customerId, locationId, locationData, companyId, employee, history }) => {
 	const [createdAppt, setCreatedAppointment] = React.useState(undefined)
 
@@ -129,9 +133,7 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 	}, [employee.appointments])
 
 	const getEstimates = async () => {
-		// Add up all service durations. We'll use this to calculate the endTime (startTime + duration = endTime)
-		const duration = appointment.services.reduce((acc, id) => acc + state.services[id].duration, 0)
-
+		const duration = getAppointmentDuration(appointment, state.services)
 		const lastAppointment = getLastAppointment(employee.appointments)
 		const startTime = determineStartTime(lastAppointment)
 
@@ -158,8 +160,9 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 		setCreatedAppointment(data.upsertAppointment)
 	}
 
-	console.log(state)
-	console.log(appointment)
+	console.log({ estimates })
+	console.log({ state })
+	console.log({ appointment })
 	return (
 		<Wrapper>
 			<Header

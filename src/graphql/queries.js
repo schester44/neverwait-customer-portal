@@ -76,7 +76,7 @@ export const locationDataQuery = gql`
 				services {
 					id
 					name
-					sources(input: { where: { type: "onlineappointment" } }) {
+					sources(input: { where: { type: "onlinecheckin" } }) {
 						price
 						duration
 						serviceId

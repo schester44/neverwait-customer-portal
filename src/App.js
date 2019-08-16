@@ -24,7 +24,7 @@ const Container = styled('div')`
 
 const App = () => {
 	const { data, loading } = useQuery(customerInfoQuery, {
-		skip: !getCookie('cusid-access')
+		skip: !getCookie('cusid-access') && !getCookie('cusid-refresh')
 	})
 
 	const user = data && data.customerInfo ? data.customerInfo : undefined

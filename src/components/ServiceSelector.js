@@ -3,7 +3,9 @@ import Service from './ServiceCard'
 import FormFooter from './FormFooter'
 import Button from './Button'
 
-const ServiceSelector = ({ selectedService, services, onSelect, onNext }) => {
+const ServiceSelector = ({ price, selectedServiceIds = [], selectedServices = {}, services, onSelect, onNext }) => {
+	const totalSelected = selectedServiceIds.length
+
 	return (
 		<div style={{ width: '100%', paddingBottom: 100 }}>
 			{services.map(service => {
@@ -12,14 +14,21 @@ const ServiceSelector = ({ selectedService, services, onSelect, onNext }) => {
 						key={`service-${service.id}`}
 						onClick={() => onSelect(service)}
 						service={service}
-						selected={selectedService === service.id}
+						selected={!!selectedServices[service.id]}
 					/>
 				)
 			})}
 
-			{selectedService && (
+			{totalSelected > 0 && (
 				<FormFooter>
-					<span>{selectedService ? '1 service selected' : 'No services selected'}</span>
+					<div>
+						<span>
+							{totalSelected > 0
+								? `${totalSelected} ${totalSelected === 1 ? 'service' : 'services'} selected`
+								: 'No services selected'}
+						</span>
+						<h4>${price}</h4>
+					</div>
 					<Button onClick={onNext} style={{ width: '50%' }}>
 						Book Now
 					</Button>
@@ -29,6 +38,6 @@ const ServiceSelector = ({ selectedService, services, onSelect, onNext }) => {
 	)
 }
 
-const areEqual = (prevProps, nextProps) => prevProps.selectedService === nextProps.selectedService
+const areEqual = (prevProps, nextProps) => prevProps.selectedServiceIds === nextProps.selectedServiceIds
 
 export default React.memo(ServiceSelector, areEqual)

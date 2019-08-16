@@ -62,7 +62,7 @@ const Wrapper = styled('div')`
 	}
 `
 
-const Review = ({ selectedService, estimates, locationData, handleConfirm }) => {
+const Review = ({ price, selectedServices, selectedServiceIds, estimates, locationData, handleConfirm }) => {
 	const time = useTimer(120)
 
 	return (
@@ -75,10 +75,16 @@ const Review = ({ selectedService, estimates, locationData, handleConfirm }) => 
 
 			<div className="block service">
 				<div>
-					<h3>{selectedService.name}</h3>
-					<h5>{selectedService.sources[0].duration} minutes</h5>
+					{selectedServiceIds.map((id, index) => {
+						return (
+							<h3 key={index} style={{ marginTop: index > 0 ? 4 : 0 }}>
+								{selectedServices[id].name}
+							</h3>
+						)
+					})}
+					<h5>{estimates.duration} minutes</h5>
 				</div>
-				<h3>${selectedService.sources[0].price}</h3>
+				<h3>${price}</h3>
 			</div>
 
 			<div className="block">

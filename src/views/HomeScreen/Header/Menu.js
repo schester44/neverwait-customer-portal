@@ -21,6 +21,8 @@ Menu.Item = styled('div')`
 	cursor: pointer;
 	opacity: 0.8;
 	border-bottom: 3px solid transparent;
+	letter-spacing: 2px;
+	font-size: 14px;
 `
 
 export default Menu

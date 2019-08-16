@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export default styled('div')`
-	margin: 25px 0;
+	margin-bottom: 50px;
 	background: rgba(37, 43, 50, 1);
 	color: white;
 	padding: 10px 20px;

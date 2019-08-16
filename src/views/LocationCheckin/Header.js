@@ -44,7 +44,7 @@ const Header = ({ step, loggedIn, title, showBack = true, onBack }) => {
 
 			{(step !== 2 || (step === 2 && loggedIn)) && (
 				<div>
-					{step && <span>Step {step} of 3</span>}
+					{step && <span>Step {step + 1} of 3</span>}
 					<h1>{title || renderStepTitle({ step, loggedIn })}</h1>
 				</div>
 			)}

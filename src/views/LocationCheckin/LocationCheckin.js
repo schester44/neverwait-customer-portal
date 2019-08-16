@@ -115,7 +115,7 @@ const LocationCheckin = ({ match, uuid, customerId }) => {
 							<HomeScreen
 								history={props.history}
 								customerId={customerId}
-								locationName={location.name}
+								location={location}
 								employees={employees}
 								location={location}
 							/>

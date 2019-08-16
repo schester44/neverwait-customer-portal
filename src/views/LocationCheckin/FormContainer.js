@@ -1,4 +1,5 @@
 import React from 'react'
+import omit from 'lodash/omit'
 import styled from 'styled-components'
 import { withRouter } from 'react-router-dom'
 import { addMinutes } from 'date-fns'
@@ -50,7 +51,8 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 
 	const [state, setState] = React.useState({
 		loading: false,
-		selectedService: undefined,
+		selectedServices: {},
+		price: 0,
 		services: employee.services.reduce((acc, service) => {
 			acc[service.id] = service
 			return acc
@@ -76,20 +78,38 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 		}
 	})
 
-	const setSelectedService = selectedService => {
-		setState(prev => ({ ...prev, selectedService }))
+	const setSelectedService = service => {
+		const isAdding = !state.selectedServices[service.id]
+
+		const servicePrice = service.sources && service.sources[0] ? service.sources[0].price : 0
+
+		setState(prev => ({
+			...prev,
+			price: isAdding ? prev.price + servicePrice : prev.price - servicePrice,
+			selectedServices: isAdding
+				? {
+						...prev.selectedServices,
+						[service.id]: service
+				  }
+				: omit(prev.selectedServices, [service.id])
+		}))
 
 		const lastAppointment = getLastAppointment(employee.appointments)
 		const startTime = determineStartTime(lastAppointment)
 
+		const duration = service.sources ? service.sources.reduce((acc, curr) => acc + curr.duration, 0) : 0
+
 		setEstimates(prev => ({
 			...prev,
 			startTime,
-			endTime: addMinutes(startTime, selectedService.duration || 0),
-			duration: selectedService.duration
+			duration,
+			endTime: addMinutes(startTime, duration || 0)
 		}))
 
-		setAppointment(prev => ({ ...prev, services: [selectedService.id] }))
+		setAppointment(prev => ({
+			...prev,
+			services: isAdding ? prev.services.concat([service.id]) : prev.services.filter(id => id !== service.id)
+		}))
 	}
 
 	// Update the estimated wait time when new appointments are made before this one is able to book.
@@ -138,6 +158,8 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 		setCreatedAppointment(data.upsertAppointment)
 	}
 
+	console.log(state)
+	console.log(appointment)
 	return (
 		<Wrapper>
 			<Header
@@ -159,7 +181,9 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 				<ServiceSelector
 					services={employee.services}
 					onNext={() => setStep(2)}
-					selectedService={state.selectedService ? state.selectedService.id : undefined}
+					selectedServiceIds={appointment.services}
+					selectedServices={state.selectedServices}
+					price={state.price}
 					onSelect={service => {
 						setSelectedService(service)
 					}}
@@ -169,7 +193,9 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 			<React.Suspense fallback={null}>
 				{step === 2 && !createdAppt && customer.id && (
 					<Review
-						selectedService={state.selectedService}
+						price={state.price}
+						selectedServices={state.selectedServices}
+						selectedServiceIds={appointment.services}
 						locationData={locationData}
 						estimates={estimates}
 						handleConfirm={handleCreate}
@@ -185,7 +211,14 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 					/>
 				)}
 				{((step === 3 && createdAppt) || createdAppt) && (
-					<Finished appointment={createdAppt} locationData={locationData} selectedService={state.selectedService} />
+					<Finished
+						price={state.price}
+						estimates={estimates}
+						appointment={createdAppt}
+						locationData={locationData}
+						selectedServiceIds={appointment.services}
+						selectedServices={state.selectedServices}
+					/>
 				)}
 			</React.Suspense>
 		</Wrapper>

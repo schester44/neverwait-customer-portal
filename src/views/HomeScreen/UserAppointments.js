@@ -1,16 +1,22 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { format } from 'date-fns'
 import { Link } from 'react-router-dom'
 import Swipe from 'react-easy-swipe'
 
 const Container = styled('div')`
 	padding: 16px 10px;
-	height: 100%;
+	min-height: 100%;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-content: flex-start;
+
+	${({ padBottom }) =>
+		padBottom &&
+		css`
+			padding-bottom: 80px;
+		`}
 
 	a {
 		display: block;
@@ -109,7 +115,7 @@ const UserAppointments = ({ type, appointments = [], history }) => {
 
 	return (
 		<Swipe className="swipe-container" onSwipeLeft={onSwipeLeft} onSwipeRight={onSwipeRight}>
-			<Container>
+			<Container padBottom={appointments.length > 3}>
 				{appointments.length === 0
 					? placeholder(type)
 					: appointments.map((appointment, index) => {
@@ -127,7 +133,8 @@ const UserAppointments = ({ type, appointments = [], history }) => {
 										<div className="details">
 											<ul>
 												<li>
-													${appointment.price} - {appointment.services[0].name}
+													${appointment.price}{' '}
+													{appointment.services.length > 0 && <span> - {appointment.services[0].name}</span>}
 												</li>
 											</ul>
 										</div>

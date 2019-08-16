@@ -5,17 +5,14 @@ import { FiChevronLeft } from 'react-icons/fi'
 
 const Header = styled('div')`
 	width: 100%;
-	padding: 24px 10px;
-	padding: 10px 5px;
-	font-size: 90%;
+	padding: 24px 20px;
+	margin-bottom: 24px;
 
-	span,
 	.header-title {
-		padding-left: 10px;
+		color: rgba(237, 209, 129, 1);
 	}
 
 	.back {
-		padding-left: 10px;
 		position: relative;
 		font-size: 36px;
 		line-height: 1;
@@ -23,9 +20,9 @@ const Header = styled('div')`
 	}
 `
 
-const HomeScreen = ({ history, customerId, employees, locationName }) => {
+const HomeScreen = ({ history, customerId, employees, location }) => {
 	return (
-		<div style={{ width: '100%' }}>
+		<div style={{ width: '100%', height: '100%' }}>
 			<Header>
 				{customerId && (
 					<div
@@ -38,9 +35,11 @@ const HomeScreen = ({ history, customerId, employees, locationName }) => {
 					</div>
 				)}
 
-				<h1 className="header-title">{locationName}</h1>
-				<span>Select a staff member</span>
+				<h1 className="header-title">{location.name}</h1>
+				<h3>{location.address}</h3>
 			</Header>
+
+			<h4 style={{ marginBottom: 10, paddingLeft: 20, letterSpacing: 3, opacity: 0.5 }}>AVAILABLE STAFF</h4>
 
 			<EmployeeList employees={employees} />
 		</div>

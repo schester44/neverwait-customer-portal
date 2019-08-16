@@ -5,7 +5,7 @@ import Employee from './Employee/Employee'
 
 const Wrapper = styled('div')`
 	height: 100%;
-	padding: 10px;
+	padding: 0 10px;
 `
 
 const EmployeeList = ({ employees, match, history }) => {

@@ -11,7 +11,7 @@ const FormFooter = styled('div')`
 	justify-content: space-between;
 	align-items: center;
 
-	padding: 15px 25px;
+	padding: 15px 25px 25px 25px;
 	margin: 0 auto;
 	z-index: 99;
 

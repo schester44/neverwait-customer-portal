@@ -6,11 +6,11 @@ const NavBar = () => {
 	return (
 		<Menu className="app-header__menu">
 			<NavLink to="/appointments/upcoming">
-				<Menu.Item>Upcoming</Menu.Item>
+				<Menu.Item>UPCOMING</Menu.Item>
 			</NavLink>
 
 			<NavLink to="/appointments/past">
-				<Menu.Item>Past</Menu.Item>
+				<Menu.Item>PAST</Menu.Item>
 			</NavLink>
 		</Menu>
 	)

@@ -89,10 +89,10 @@ const NavFooter = ({ disableCheckins = false, locations }) => {
 			{!visible.locations && (
 				<Button
 					onClick={() => setVisible({ locations: true })}
-					style={{ display: 'flex', alignItems: 'center', lineHeight: 1 }}
+					style={{ display: 'flex', alignItems: 'center', lineHeight: 1, padding: 20 }}
 				>
 					<FiLogIn />
-					<span style={{ paddingLeft: 8 }}>Sign In On Waitlist</span>
+					<span style={{ paddingLeft: 8 }}>Check In To Location</span>
 				</Button>
 			)}
 

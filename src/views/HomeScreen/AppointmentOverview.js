@@ -34,7 +34,7 @@ const themeStyles = ({ theme }) => `
 
 const Container = styled('div')`
 	padding: 10px;
-	margin: 10px;
+	margin: 0 10px;
 	width: calc(100% - 20px);
 	padding: 15px;
 

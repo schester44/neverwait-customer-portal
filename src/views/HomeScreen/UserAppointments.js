@@ -6,11 +6,12 @@ import Swipe from 'react-easy-swipe'
 
 const Container = styled('div')`
 	padding: 16px 10px;
-	min-height: 100%;
+	height: 100%;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-content: flex-start;
+	
 
 	${({ padBottom }) =>
 		padBottom &&
@@ -88,7 +89,7 @@ const Appointment = styled('div')`
 
 const Placeholder = styled('div')`
 	width: 100%;
-	height: 60%;
+	height: 90%;
 	display: flex;
 	align-items: center;
 	justify-content: center;

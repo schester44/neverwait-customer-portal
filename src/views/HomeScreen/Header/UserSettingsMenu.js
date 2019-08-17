@@ -1,8 +1,6 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import Drawer from '../Drawer'
 import Menu from '../../../components/Menu'
-import { USER_PAYMENT_METHODS, USER_PREFERENCES } from '../../../routes'
 
 import { useMutation } from '@apollo/react-hooks'
 

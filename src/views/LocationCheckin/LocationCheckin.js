@@ -112,13 +112,7 @@ const LocationCheckin = ({ match, uuid, customerId }) => {
 							return true
 						})
 						return (
-							<HomeScreen
-								history={props.history}
-								customerId={customerId}
-								location={location}
-								employees={employees}
-								location={location}
-							/>
+							<HomeScreen history={props.history} customerId={customerId} employees={employees} location={location} />
 						)
 					}}
 				/>

@@ -42,7 +42,7 @@ const isWorking = (employee, date) => {
 
 	// TODO: This assumes the first scheduleshift is always the earliest shift.
 	// Check if we're within that first 30 minutes of a shift and return false. give the walkin customers time to schedule.
-	if (isAfter(addMinutes(dateFromTimeString(range.schedule_shifts?.[0].start_time, new Date()), 30), new Date())) {
+	if (isAfter(addMinutes(dateFromTimeString(range.schedule_shifts?.[0]?.start_time, new Date()), 30), new Date())) {
 		return false
 	}
 

@@ -11,10 +11,11 @@ const themeStyles = ({ theme }) => `
 
 const Container = styled('div')`
 	width: 100%;
-	height: 100vh;
+	min-height: 100vh;
 	padding: 10px;
 	max-width: 768px;
 	margin: 0 auto;
+	padding-bottom: 40px;
 
 	.title {
 		text-align: center;

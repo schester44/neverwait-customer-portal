@@ -98,10 +98,24 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 				: omit(prev.selectedServices, [service.id])
 		}))
 
-		const lastAppointment = getLastAppointment(employee.appointments)
+		const services = isAdding
+			? appointment.services.concat([service.id])
+			: appointment.services.filter(id => id !== service.id)
+
+		const duration = services.reduce((acc, id) => {
+			const service = state.services[id]
+
+			// This shouldnt happen
+			if (!service.sources || service.sources.length === 0) return acc
+
+			// assume the first service is the correct service
+			return acc + service.sources[0].duration
+		}, 0)
+
+		const lastAppointment = getLastAppointment(employee.appointments, duration)
 		const startTime = determineStartTime(lastAppointment)
 
-		const duration = service.sources ? service.sources.reduce((acc, curr) => acc + curr.duration, 0) : 0
+		console.log(duration)
 
 		setEstimates(prev => ({
 			...prev,
@@ -110,10 +124,7 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 			endTime: addMinutes(startTime, duration || 0)
 		}))
 
-		setAppointment(prev => ({
-			...prev,
-			services: isAdding ? prev.services.concat([service.id]) : prev.services.filter(id => id !== service.id)
-		}))
+		setAppointment(prev => ({ ...prev, services }))
 	}
 
 	// Update the estimated wait time when new appointments are made before this one is able to book.

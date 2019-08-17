@@ -4,6 +4,7 @@ import addMinutes from 'date-fns/add_minutes'
 import differenceInMinutes from 'date-fns/difference_in_minutes'
 
 export default (appointments, selectedServicesDuration) => {
+	console.log(selectedServicesDuration)
 	const now = new Date()
 	// sort by startTime so appointments are in the order of which they occur
 	const sortedAppointments = appointments
@@ -25,6 +26,8 @@ export default (appointments, selectedServicesDuration) => {
 			sortedAppointments[i - 1] ? sortedAppointments[i - 1].endTime : now
 		)
 
+		console.log(difference)
+
 		// If theres more than 20 minutes of dead time between the two appointments then our last appointment is the previous appointment
 		if (difference > selectedServicesDuration) {
 			index = i - 1
@@ -34,6 +37,8 @@ export default (appointments, selectedServicesDuration) => {
 			index = i
 		}
 	}
+
+	console.log(index, sortedAppointments)
 
 	return !isNaN(index) ? sortedAppointments[index] : undefined
 }

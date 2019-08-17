@@ -115,8 +115,6 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 		const lastAppointment = getLastAppointment(employee.appointments, duration)
 		const startTime = determineStartTime(lastAppointment)
 
-		console.log(duration)
-
 		setEstimates(prev => ({
 			...prev,
 			startTime,
@@ -129,11 +127,11 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 
 	// Update the estimated wait time when new appointments are made before this one is able to book.
 	React.useEffect(() => {
-		const lastAppointment = getLastAppointment(employee.appointments)
-		const startTime = determineStartTime(lastAppointment)
-
 		setEstimates(prev => {
 			if (!prev.startTime) return prev
+
+			const lastAppointment = getLastAppointment(employee.appointments, prev.duration)
+			const startTime = determineStartTime(lastAppointment)
 
 			return {
 				...prev,
@@ -145,7 +143,7 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 
 	const getEstimates = async () => {
 		const duration = getAppointmentDuration(appointment, state.services)
-		const lastAppointment = getLastAppointment(employee.appointments)
+		const lastAppointment = getLastAppointment(employee.appointments, duration)
 		const startTime = determineStartTime(lastAppointment)
 
 		const endTime = addMinutes(startTime, duration)

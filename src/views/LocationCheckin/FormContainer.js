@@ -152,10 +152,24 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 	}
 
 	const handleCreate = async () => {
+		let price = 0
+		let duration = 0
+
+		appointment.services.forEach(id => {
+			const service = state.services[id]
+
+			if (service.sources[0]) {
+				price += service.sources[0].price
+				duration += service.sources[0].duration
+			}
+		})
+
 		const { data } = await createAppointment({
 			variables: {
 				input: {
 					...appointment,
+					price,
+					duration,
 					startTime: estimates.startTime,
 					endTime: estimates.endTime,
 					customerId: customer.id
@@ -169,9 +183,6 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 		setCreatedAppointment(data.upsertAppointment)
 	}
 
-	console.log({ estimates })
-	console.log({ state })
-	console.log({ appointment })
 	return (
 		<Wrapper>
 			<Header

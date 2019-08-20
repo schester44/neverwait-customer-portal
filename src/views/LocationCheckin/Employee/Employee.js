@@ -10,7 +10,7 @@ import Modal from '../../Auth/Modal'
 const WaitTime = ({ canSchedule, currentWait }) => {
 	const time = timeFragmentsFromMinutes(currentWait)
 
-	if (!canSchedule) return 'Not Working'
+	if (!canSchedule) return 'Currently Closed'
 
 	return currentWait < 15 ? (
 		'No Wait'

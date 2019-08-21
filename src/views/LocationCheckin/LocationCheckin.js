@@ -1,15 +1,17 @@
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { useQuery, useApolloClient } from '@apollo/react-hooks'
-import { startOfDay, endOfDay } from 'date-fns'
-
 import { locationDataQuery } from '../../graphql/queries'
 import { appointmentsSubscription } from '../../graphql/subscriptions'
 import Loading from '../../components/Loading'
 import format from 'date-fns/format'
+import isWithinRange from 'date-fns/is_within_range'
+import startOfDay from 'date-fns/start_of_day'
+import endOfDay from 'date-fns/end_of_day'
 
 const HomeScreen = React.lazy(() => import('./HomeScreen'))
 const Form = React.lazy(() => import('./FormContainer'))
+const ClosedPlaceholder = React.lazy(() => import('./ClosedPlaceholder'))
 
 const LocationCheckin = ({ match, uuid, customerId }) => {
 	const startTime = startOfDay(new Date())
@@ -31,6 +33,17 @@ const LocationCheckin = ({ match, uuid, customerId }) => {
 	const { data = {}, loading } = useQuery(locationDataQuery, queryOptions)
 	const client = useApolloClient()
 	const location = data.locationByUUID
+
+	const isClosed = React.useMemo(() => {
+		if (!location) return false
+
+		const today = new Date()
+		return location.closed_dates.find(range =>
+			isWithinRange(today, startOfDay(range.start_date), endOfDay(range.end_date))
+		)
+	}, [location])
+
+	console.log(isClosed)
 
 	// Effect is needed because this component initializes without a locationId to subscribe to and there is no skip property to prevent from subscribing with an empty location
 	React.useEffect(() => {
@@ -99,6 +112,10 @@ const LocationCheckin = ({ match, uuid, customerId }) => {
 	// TODO: This redirects when there is a network error.
 	if (!loading && !location) return <Redirect to="/" />
 
+	if (isClosed) {
+		return <ClosedPlaceholder showBackButton={!!customerId} location={location} reason={isClosed.description} />
+	}
+
 	return (
 		<div style={{ minHeight: '100vh' }}>
 			<Switch>
@@ -112,7 +129,13 @@ const LocationCheckin = ({ match, uuid, customerId }) => {
 							return true
 						})
 						return (
-							<HomeScreen history={props.history} customerId={customerId} employees={employees} location={location} />
+							<HomeScreen
+								isClosed={isClosed}
+								history={props.history}
+								customerId={customerId}
+								employees={employees}
+								location={location}
+							/>
 						)
 					}}
 				/>

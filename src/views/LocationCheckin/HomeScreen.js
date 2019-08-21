@@ -17,6 +17,7 @@ const Header = styled('div')`
 		font-size: 36px;
 		line-height: 1;
 		padding-right: 16px;
+		cursor: pointer;
 	}
 `
 

@@ -57,6 +57,11 @@ export const locationDataQuery = gql`
 			id
 			name
 			address
+			closed_dates {
+				start_date
+				end_date
+				description
+			}
 			company {
 				id
 			}

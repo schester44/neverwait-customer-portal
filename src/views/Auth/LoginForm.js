@@ -20,8 +20,8 @@ const LoginForm = ({ loading = false, values = {}, setFieldValue, handleSubmit }
 				<div className="form-input">
 					<Input
 						type="tel"
-						value={values.contactNumber}
-						name="contactNumber"
+						value={values.phoneNumber}
+						name="phoneNumber"
 						label="Phone Number"
 						onChange={handleChange}
 					/>
@@ -34,7 +34,7 @@ const LoginForm = ({ loading = false, values = {}, setFieldValue, handleSubmit }
 				<Button
 					onClick={handleSubmit}
 					style={{ width: '100%', marginTop: 24 }}
-					disabled={values.contactNumber.trim().length < 10 || values.password.trim().length < 4 || loading}
+					disabled={values.phoneNumber.trim().length < 10 || values.password.trim().length < 4 || loading}
 				>
 					Log In
 				</Button>

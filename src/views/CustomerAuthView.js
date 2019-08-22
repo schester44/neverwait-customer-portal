@@ -7,7 +7,7 @@ import Modal from './Auth/Modal'
 import LoginForm from './Auth/LoginForm'
 import CreateAccountForm from './Auth/CreateAccountForm'
 import { useMutation } from '@apollo/react-hooks'
-import { createCustomerMutation, loginCustomerMutation } from '../graphql/mutations'
+import { registerProfileMutation, loginProfileMutation } from '../graphql/mutations'
 
 const Container = styled('div')`
 	width: 100%;
@@ -23,9 +23,9 @@ const Container = styled('div')`
 	}
 `
 
-const CustomerAuthView = ({ companyId, onLogin }) => {
-	const [createCustomer, { loading: createLoading }] = useMutation(createCustomerMutation)
-	const [login, { loading: loginLoading }] = useMutation(loginCustomerMutation)
+const CustomerAuthView = ({ onLogin }) => {
+	const [registerProfile, { loading: createLoading }] = useMutation(registerProfileMutation)
+	const [login, { loading: loginLoading }] = useMutation(loginProfileMutation)
 	const [{ values, visibleView }, setFormState] = React.useState({
 		visibleView: undefined,
 		values: {}
@@ -37,40 +37,40 @@ const CustomerAuthView = ({ companyId, onLogin }) => {
 		setFormState(prev => ({ ...prev, values: { ...prev.values, [k]: v } }))
 	}
 
-	const handleLogin = async (contactNumber, password) => {
+	const handleLogin = async (phoneNumber, password) => {
 		const {
-			data: { loginCustomer }
+			data: { loginProfile }
 		} = await login({
 			variables: {
 				input: {
-					contactNumber,
+					phoneNumber,
 					password
 				}
 			}
 		})
 
-		if (loginCustomer && loginCustomer.id) {
-			onLogin(loginCustomer)
+		if (loginProfile && loginProfile.id) {
+			onLogin(loginProfile)
 		}
 	}
 
 	const handleCreateAccount = async () => {
 		try {
 			const {
-				data: { createCustomer: response }
-			} = await createCustomer({
+				data: { registerProfile: response }
+			} = await registerProfile({
 				variables: {
 					input: omit(values, ['confirmPassword'])
 				}
 			})
 
 			if (response && response.id) {
-				handleLogin(values.contactNumber, values.password)
+				handleLogin(values.phoneNumber, values.password)
 			} else {
 				alert('Failed to create an account.')
 			}
 		} catch (error) {
-			console.log(error);
+			console.log(error)
 		}
 	}
 
@@ -86,7 +86,7 @@ const CustomerAuthView = ({ companyId, onLogin }) => {
 							values={values}
 							loading={isLoading}
 							setFieldValue={setFieldValue}
-							handleSubmit={() => handleLogin(values.contactNumber, values.password)}
+							handleSubmit={() => handleLogin(values.phoneNumber, values.password)}
 						/>
 					)}
 					{visibleView === 'create-account' && (
@@ -108,10 +108,9 @@ const CustomerAuthView = ({ companyId, onLogin }) => {
 						loading: false,
 						visibleView: 'create-account',
 						values: {
-							companyId,
 							firstName: '',
 							lastName: '',
-							contactNumber: '',
+							phoneNumber: '',
 							password: '',
 							confirmPassword: ''
 						}
@@ -128,7 +127,7 @@ const CustomerAuthView = ({ companyId, onLogin }) => {
 						loading: false,
 						visibleView: 'login',
 						values: {
-							contactNumber: '',
+							phoneNumber: '',
 							password: ''
 						}
 					})

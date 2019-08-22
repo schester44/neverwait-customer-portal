@@ -21,11 +21,11 @@ const Header = styled('div')`
 	}
 `
 
-const HomeScreen = ({ history, customerId, employees, location }) => {
+const HomeScreen = ({ history, profileId, employees, location }) => {
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Header>
-				{customerId && (
+				{profileId && (
 					<div
 						className="back"
 						onClick={() => {

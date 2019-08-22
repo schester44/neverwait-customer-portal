@@ -23,7 +23,7 @@ const fragments = {
 	`
 }
 
-export const customerInfoQuery = gql`
+export const profileQuery = gql`
 	{
 		locations {
 			name
@@ -31,7 +31,7 @@ export const customerInfoQuery = gql`
 			address
 		}
 
-		customerInfo {
+		profile {
 			id
 			firstName
 			lastName
@@ -50,7 +50,7 @@ export const customerInfoQuery = gql`
 	${fragments.appointment}
 `
 
-// FIXME: Should need extra variables.. problem with inconsistent types
+// FIXME: Shouldn't need extra variables for startTime,endTiem,startDate,endDate.. should only need 2.. problem with inconsistent types
 export const locationDataQuery = gql`
 	query Location($uuid: String!, $startTime: String!, $endTime: String!, $startDate: Date!, $endDate: Date!) {
 		locationByUUID(input: { uuid: $uuid }) {

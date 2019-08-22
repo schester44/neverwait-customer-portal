@@ -74,18 +74,14 @@ const Container = styled('div')`
 	${themeStyles}
 `
 
-const RecentAppointmentOverview = ({ history, user, appointmentId, appointment: passedInAppointment, setTime }) => {
+const RecentAppointmentOverview = ({ history, profile, appointmentId, appointment: passedInAppointment, setTime }) => {
 	const appointment = React.useMemo(() => {
 		if (passedInAppointment) return passedInAppointment
 
 		const compare = appt => Number(appt.id) === Number(appointmentId)
 
-		return user.appointments.upcoming.find(compare) || user.appointments.past.find(compare)
-	}, [user, appointmentId, passedInAppointment])
-
-	const isUpcoming = isAfter(appointment.endTime, new Date())
-
-	console.log(isUpcoming)
+		return profile.appointments.upcoming.find(compare) || profile.appointments.past.find(compare)
+	}, [profile, appointmentId, passedInAppointment])
 
 	React.useEffect(() => {
 		if (appointment) {

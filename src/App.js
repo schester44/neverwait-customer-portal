@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import Loading from './components/Loading'
 import AddToHomeScreen from './components/AddToHomeScreen'
 
-import { customerInfoQuery } from './graphql/queries'
+import { profileQuery } from './graphql/queries'
 import getCookie from './utils/getCookie'
 import { WAITLIST_LOCATION } from './routes'
 
@@ -23,11 +23,11 @@ const Container = styled('div')`
 `
 
 const App = () => {
-	const { data, loading } = useQuery(customerInfoQuery, {
+	const { data, loading } = useQuery(profileQuery, {
 		skip: !getCookie('cusid-access') && !getCookie('cusid-refresh')
 	})
 
-	const user = data && data.customerInfo ? data.customerInfo : undefined
+	const profile = data && data.profile ? data.profile : undefined
 
 	if (loading) return <Loading />
 
@@ -39,19 +39,13 @@ const App = () => {
 					<Route
 						path={WAITLIST_LOCATION}
 						render={props => {
-							return (
-								<LocationCheckin
-									customerId={user ? user.id : undefined}
-									uuid={props.match.params.uuid}
-									match={props.match}
-								/>
-							)
+							return <LocationCheckin profileId={profile?.id} uuid={props.match.params.uuid} match={props.match} />
 						}}
 					/>
 
 					<Route
 						render={props => {
-							if (!user) {
+							if (!profile) {
 								return <LoginPage />
 							}
 
@@ -60,7 +54,7 @@ const App = () => {
 									routeLocation={props.location}
 									history={props.history}
 									locations={data.locations}
-									user={user}
+									profile={profile}
 								/>
 							)
 						}}

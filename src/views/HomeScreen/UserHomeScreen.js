@@ -153,7 +153,7 @@ const Container = styled('div')`
 	${themeStyles}
 `
 
-const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
+const UserHomeScreen = ({ profile, locations, history, routeLocation }) => {
 	// TODO: Wont scale as routes are added.
 	const height = routeLocation.pathname.indexOf('/appointments') > -1 ? DEFAULT_HEIGHT : SECONDARY_HEIGHT
 
@@ -182,7 +182,7 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 									path={USER_APPOINTMENTS}
 									render={props => {
 										const type = props.match.params.type
-										const appointments = user.appointments[type]
+										const appointments = profile.appointments[type]
 										return <Appointments history={props.history} type={type} appointments={appointments} />
 									}}
 								/>
@@ -190,7 +190,7 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 								<Route
 									path={APPOINTMENT_OVERVIEW}
 									render={props => {
-										if (!user) return <Redirect to={USER_DASHBOARD} />
+										if (!profile) return <Redirect to={USER_DASHBOARD} />
 
 										if (props.match.params.id === 'recent') {
 											const appointment = JSON.parse(localStorage.getItem('last-appt'))
@@ -209,7 +209,7 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 											<AppointmentOverview
 												setTime={onSetTime}
 												history={props.history}
-												user={user}
+												profile={profile}
 												appointmentId={props.match.params.id}
 											/>
 										)
@@ -222,7 +222,7 @@ const UserHomeScreen = ({ user, locations, history, routeLocation }) => {
 					</React.Suspense>
 				</CSSTransition>
 			</TransitionGroup>
-			<NavFooter disableCheckins={user.appointments.upcoming.length >= 5} locations={locations} />
+			<NavFooter disableCheckins={profile.appointments.upcoming.length >= 5} locations={locations} />
 		</Container>
 	)
 }

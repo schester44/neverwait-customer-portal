@@ -9,11 +9,12 @@ export default styled('div')`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	opacity: ${({ working }) => (working ? '1' : '0.5')};
+	opacity: 0.3;
 
-	${({ canSchedule }) =>
-		canSchedule &&
+	${({ noHover }) =>
+		!noHover &&
 		`
+	
 	cursor: pointer;
 	opacity: 1;
 	&:hover {

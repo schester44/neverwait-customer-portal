@@ -3,7 +3,6 @@ import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import format from 'date-fns/format'
 import Swipe from 'react-easy-swipe'
-import { isAfter } from 'date-fns'
 import Button from '../../components/Button'
 import { MobileView } from 'react-device-detect'
 

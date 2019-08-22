@@ -28,8 +28,8 @@ const CreateAccountForm = ({ values = {}, setFieldValue, loading = false, handle
 			<div className="form-input">
 				<Input
 					type="tel"
-					value={values.contactNumber}
-					name="contactNumber"
+					value={values.phoneNumber}
+					name="phoneNumber"
 					label="Phone Number"
 					onChange={handleChange}
 				/>
@@ -51,7 +51,7 @@ const CreateAccountForm = ({ values = {}, setFieldValue, loading = false, handle
 				style={{ width: '100%', marginTop: 24 }}
 				disabled={
 					loading ||
-					values.contactNumber.trim().length < 10 ||
+					values.phoneNumber.trim().length < 10 ||
 					values.password.trim().length < 4 ||
 					values.password.trim() !== values.confirmPassword.trim() ||
 					values.firstName.trim().length === 0

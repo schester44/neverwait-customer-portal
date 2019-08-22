@@ -8,22 +8,22 @@ export const authWithToken = gql`
 	}
 `
 
-export const createCustomerMutation = gql`
-	mutation createCustomer($input: CreateCustomerInput!) {
-		createCustomer(input: $input) {
+export const registerProfileMutation = gql`
+	mutation registerProfile($input: CreateOnlineProfileInput!) {
+		registerProfile(input: $input) {
 			id
-			contactNumber
+			phoneNumber
 		}
 	}
 `
 
-export const loginCustomerMutation = gql`
-	mutation loginCustomer($input: CustomerLoginInput!) {
-		loginCustomer(input: $input) {
+export const loginProfileMutation = gql`
+	mutation loginProfile($input: OnlineProfileLoginInput!) {
+		loginProfile(input: $input) {
 			id
 			firstName
 			lastName
-			contactNumber
+			phoneNumber
 		}
 	}
 `

@@ -13,7 +13,7 @@ const HomeScreen = React.lazy(() => import('./HomeScreen'))
 const Form = React.lazy(() => import('./FormContainer'))
 const ClosedPlaceholder = React.lazy(() => import('./ClosedPlaceholder'))
 
-const LocationCheckin = ({ match, uuid, customerId }) => {
+const LocationCheckin = ({ match, uuid, profileId }) => {
 	const startTime = startOfDay(new Date())
 	const endTime = endOfDay(new Date())
 
@@ -42,8 +42,6 @@ const LocationCheckin = ({ match, uuid, customerId }) => {
 			isWithinRange(today, startOfDay(range.start_date), endOfDay(range.end_date))
 		)
 	}, [location])
-
-	console.log(isClosed)
 
 	// Effect is needed because this component initializes without a locationId to subscribe to and there is no skip property to prevent from subscribing with an empty location
 	React.useEffect(() => {
@@ -113,7 +111,7 @@ const LocationCheckin = ({ match, uuid, customerId }) => {
 	if (!loading && !location) return <Redirect to="/" />
 
 	if (isClosed) {
-		return <ClosedPlaceholder showBackButton={!!customerId} location={location} reason={isClosed.description} />
+		return <ClosedPlaceholder showBackButton={!!profileId} location={location} reason={isClosed.description} />
 	}
 
 	return (
@@ -132,7 +130,7 @@ const LocationCheckin = ({ match, uuid, customerId }) => {
 							<HomeScreen
 								isClosed={isClosed}
 								history={props.history}
-								customerId={customerId}
+								profileId={profileId}
 								employees={employees}
 								location={location}
 							/>
@@ -149,8 +147,7 @@ const LocationCheckin = ({ match, uuid, customerId }) => {
 								match={props.match}
 								locationId={location.id}
 								locationData={location}
-								companyId={location.company.id}
-								customerId={customerId}
+								profileId={profileId}
 								employee={employee}
 							/>
 						)

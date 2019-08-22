@@ -11,7 +11,7 @@ import Review from './Review'
 import { sequentialUpsertMutation } from '../../graphql/mutations'
 import ServiceSelector from '../../components/ServiceSelector'
 import Header from './Header'
-import { customerInfoQuery } from '../../graphql/queries'
+import { profileQuery } from '../../graphql/queries'
 
 const AuthView = React.lazy(() => import('../CustomerAuthView'))
 const Finished = React.lazy(() => import('./FinishedView'))
@@ -34,7 +34,7 @@ const getAppointmentDuration = (appointment, services) => {
 	return appointment.services.reduce((acc, id) => acc + services[id].sources?.[0]?.duration, 0)
 }
 
-const RootContainer = ({ customerId, locationId, locationData, companyId, employee, history }) => {
+const RootContainer = ({ profileId, locationId, locationData, employee, history }) => {
 	const [createdAppt, setCreatedAppointment] = React.useState(undefined)
 
 	const [estimates, setEstimates] = React.useState({
@@ -43,7 +43,7 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 		endTime: undefined
 	})
 
-	const [customer, setCustomer] = React.useState({ id: customerId })
+	const [customer, setCustomer] = React.useState({ id: profileId })
 
 	const [appointment, setAppointment] = React.useState({
 		locationId,
@@ -66,17 +66,17 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 	const [createAppointment] = useMutation(sequentialUpsertMutation, {
 		update: (cache, { data: { upsertAppointment } }) => {
 			const data = cache.readQuery({
-				query: customerInfoQuery
+				query: profileQuery
 			})
 
-			let customerInfo = data.customerInfo
-			customerInfo.appointments.upcoming = [upsertAppointment, ...customerInfo.appointments.upcoming]
+			let profile = data.profile
+			profile.appointments.upcoming = [upsertAppointment, ...profile.appointments.upcoming]
 
 			cache.writeQuery({
-				query: customerInfoQuery,
+				query: profileQuery,
 				data: {
 					...data,
-					customerInfo
+					profile
 				}
 			})
 		}
@@ -172,7 +172,7 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 					duration,
 					startTime: estimates.startTime,
 					endTime: estimates.endTime,
-					customerId: customer.id
+					profileId: customer.id
 				}
 			}
 		})
@@ -226,7 +226,6 @@ const RootContainer = ({ customerId, locationId, locationData, companyId, employ
 				)}
 				{step === 2 && !createdAppt && !customer.id && (
 					<AuthView
-						companyId={companyId}
 						onLogin={customer => {
 							getEstimates()
 							setCustomer(customer)

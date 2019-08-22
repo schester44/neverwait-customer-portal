@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/react-hooks'
 import styled from 'styled-components'
 import LoginForm from './LoginForm'
 
-import { loginCustomerMutation } from '../../graphql/mutations'
+import { loginProfileMutation } from '../../graphql/mutations'
 
 const themeStyles = ({ theme }) => `
 	background: ${theme.colors.n700};
@@ -31,29 +31,32 @@ const Container = styled('div')`
 `
 
 const LoginPage = () => {
-	const [login, { loading }] = useMutation(loginCustomerMutation)
+	const [login, { loading }] = useMutation(loginProfileMutation)
 
 	const [fields, set] = React.useState({
 		firstName: '',
 		lastName: '',
-		contactNumber: '',
+		phoneNumber: '',
 		password: ''
 	})
 
 	const setFieldValue = (k, v) => {
 		set(p => ({ ...p, [k]: v }))
 	}
+
 	const handleSubmit = async () => {
-		await login({
+		const { data } = await login({
 			variables: {
 				input: {
-					contactNumber: fields.contactNumber,
+					phoneNumber: fields.phoneNumber,
 					password: fields.password
 				}
 			}
 		})
 
-		window.location.reload()
+		if (data.loginProfile) {
+			window.location.reload()
+		}
 	}
 
 	return (

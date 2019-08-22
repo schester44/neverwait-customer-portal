@@ -7,10 +7,12 @@ import { useWaitTime } from '../../../graphql/hooks'
 import isWorking from './utils/isWorking'
 import Modal from '../../Auth/Modal'
 
-const WaitTime = ({ canSchedule, currentWait }) => {
+const WaitTime = ({ status, currentWait }) => {
 	const time = timeFragmentsFromMinutes(currentWait)
 
-	if (!canSchedule) return 'Currently Closed'
+	if (!status.working) return 'Currently Closed'
+
+	if (!status.canSchedule) return status.reason || 'Unavailable'
 
 	return currentWait < 15 ? (
 		'No Wait'
@@ -35,15 +37,12 @@ const WaitTime = ({ canSchedule, currentWait }) => {
 const Employee = ({ employee, onClick }) => {
 	const waitTime = useWaitTime(employee)
 
-	const canSchedule = React.useMemo(() => isWorking(employee, addMinutes(new Date(), waitTime || 0)), [
-		employee,
-		waitTime
-	])
+	const status = React.useMemo(() => isWorking(employee, addMinutes(new Date(), waitTime || 0)), [employee, waitTime])
 
 	const [show, set] = React.useState(false)
 
 	const handleClick = e => {
-		if (canSchedule) {
+		if (status.working && status.canSchedule) {
 			if (waitTime >= 15) {
 				onClick(e)
 			} else {
@@ -59,18 +58,20 @@ const Employee = ({ employee, onClick }) => {
 					<h3 style={{ textAlign: 'center' }}>There is no need to checkin because there is no wait!</h3>
 				</Modal>
 			)}
-			<Container noHover={!canSchedule} onClick={handleClick}>
+			<Container working={status.working} canSchedule={status.canSchedule} onClick={handleClick}>
 				<div>
 					<h1>{employee.firstName}</h1>
 
-					<p>{waitTime === undefined ? null : <WaitTime canSchedule={canSchedule} currentWait={waitTime} />}</p>
+					<p>{waitTime === undefined ? null : <WaitTime status={status} currentWait={waitTime} />}</p>
 				</div>
 
-				<div className="right">
-					<button>
-						<FiChevronRight />
-					</button>
-				</div>
+				{status.canSchedule && (
+					<div className="right">
+						<button>
+							<FiChevronRight />
+						</button>
+					</div>
+				)}
 			</Container>
 		</>
 	)

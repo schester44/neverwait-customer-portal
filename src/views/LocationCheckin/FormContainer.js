@@ -65,13 +65,13 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 	})
 
 	const [createAppointment] = useMutation(sequentialUpsertMutation, {
-		update: (cache, { data: { upsertAppointment } }) => {
+		update: (cache, { data: { checkinOnline } }) => {
 			const data = cache.readQuery({
 				query: profileQuery
 			})
 
 			let profile = data.profile
-			profile.appointments.upcoming = [upsertAppointment, ...profile.appointments.upcoming]
+			profile.appointments.upcoming = [checkinOnline, ...profile.appointments.upcoming]
 
 			cache.writeQuery({
 				query: profileQuery,
@@ -153,28 +153,11 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 	}
 
 	const handleCreate = async () => {
-		let price = 0
-		let duration = 0
-
-		appointment.services.forEach(id => {
-			const service = state.services[id]
-
-			if (service.sources[0]) {
-				price += service.sources[0].price
-				duration += service.sources[0].duration
-			}
-		})
+		console.log(appointment)
 
 		const { data } = await createAppointment({
 			variables: {
-				input: {
-					...appointment,
-					price,
-					duration,
-					startTime: estimates.startTime,
-					endTime: estimates.endTime,
-					profileId: customer.id
-				}
+				input: appointment
 			}
 		})
 		setStep(3)
@@ -182,12 +165,12 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 		ReactGA.event({
 			category: 'OnlineCheckin',
 			action: 'Created',
-			value: data.upsertAppointment.id
+			value: data.checkinOnline.id
 		})
 
-		localStorage.setItem('last-appt', JSON.stringify(data.upsertAppointment))
+		localStorage.setItem('last-appt', JSON.stringify(data.checkinOnline))
 
-		setCreatedAppointment(data.upsertAppointment)
+		setCreatedAppointment(data.checkinOnline)
 	}
 
 	return (

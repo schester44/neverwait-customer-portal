@@ -46,7 +46,7 @@ const App = () => {
 					<Route
 						path={WAITLIST_LOCATION}
 						render={props => {
-							ReactGA.pageview(WAITLIST_LOCATION)
+							ReactGA.pageview(props.location.pathname)
 							return <LocationCheckin profileId={profile?.id} uuid={props.match.params.uuid} match={props.match} />
 						}}
 					/>

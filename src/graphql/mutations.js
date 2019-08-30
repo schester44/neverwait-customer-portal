@@ -35,8 +35,8 @@ export const customerLogout = gql`
 `
 
 export const sequentialUpsertMutation = gql`
-	mutation upsert($input: AppointmentInput!) {
-		upsertAppointment(sourceType: onlinecheckin, input: $input) {
+	mutation upsert($input: OnlineCheckinInput!) {
+		checkinOnline(input: $input) {
 			id
 			startTime
 			endTime

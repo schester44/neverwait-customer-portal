@@ -1,5 +1,6 @@
 import React from 'react'
 import { isBefore, differenceInMinutes, addMinutes, isAfter } from 'date-fns'
+import isWorking from '../views/LocationCheckin/Employee/utils/isWorking'
 
 export const waitTimeInMinutes = (appointments = [], blockedTimes = []) => {
 	let index = undefined
@@ -39,19 +40,29 @@ export const waitTimeInMinutes = (appointments = [], blockedTimes = []) => {
 }
 
 export const useWaitTime = employee => {
-	const [time, setTime] = React.useState(undefined)
+	const [state, setState] = React.useState({
+		waitTime: undefined,
+		status: {}
+	})
 
 	React.useEffect(() => {
-		setTime(waitTimeInMinutes(employee.appointments, employee.blockedTimes))
+		const update = () => {
+			setState(() => {
+				const waitTime = waitTimeInMinutes(employee.appointments, employee.blockedTimes)
+				const status = isWorking(employee, addMinutes(new Date(), waitTime || 0))
 
-		const timer = window.setInterval(() => {
-			setTime(waitTimeInMinutes(employee.appointments, employee.blockedTimes))
-		}, 60000)
+				return { waitTime, status }
+			})
+		}
+
+		const timer = window.setInterval(update, 60000)
+		
+		update()
 
 		return () => {
 			window.clearInterval(timer)
 		}
-	}, [employee.appointments, employee.blockedTimes])
+	}, [employee])
 
-	return time
+	return state
 }

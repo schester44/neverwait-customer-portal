@@ -9,6 +9,7 @@ import AddToHomeScreen from './components/AddToHomeScreen'
 import { profileQuery } from './graphql/queries'
 import getCookie from './utils/getCookie'
 import { WAITLIST_LOCATION } from './routes'
+import ReactGA from 'react-ga'
 
 const LoginPage = React.lazy(() => import('./views/Auth/LoginPage'))
 const HomeScreen = React.lazy(() => import('./views/HomeScreen'))
@@ -29,6 +30,12 @@ const App = () => {
 
 	const profile = data && data.profile ? data.profile : undefined
 
+	React.useEffect(() => {
+		if (!profile) return
+
+		ReactGA.set({ userId: profile.id })
+	}, [profile])
+
 	if (loading) return <Loading />
 
 	return (
@@ -39,6 +46,7 @@ const App = () => {
 					<Route
 						path={WAITLIST_LOCATION}
 						render={props => {
+							ReactGA.pageview(WAITLIST_LOCATION)
 							return <LocationCheckin profileId={profile?.id} uuid={props.match.params.uuid} match={props.match} />
 						}}
 					/>
@@ -48,6 +56,8 @@ const App = () => {
 							if (!profile) {
 								return <LoginPage />
 							}
+
+							ReactGA.pageview('/home-screen')
 
 							return (
 								<HomeScreen

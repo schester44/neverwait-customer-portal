@@ -1,5 +1,6 @@
 import React from 'react'
 import omit from 'lodash/omit'
+import ReactGA from 'react-ga'
 import styled from 'styled-components'
 import { withRouter } from 'react-router-dom'
 import { addMinutes } from 'date-fns'
@@ -177,6 +178,12 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 			}
 		})
 		setStep(3)
+
+		ReactGA.event({
+			category: 'OnlineCheckin',
+			action: 'Created',
+			value: data.upsertAppointment.id
+		})
 
 		localStorage.setItem('last-appt', JSON.stringify(data.upsertAppointment))
 

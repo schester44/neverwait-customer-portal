@@ -1,10 +1,11 @@
 import React from 'react'
-import addMinutes from 'date-fns/add_minutes'
+import ReactGA from 'react-ga'
+
 import { FiChevronRight } from 'react-icons/fi'
 import Container from './Container'
 import timeFragmentsFromMinutes from './utils/timeFragments'
 import { useWaitTime } from '../../../graphql/hooks'
-import isWorking from './utils/isWorking'
+
 import Modal from '../../Auth/Modal'
 
 const WaitTime = ({ status, currentWait }) => {
@@ -35,15 +36,20 @@ const WaitTime = ({ status, currentWait }) => {
 }
 
 const Employee = ({ employee, onClick }) => {
-	const waitTime = useWaitTime(employee)
-
-	const status = React.useMemo(() => isWorking(employee, addMinutes(new Date(), waitTime || 0)), [employee, waitTime])
+	const { status, waitTime } = useWaitTime(employee)
 
 	const [show, set] = React.useState(false)
 
 	const handleClick = e => {
 		if (status.working && status.canSchedule) {
 			if (waitTime >= 15) {
+				ReactGA.event({
+					category: 'Check-in Form',
+					action: 'Selected',
+					label: 'Employee',
+					value: employee.id
+				})
+
 				onClick(e)
 			} else {
 				set(true)

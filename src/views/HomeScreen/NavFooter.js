@@ -1,4 +1,6 @@
 import React from 'react'
+import ReactGA from 'react-ga'
+
 import { generatePath, Link } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
 import { FiX, FiLogIn } from 'react-icons/fi'
@@ -88,7 +90,14 @@ const NavFooter = ({ disableCheckins = false, locations }) => {
 		<Container>
 			{!visible.locations && (
 				<Button
-					onClick={() => setVisible({ locations: true })}
+					onClick={() => {
+						setVisible({ locations: true })
+						ReactGA.event({
+							category: 'User',
+							action: 'Check-in Button clicked',
+							label: 'HomeScreen'
+						})
+					}}
 					style={{ display: 'flex', alignItems: 'center', lineHeight: 1, padding: 20 }}
 				>
 					<FiLogIn />

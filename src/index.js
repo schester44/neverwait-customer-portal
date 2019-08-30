@@ -10,7 +10,11 @@ import App from './App'
 import { dark as theme } from './themes'
 import { createStyles } from './themes/global-styles'
 
+import ReactGA from 'react-ga'
+
 import * as Sentry from '@sentry/browser'
+
+ReactGA.initialize(process.env.REACT_APP_GATRACKINGID, { debug: true })
 
 if (process.env.NODE_ENV === 'production') {
 	Sentry.init({

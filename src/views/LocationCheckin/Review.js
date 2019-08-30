@@ -5,42 +5,6 @@ import { format } from 'date-fns'
 import Button from '../../components/Button'
 import FormFooter from '../../components/FormFooter'
 
-const formattedTime = time => {
-	let minutes = 0
-
-	if (time > 60) {
-		minutes = Math.floor(time / 60)
-	}
-
-	minutes = minutes >= 10 ? minutes : `0${minutes}`
-
-	let seconds = time % 60
-	return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`
-}
-
-const useTimer = duration => {
-	const [time, setTime] = React.useState(duration)
-
-	React.useState(() => {
-		const handler = () => {
-			setTime(prev => {
-				if (prev - 1 < 0) {
-					window.clearInterval(int)
-					return prev
-				}
-
-				return prev - 1
-			})
-		}
-
-		const int = window.setInterval(handler, 1000)
-
-		return () => window.clearInterval(int)
-	}, [])
-
-	return formattedTime(time)
-}
-
 const Wrapper = styled('div')`
 	padding: 10px 10px 80px 10px;
 	width: 100%;
@@ -63,8 +27,6 @@ const Wrapper = styled('div')`
 `
 
 const Review = ({ price, selectedServices, selectedServiceIds, estimates, locationData, handleConfirm }) => {
-	const time = useTimer(120)
-
 	return (
 		<Wrapper>
 			<div className="block location">
@@ -97,8 +59,7 @@ const Review = ({ price, selectedServices, selectedServiceIds, estimates, locati
 			</h4>
 
 			<FormFooter>
-				<span>Expires in {time}</span>
-				<Button style={{ width: '50%' }} onClick={handleConfirm}>
+				<Button style={{ width: '100%' }} onClick={handleConfirm}>
 					Confirm
 				</Button>
 			</FormFooter>

@@ -1,0 +1,133 @@
+import React from 'react'
+import omit from 'lodash/omit'
+import { FiChevronLeft } from 'react-icons/fi'
+import { Link } from 'react-router-dom'
+import { useMutation } from '@apollo/react-hooks'
+import styled from 'styled-components'
+import ReactGA from 'react-ga'
+
+import { loginProfileMutation, registerProfileMutation } from '../../graphql/mutations'
+import CreateAccountForm from './CreateAccountForm'
+
+const themeStyles = ({ theme }) => `
+	background: ${theme.colors.n700};
+`
+
+const Container = styled('div')`
+	width: 100%;
+	min-height: 100vh;
+	padding: 10px;
+	max-width: 768px;
+	margin: 0 auto;
+	padding-bottom: 40px;
+
+	.register-btn {
+		margin-top: 5vh;
+		text-align: center;
+
+		p {
+			margin-bottom: 8px;
+		}
+	}
+
+	.back {
+		position: absolute;
+		top: 10px;
+		left: 10px;
+		font-size: 36px;
+		line-height: 1;
+	}
+
+	.title {
+		text-align: center;
+		font-size: 20px;
+		padding: 4px;
+		margin-bottom: 24px;
+	}
+
+	.subtitle {
+		padding: 0 0 10px 10px;
+		font-weight: 400;
+	}
+
+	${themeStyles};
+`
+
+const CrateAccount = ({ history }) => {
+	const [login, { loading }] = useMutation(loginProfileMutation)
+	const [registerProfile, { loading: createLoading }] = useMutation(registerProfileMutation)
+
+	const [fields, set] = React.useState({
+		firstName: '',
+		lastName: '',
+		phoneNumber: '',
+		password: '',
+		confirmPassword: ''
+	})
+
+	const setFieldValue = (k, v) => {
+		set(p => ({ ...p, [k]: v }))
+	}
+
+	const handleSubmit = async () => {
+		try {
+			const {
+				data: { registerProfile: response }
+			} = await registerProfile({
+				variables: {
+					input: omit(fields, ['confirmPassword'])
+				}
+			})
+
+			ReactGA.event({
+				category: 'Auth',
+				action: 'AccountCreated',
+				label: 'RegisterPage'
+			})
+
+			if (response && response.id) {
+				handleLogin(fields.phoneNumber, fields.password)
+			} else {
+				alert('Failed to create an account.')
+			}
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	const handleLogin = async (phoneNumber, password) => {
+		const { data } = await login({
+			variables: {
+				input: {
+					phoneNumber,
+					password
+				}
+			}
+		})
+
+		if (data.loginProfile) {
+			history.push('/')
+		}
+	}
+
+	return (
+		<Container>
+			<Link to="/">
+				<div className="back">
+					<FiChevronLeft />
+				</div>
+			</Link>
+
+			<h1 className="title">Register</h1>
+
+			<CreateAccountForm
+				loading={loading || createLoading}
+				values={fields}
+				setFieldValue={setFieldValue}
+				handleSubmit={handleSubmit}
+			/>
+		</Container>
+	)
+}
+
+export default CrateAccount

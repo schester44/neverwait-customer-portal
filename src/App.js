@@ -1,6 +1,6 @@
 import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
-import { withRouter, Switch, Route } from 'react-router-dom'
+import { Redirect, withRouter, Switch, Route } from 'react-router-dom'
 import styled from 'styled-components'
 
 import Loading from './components/Loading'
@@ -8,10 +8,11 @@ import AddToHomeScreen from './components/AddToHomeScreen'
 
 import { profileQuery } from './graphql/queries'
 import getCookie from './utils/getCookie'
-import { WAITLIST_LOCATION } from './routes'
+import { WAITLIST_LOCATION, AUTH_REGISTER } from './routes'
 import ReactGA from 'react-ga'
 
 const LoginPage = React.lazy(() => import('./views/Auth/LoginPage'))
+const RegisterPage = React.lazy(() => import('./views/Auth/RegisterPage'))
 const HomeScreen = React.lazy(() => import('./views/HomeScreen'))
 const LocationCheckin = React.lazy(() => import('./views/LocationCheckin'))
 
@@ -48,6 +49,15 @@ const App = () => {
 						render={props => {
 							ReactGA.pageview(props.location.pathname)
 							return <LocationCheckin profileId={profile?.id} uuid={props.match.params.uuid} match={props.match} />
+						}}
+					/>
+
+					<Route
+						path={AUTH_REGISTER}
+						render={props => {
+							if (profile) return <Redirect to="/" />
+
+							return <RegisterPage history={props.history} />
 						}}
 					/>
 

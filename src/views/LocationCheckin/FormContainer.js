@@ -64,7 +64,7 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 		}, {})
 	})
 
-	const [createAppointment] = useMutation(sequentialUpsertMutation, {
+	const [createAppointment, { createAppointmentLoaded }] = useMutation(sequentialUpsertMutation, {
 		update: (cache, { data: { checkinOnline } }) => {
 			const data = cache.readQuery({
 				query: profileQuery
@@ -153,13 +153,14 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 	}
 
 	const handleCreate = async () => {
-		console.log(appointment)
+		if (createAppointmentLoaded) return
 
 		const { data } = await createAppointment({
 			variables: {
 				input: appointment
 			}
 		})
+
 		setStep(3)
 
 		ReactGA.event({

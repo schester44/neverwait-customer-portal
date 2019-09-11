@@ -9,7 +9,7 @@ const Container = styled('div')`
 
 	.form-input {
 		width: 100%;
-		padding: 8px;
+		padding: 8px 0;
 	}
 `
 
@@ -26,17 +26,14 @@ const CreateAccountForm = ({ values = {}, setFieldValue, loading = false, handle
 			</div>
 
 			<div className="form-input">
-				<Input
-					type="tel"
-					value={values.phoneNumber}
-					name="phoneNumber"
-					label="Phone Number"
-					onChange={handleChange}
-				/>
+				<Input type="tel" value={values.phoneNumber} name="phoneNumber" label="Phone Number" onChange={handleChange} />
 			</div>
 
 			<div className="form-input">
 				<Input type="password" value={values.password} name="password" label="Password" onChange={handleChange} />
+			</div>
+
+			<div className="form-input">
 				<Input
 					type="password"
 					value={values.confirmPassword}

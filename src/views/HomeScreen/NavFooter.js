@@ -4,7 +4,7 @@ import ReactGA from 'react-ga'
 import { generatePath, Link } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
 import { FiX, FiLogIn } from 'react-icons/fi'
-import { WAITLIST_LOCATION } from '../../routes'
+import { LOCATION_WAITLIST } from '../../routes'
 import Button from '../../components/Button'
 
 const Drawer = React.lazy(() => import('./Drawer'))
@@ -125,7 +125,7 @@ const NavFooter = ({ disableCheckins = false, locations }) => {
 						<div className="overflow">
 							{locations.map(location => {
 								return (
-									<Link key={location.uuid} to={generatePath(WAITLIST_LOCATION, { uuid: location.uuid })}>
+									<Link key={location.uuid} to={generatePath(LOCATION_WAITLIST, { uuid: location.uuid })}>
 										<Location>
 											<h4>{location.name}</h4>
 											<h5>{location.address}</h5>

@@ -8,7 +8,7 @@ import AddToHomeScreen from './components/AddToHomeScreen'
 
 import { profileQuery } from './graphql/queries'
 import getCookie from './utils/getCookie'
-import { WAITLIST_LOCATION, AUTH_REGISTER } from './routes'
+import { __DEPRECATED_LOCATION_WAITLIST, LOCATION_WAITLIST, AUTH_REGISTER } from './routes'
 import ReactGA from 'react-ga'
 
 const LoginPage = React.lazy(() => import('./views/Auth/LoginPage'))
@@ -45,7 +45,14 @@ const App = () => {
 				<AddToHomeScreen />
 				<Switch>
 					<Route
-						path={WAITLIST_LOCATION}
+						path={__DEPRECATED_LOCATION_WAITLIST}
+						render={() => {
+							return <Redirect to={LOCATION_WAITLIST} />
+						}}
+					/>
+					
+					<Route
+						path={LOCATION_WAITLIST}
 						render={props => {
 							ReactGA.pageview(props.location.pathname)
 							return <LocationCheckin profileId={profile?.id} uuid={props.match.params.uuid} match={props.match} />

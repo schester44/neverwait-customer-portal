@@ -41,6 +41,12 @@ const Container = styled('div')`
 	left: 0;
 	width: 100%;
 	height: 80px;
+	
+	.overflow {
+		height: 200px;
+		overflow: auto;
+		padding-bottom: 100px;
+	}
 
 	.close-button {
 		cursor: pointer;
@@ -76,6 +82,7 @@ const locationThemeStyles = ({ theme }) => `
 const Location = styled('div')`
 	padding: 15px;
 	border-radius: 8px;
+	margin-bottom: 8px;
 	cursor: pointer;
 
 	${locationThemeStyles};
@@ -113,17 +120,19 @@ const NavFooter = ({ disableCheckins = false, locations }) => {
 
 			<React.Suspense fallback={null}>
 				{visible.locations && (
-					<Drawer onClose={() => setVisible({ locations: undefined })} title="Select a location to join waitlist">
-						{locations.map(location => {
-							return (
-								<Link key={location.uuid} to={generatePath(WAITLIST_LOCATION, { uuid: location.uuid })}>
-									<Location>
-										<h4>{location.name}</h4>
-										<h5>{location.address}</h5>
-									</Location>
-								</Link>
-							)
-						})}
+					<Drawer onClose={() => setVisible({ locations: undefined })} title="Select a location to check in">
+						<div className="overflow">
+							{locations.map(location => {
+								return (
+									<Link key={location.uuid} to={generatePath(WAITLIST_LOCATION, { uuid: location.uuid })}>
+										<Location>
+											<h4>{location.name}</h4>
+											<h5>{location.address}</h5>
+										</Location>
+									</Link>
+								)
+							})}
+						</div>
 					</Drawer>
 				)}
 			</React.Suspense>

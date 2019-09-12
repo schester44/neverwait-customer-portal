@@ -45,14 +45,6 @@ const App = () => {
 				<AddToHomeScreen />
 				<Switch>
 					<Route
-						path={LOCATION_WAITLIST}
-						render={props => {
-							ReactGA.pageview(props.location.pathname)
-							return <LocationCheckin profileId={profile?.id} uuid={props.match.params.uuid} match={props.match} />
-						}}
-					/>
-
-					<Route
 						path={AUTH_REGISTER}
 						render={props => {
 							if (profile) return <Redirect to="/" />
@@ -62,16 +54,28 @@ const App = () => {
 					/>
 
 					<Route
+						path={LOCATION_WAITLIST}
+						render={props => {
+							ReactGA.pageview(props.location.pathname)
+							return <LocationCheckin profileId={profile?.id} uuid={props.match.params.uuid} match={props.match} />
+						}}
+					/>
+
+					<Route
 						path={__DEPRECATED_LOCATION_WAITLIST}
 						render={props => {
-							console.log(generatePath(LOCATION_WAITLIST, props.match.params));
-							return <Redirect to={generatePath(LOCATION_WAITLIST, props.match.params)} />
+							const path = generatePath(LOCATION_WAITLIST, props.match.params)
+							ReactGA.pageview(path)
+
+							return <Redirect to={path} />
 						}}
 					/>
 
 					<Route
 						render={props => {
 							if (!profile) {
+								ReactGA.pageview('/login-screen')
+
 								return <LoginPage />
 							}
 

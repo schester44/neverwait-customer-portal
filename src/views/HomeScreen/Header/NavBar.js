@@ -1,16 +1,17 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { generatePath, NavLink } from 'react-router-dom'
 import Menu from './Menu'
+import { USER_APPOINTMENTS } from '../../../routes'
 
 const NavBar = () => {
 	return (
 		<Menu className="app-header__menu">
-			<NavLink to="/appointments/upcoming">
-				<Menu.Item>UPCOMING</Menu.Item>
+			<NavLink to={generatePath(USER_APPOINTMENTS, { type: 'upcoming' })}>
+				<Menu.Item data-cy="user-nav-upcoming">UPCOMING</Menu.Item>
 			</NavLink>
 
-			<NavLink to="/appointments/past">
-				<Menu.Item>PAST</Menu.Item>
+			<NavLink to={generatePath(USER_APPOINTMENTS, { type: 'past' })}>
+				<Menu.Item data-cy="user-nav-past">PAST</Menu.Item>
 			</NavLink>
 		</Menu>
 	)

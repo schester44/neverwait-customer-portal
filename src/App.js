@@ -1,6 +1,6 @@
 import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
-import { Redirect, withRouter, Switch, Route } from 'react-router-dom'
+import { generatePath, Redirect, withRouter, Switch, Route } from 'react-router-dom'
 import styled from 'styled-components'
 
 import Loading from './components/Loading'
@@ -45,13 +45,6 @@ const App = () => {
 				<AddToHomeScreen />
 				<Switch>
 					<Route
-						path={__DEPRECATED_LOCATION_WAITLIST}
-						render={() => {
-							return <Redirect to={LOCATION_WAITLIST} />
-						}}
-					/>
-					
-					<Route
 						path={LOCATION_WAITLIST}
 						render={props => {
 							ReactGA.pageview(props.location.pathname)
@@ -65,6 +58,14 @@ const App = () => {
 							if (profile) return <Redirect to="/" />
 
 							return <RegisterPage history={props.history} />
+						}}
+					/>
+
+					<Route
+						path={__DEPRECATED_LOCATION_WAITLIST}
+						render={props => {
+							console.log(generatePath(LOCATION_WAITLIST, props.match.params));
+							return <Redirect to={generatePath(LOCATION_WAITLIST, props.match.params)} />
 						}}
 					/>
 

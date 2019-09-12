@@ -14,7 +14,10 @@ const Container = styled('div')`
 `
 
 const CreateAccountForm = ({ values = {}, setFieldValue, loading = false, handleSubmit }) => {
-	const handleChange = ({ target: { name, value } }) => setFieldValue(name, value)
+	const handleChange = ({ target: { name, value } }) => {
+		return setFieldValue(name, name === 'phoneNumber' ? value.replace(/[^0-9]/g, '') : value)
+	}
+
 	return (
 		<Container>
 			<div className="form-input">
@@ -44,6 +47,7 @@ const CreateAccountForm = ({ values = {}, setFieldValue, loading = false, handle
 			</div>
 
 			<Button
+				className="submit-btn"
 				onClick={handleSubmit}
 				style={{ width: '100%', marginTop: 24 }}
 				disabled={

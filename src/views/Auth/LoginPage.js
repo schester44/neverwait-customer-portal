@@ -27,7 +27,7 @@ const Container = styled('div')`
 		padding-bottom: 20px;
 		text-align: center;
 		left: 0;
-		
+
 		p {
 			margin-bottom: 8px;
 		}
@@ -87,7 +87,7 @@ const LoginPage = () => {
 				<p>Don't have an account?</p>
 
 				<Link to={AUTH_REGISTER}>
-					<Button size="small" ghost>
+					<Button className="create-account-btn" size="small" ghost>
 						Create An Account
 					</Button>
 				</Link>

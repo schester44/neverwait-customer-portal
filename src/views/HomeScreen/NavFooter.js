@@ -97,6 +97,7 @@ const NavFooter = ({ disableCheckins = false, locations }) => {
 		<Container>
 			{!visible.locations && (
 				<Button
+					data-cy="checkin-btn"
 					onClick={() => {
 						setVisible({ locations: true })
 						ReactGA.event({

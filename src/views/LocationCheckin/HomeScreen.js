@@ -40,7 +40,9 @@ const HomeScreen = ({ history, profileId, employees, location }) => {
 				<h3>{location.address}</h3>
 			</Header>
 
-			<h4 style={{ marginBottom: 10, paddingLeft: 20, letterSpacing: 3, opacity: 0.5 }}>AVAILABLE STAFF</h4>
+			<h4 data-cy="employee-list" style={{ marginBottom: 10, paddingLeft: 20, letterSpacing: 3, opacity: 0.5 }}>
+				AVAILABLE STAFF
+			</h4>
 
 			<EmployeeList employees={employees} />
 		</div>

@@ -32,6 +32,7 @@ const LoginForm = ({ loading = false, values = {}, setFieldValue, handleSubmit }
 				</div>
 
 				<Button
+					className="login-submit-btn"
 					onClick={handleSubmit}
 					style={{ width: '100%', marginTop: 24 }}
 					disabled={values.phoneNumber.trim().length < 10 || values.password.trim().length < 4 || loading}

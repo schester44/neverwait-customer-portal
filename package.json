@@ -44,7 +44,8 @@
 		"start": "react-app-rewired start",
 		"build": "react-app-rewired build",
 		"predeploy": "npm run build",
-		"deploy": "gh-pages -d build"
+		"deploy": "gh-pages -d build",
+		"test": "cypress open"
 	},
 	"browserslist": {
 		"production": [
@@ -61,6 +62,8 @@
 	"devDependencies": {
 		"@babel/plugin-proposal-optional-chaining": "^7.2.0",
 		"customize-cra": "^0.5.0",
+		"cypress": "^3.4.1",
+		"faker": "^4.1.0",
 		"react-app-rewired": "^2.1.3"
 	}
 }

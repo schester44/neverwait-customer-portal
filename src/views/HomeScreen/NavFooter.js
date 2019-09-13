@@ -124,6 +124,8 @@ const NavFooter = ({ disableCheckins = false, locations }) => {
 					<Drawer onClose={() => setVisible({ locations: undefined })} title="Select a location to check in">
 						<div className="overflow">
 							{locations.map(location => {
+								if (location.uuid.includes('demo')) return null
+
 								return (
 									<Link key={location.uuid} to={generatePath(LOCATION_WAITLIST, { uuid: location.uuid })}>
 										<Location>

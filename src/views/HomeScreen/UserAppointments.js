@@ -14,12 +14,6 @@ const Container = styled('div')`
 	flex-wrap: wrap;
 	align-content: flex-start;
 
-	${({ padBottom }) =>
-		padBottom &&
-		css`
-			padding-bottom: 80px;
-		`}
-
 	a {
 		display: block;
 		width: 100%;

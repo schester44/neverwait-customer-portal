@@ -43,9 +43,9 @@ const isWorking = (employee, date) => {
 
 	const scheduled = range.schedule_shifts.some(shift => {
 		return isWithinRange(
-			date,
-			parse(dateFromTimeString(shift.start_time, date)),
-			parse(dateFromTimeString(shift.end_time, date))
+			new Date(),
+			parse(dateFromTimeString(shift.start_time, new Date())),
+			parse(dateFromTimeString(shift.end_time, new Date()))
 		)
 	})
 
@@ -63,7 +63,16 @@ const isWorking = (employee, date) => {
 		}
 	}
 
-	return { working: true, canSchedule: true }
+	// employee is schedulable if the current wait time is inbetween their start/end times
+	const canSchedule = range.schedule_shifts.some(shift => {
+		return isWithinRange(
+			date,
+			parse(dateFromTimeString(shift.start_time, date)),
+			parse(dateFromTimeString(shift.end_time, date))
+		)
+	})
+
+	return { working: true, canSchedule, reason: !canSchedule ? 'Fully booked' : undefined }
 }
 
 export default isWorking

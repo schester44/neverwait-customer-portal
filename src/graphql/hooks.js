@@ -56,7 +56,7 @@ export const useWaitTime = employee => {
 		}
 
 		const timer = window.setInterval(update, 60000)
-		
+
 		update()
 
 		return () => {

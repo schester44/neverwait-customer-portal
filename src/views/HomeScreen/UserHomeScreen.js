@@ -140,7 +140,7 @@ const Container = styled('div')`
 		height: 100%;
 		padding-top: 80px;
 		flex: 1;
-		padding-bottom: 50px;
+		padding-bottom: 80px;
 		overflow: auto;
 
 		.swipe-container {

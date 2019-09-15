@@ -43,3 +43,30 @@ render(
 	</ApolloProvider>,
 	document.getElementById('root')
 )
+
+// This fires when a user is prompted to add the app to their homescreen
+// We use it to track it happening in Google Analytics so we have those sweet metrics
+
+window.addEventListener('beforeinstallprompt', e => {
+	ReactGA.event({
+		category: 'AppInstall',
+		action: 'Prompted',
+		label: 'HomeScreen'
+	})
+
+	e.userChoice.then(choiceResult => {
+		if (choiceResult.outcome === 'dismissed') {
+			ReactGA.event({
+				category: 'AppInstall',
+				action: 'Dismissed',
+				label: 'HomeScreen'
+			})
+		} else {
+			ReactGA.event({
+				category: 'AppInstall',
+				action: 'Added',
+				label: 'HomeScreen'
+			})
+		}
+	})
+})

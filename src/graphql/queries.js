@@ -57,6 +57,44 @@ export const locationDataQuery = gql`
 			id
 			name
 			address
+			working_hours {
+				sunday {
+					open
+					startTime
+					endTime
+				}
+				monday {
+					open
+					startTime
+					endTime
+				}
+				tuesday {
+					open
+					startTime
+					endTime
+				}
+				wednesday {
+					open
+					startTime
+					endTime
+				}
+				thursday {
+					open
+					startTime
+					endTime
+				}
+				friday {
+					open
+					startTime
+					endTime
+				}
+				saturday {
+					open
+					startTime
+					endTime
+				}
+			}
+
 			closed_dates {
 				start_date
 				end_date

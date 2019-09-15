@@ -9,7 +9,7 @@ import isWithinRange from 'date-fns/is_within_range'
 import startOfDay from 'date-fns/start_of_day'
 import endOfDay from 'date-fns/end_of_day'
 
-const HomeScreen = React.lazy(() => import('./HomeScreen'))
+const Overview = React.lazy(() => import('./Overview/LocationOverview'))
 const Form = React.lazy(() => import('./FormContainer'))
 const ClosedPlaceholder = React.lazy(() => import('./ClosedPlaceholder'))
 
@@ -38,9 +38,15 @@ const LocationCheckin = ({ match, uuid, profileId }) => {
 		if (!location) return false
 
 		const today = new Date()
-		return location.closed_dates.find(range =>
-			isWithinRange(today, startOfDay(range.start_date), endOfDay(range.end_date))
-		)
+		const todaysName = format(today, 'dddd').toLowerCase()
+
+		const closedDate = location.closed_dates.find(range => {
+			return isWithinRange(today, startOfDay(range.start_date), endOfDay(range.end_date))
+		})
+
+		if (closedDate) return closedDate
+
+		return !location.working_hours[todaysName].open
 	}, [location])
 
 	// Effect is needed because this component initializes without a locationId to subscribe to and there is no skip property to prevent from subscribing with an empty location
@@ -61,7 +67,6 @@ const LocationCheckin = ({ match, uuid, profileId }) => {
 
 				const isDeleted = appointment?.deleted
 
-				
 				// let apollo handle updates.
 				if (!isNewRecord && !isDeleted) return
 
@@ -103,6 +108,8 @@ const LocationCheckin = ({ match, uuid, profileId }) => {
 		return <ClosedPlaceholder showBackButton={!!profileId} location={location} reason={isClosed.description} />
 	}
 
+	console.log(isClosed)
+
 	return (
 		<div style={{ minHeight: '100vh' }}>
 			<Switch>
@@ -116,7 +123,7 @@ const LocationCheckin = ({ match, uuid, profileId }) => {
 							return true
 						})
 						return (
-							<HomeScreen
+							<Overview
 								isClosed={isClosed}
 								history={props.history}
 								profileId={profileId}

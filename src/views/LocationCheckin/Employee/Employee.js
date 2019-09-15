@@ -19,7 +19,7 @@ const WaitTime = ({ status, currentWait }) => {
 		'No Wait'
 	) : (
 		<span>
-			Current Wait:{' '}
+			Live Wait Time:{' '}
 			{time.hours > 0 ? (
 				<span>
 					{time.hours}
@@ -47,7 +47,7 @@ const Employee = ({ employee, onClick }) => {
 					category: 'Check-in Form',
 					action: 'Selected',
 					label: 'Employee',
-					value: employee.id
+					value: Number(employee.id)
 				})
 
 				onClick(e)

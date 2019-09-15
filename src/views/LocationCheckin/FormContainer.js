@@ -166,7 +166,7 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 		ReactGA.event({
 			category: 'OnlineCheckin',
 			action: 'Created',
-			value: data.checkinOnline.id
+			value: Number(data.checkinOnline.id)
 		})
 
 		localStorage.setItem('last-appt', JSON.stringify(data.checkinOnline))

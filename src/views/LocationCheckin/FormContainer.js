@@ -3,7 +3,7 @@ import omit from 'lodash/omit'
 import ReactGA from 'react-ga'
 import styled from 'styled-components'
 import { withRouter } from 'react-router-dom'
-import { addMinutes } from 'date-fns'
+import { addMinutes, isAfter } from 'date-fns'
 import { useMutation } from '@apollo/react-hooks'
 import determineStartTime from './utils/determineStartTime'
 import getLastAppointment from './utils/getLastAppointment'
@@ -13,6 +13,8 @@ import { sequentialUpsertMutation } from '../../graphql/mutations'
 import ServiceSelector from '../../components/ServiceSelector'
 import Header from './Header'
 import { profileQuery } from '../../graphql/queries'
+import { dateFromTimeString } from './Employee/utils/isWorking'
+import pling from '../../components/Pling'
 
 const AuthView = React.lazy(() => import('../CustomerAuthView'))
 const Finished = React.lazy(() => import('./FinishedView'))
@@ -194,7 +196,18 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 			{step === 1 && (
 				<ServiceSelector
 					services={employee.services}
-					onNext={() => setStep(2)}
+					onNext={() => {
+						if (history.location.state?.status) {
+							// check service durations against employee end time
+							const shiftEndTime = dateFromTimeString(history.location.state?.status?.currentShift.end_time, new Date())
+
+							if (isAfter(estimates.endTime, shiftEndTime)) {
+								pling({ message: `Selected service duration exceeds ${employee.firstName}'s work hours.` })
+								return false
+							}
+						}
+						setStep(2)
+					}}
 					selectedServiceIds={appointment.services}
 					selectedServices={state.selectedServices}
 					price={state.price}

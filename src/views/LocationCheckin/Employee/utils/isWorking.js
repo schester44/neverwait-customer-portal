@@ -6,12 +6,12 @@ import format from 'date-fns/format'
 import isSameDay from 'date-fns/is_same_day'
 import isAfter from 'date-fns/is_after'
 import addMinutes from 'date-fns/add_minutes'
-import { distanceInWordsToNow } from 'date-fns'
+import { distanceInWordsToNow, setSeconds } from 'date-fns'
 
-function dateFromTimeString(time, date) {
+export function dateFromTimeString(time, date) {
 	const [hours, minutes] = time.split(':')
 
-	return setHours(setMinutes(date || new Date(), parseInt(minutes, 10)), parseInt(hours, 10))
+	return setSeconds(setHours(setMinutes(date || new Date(), parseInt(minutes, 10)), parseInt(hours, 10)), 0)
 }
 
 const getScheduleRangeByDate = (scheduleRanges, date) => {
@@ -64,7 +64,7 @@ const isWorking = (employee, date) => {
 	}
 
 	// employee is schedulable if the current wait time is inbetween their start/end times
-	const canSchedule = range.schedule_shifts.some(shift => {
+	const currentShift = range.schedule_shifts.find(shift => {
 		return isWithinRange(
 			date,
 			parse(dateFromTimeString(shift.start_time, date)),
@@ -72,7 +72,12 @@ const isWorking = (employee, date) => {
 		)
 	})
 
-	return { working: true, canSchedule, reason: !canSchedule ? 'Fully booked' : undefined }
+	return {
+		working: true,
+		currentShift,
+		canSchedule: !!currentShift,
+		reason: !currentShift ? 'Fully booked' : undefined
+	}
 }
 
 export default isWorking

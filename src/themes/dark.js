@@ -28,7 +28,9 @@ const misc = {
 	headerBg: neutrals.n500,
 	headerColor: neutrals.n100,
 	inputBg: neutrals.n100,
-	inputColor: neutrals.n700
+	inputColor: neutrals.n700,
+	primaryCardBg: neutrals.n700,
+	secondaryHeaderBg: neutrals.n700
 }
 
 export const borderRadius = {

@@ -17,12 +17,14 @@ const greens = {
 }
 
 const misc = {
-	shadow: 'rgba(26, 30, 32, 0.05)',
-	bodyBg: neutrals.n500,
+	shadow: neutrals.n500,
+	bodyBg: 'rgba(246, 248, 250, 1.0)',
 	bodyColor: neutrals.n100,
 	success: greens.g500,
 	headerBg: white,
-	headerColor: neutrals.n100
+	headerColor: neutrals.n100,
+	primaryCardBg: neutrals.n700,
+	secondaryHeaderBg: neutrals.n700
 }
 
 export const borderRadius = {

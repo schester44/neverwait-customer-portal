@@ -1,26 +1,20 @@
 import React from 'react'
-import styled from 'styled-components'
 import { withRouter } from 'react-router-dom'
 import Employee from './Employee/Employee'
 
-const Wrapper = styled('div')`
-	height: 100%;
-	padding: 0 10px;
-`
-
 const EmployeeList = ({ employees, match, history }) => {
 	return (
-		<Wrapper>
+		<div>
 			{employees.map(employee => (
 				<Employee
 					employee={employee}
 					key={employee.id}
-					onClick={() => {
-						history.push(`${match.url}/sign-in/${employee.id}`)
+					onClick={status => {
+						history.push(`${match.url}/sign-in/${employee.id}`, { status })
 					}}
 				/>
 			))}
-		</Wrapper>
+		</div>
 	)
 }
 

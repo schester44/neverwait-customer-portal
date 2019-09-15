@@ -1,14 +1,17 @@
 import React from 'react'
 import styled from 'styled-components'
 import EmployeeList from '../EmployeeList'
-import { FiChevronLeft } from 'react-icons/fi'
+import { FiChevronLeft, FiCalendar, FiUser } from 'react-icons/fi'
 import WorkingHour from './WorkingHour'
+import ClosingSoon from './ClosingSoon'
+
 import format from 'date-fns/format'
 
 const Header = styled('div')`
 	width: 100%;
 	padding: 24px 20px;
 	margin-bottom: 24px;
+	background: ${({ theme }) => theme.colors.secondaryHeaderBg};
 
 	.header-title {
 		color: rgba(237, 209, 129, 1);
@@ -23,8 +26,15 @@ const Header = styled('div')`
 	}
 `
 
-const LocationTable = styled('div')`
-	padding: 0 20px;
+const Card = styled('div')`
+	margin: 24px 10px 0 10px;
+	padding: 10px;
+	border-radius: 8px;
+	background: ${({ theme }) => theme.colors.primaryCardBg};
+
+	h4.title {
+		padding-bottom: 10px;
+	}
 `
 
 const Placeholder = styled('div')`
@@ -63,13 +73,17 @@ const LocationOverview = ({ isClosed, history, profileId, employees, location })
 				)}
 			</Header>
 
-			{hasEmployees && (
-				<h4 data-cy="employee-list" style={{ marginBottom: 10, paddingLeft: 20, letterSpacing: 1, opacity: 0.5 }}>
+			<ClosingSoon today={location.working_hours[todaysName]} />
+
+			<Card>
+				<h4 className="title">
+					<FiUser style={{ marginRight: 4 }} />
 					AVAILABLE STAFF
 				</h4>
-			)}
-			{hasEmployees && <EmployeeList employees={employees} />}
-	
+
+				{hasEmployees && <EmployeeList employees={employees} />}
+			</Card>
+
 			{!hasEmployees && (
 				<Placeholder>
 					<div className="title">{location.name}</div>
@@ -77,25 +91,18 @@ const LocationOverview = ({ isClosed, history, profileId, employees, location })
 				</Placeholder>
 			)}
 
-			<h4
-				style={{
-					paddingTop: 16,
-					margin: '24px 10px 10px 10px',
-					paddingLeft: 10,
-					letterSpacing: 1,
-					opacity: 0.5
-				}}
-			>
-				LOCATION HOURS
-			</h4>
+			<Card>
+				<h4 className="title">
+					<FiCalendar style={{ marginRight: 4 }} />
+					LOCATION HOURS
+				</h4>
 
-			<LocationTable>
 				{Object.keys(location.working_hours).map(day => {
 					if (day === '__typename') return null
 
 					return <WorkingHour isToday={day === todaysName} key={day} day={day} details={location.working_hours[day]} />
 				})}
-			</LocationTable>
+			</Card>
 		</div>
 	)
 }

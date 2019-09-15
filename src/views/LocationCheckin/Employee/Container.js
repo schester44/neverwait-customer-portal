@@ -4,12 +4,12 @@ export default styled('div')`
 	margin-bottom: 8px;
 	background: rgba(37, 43, 50, 1);
 	color: white;
-	padding: 10px 20px;
+	padding: 10px;
 	border-radius: 8px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	opacity: ${({ working }) => (working ? '1' : '0.5')};
+	width: 100%;
 
 	${({ canSchedule }) =>
 		canSchedule &&

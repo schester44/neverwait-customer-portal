@@ -57,6 +57,8 @@ const Employee = ({ employee, onClick }) => {
 		}
 	}
 
+	if (!status.working) return null
+
 	return (
 		<>
 			{show && (
@@ -64,7 +66,7 @@ const Employee = ({ employee, onClick }) => {
 					<h3 style={{ textAlign: 'center' }}>There is no need to checkin because there is no wait!</h3>
 				</Modal>
 			)}
-			<Container working={status.working} canSchedule={status.canSchedule} onClick={handleClick}>
+			<Container canSchedule={status.canSchedule} onClick={e => handleClick(status)}>
 				<div>
 					<h1>{employee.firstName}</h1>
 

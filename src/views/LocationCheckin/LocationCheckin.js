@@ -53,38 +53,27 @@ const LocationCheckin = ({ match, uuid, profileId }) => {
 				variables: { locationId: location ? location.id : null }
 			})
 			.subscribe(({ data }) => {
-				const queryData = client.readQuery({
-					query: locationDataQuery,
-					...queryOptions
-				})
+				const queryData = client.readQuery({ query: locationDataQuery, ...queryOptions })
 
 				if (!data || !data.AppointmentsChange) return
 
-				const { appointment, employeeId } = data.AppointmentsChange
+				const { appointment, employeeId, isNewRecord } = data.AppointmentsChange
 
-				const employee = queryData.locationByUUID.employees.find(emp => +emp.id === +employeeId)
+				const isDeleted = appointment?.deleted
 
-				if (!employee) {
-					console.log('appointment changes but no employee with the id', employeeId)
-					return false
-				}
-
-				const appointmentsById = employee.appointments.reduce((acc, curr) => {
-					acc[curr.id] = curr
-					return acc
-				}, {})
-
-				const appointments = appointmentsById[appointment.id]
-					? employee.appointments.map(app => (+app.id === +appointment.id ? appointment : app))
-					: [...employee.appointments, appointment]
+				
+				// let apollo handle updates.
+				if (!isNewRecord && !isDeleted) return
 
 				const employees = queryData.locationByUUID.employees.map(employee => {
-					return +employee.id === +employeeId
-						? {
-								...employee,
-								appointments
-						  }
-						: employee
+					if (+employeeId !== +employee.id) return employee
+
+					return {
+						...employee,
+						appointments: isDeleted
+							? employee.appointments.filter(appt => appt.id !== appointment.id)
+							: employee.appointments.concat([appointment])
+					}
 				})
 
 				console.log('employee data updated')

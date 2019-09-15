@@ -20,6 +20,17 @@ const themeStyles = ({ theme }) => `
 	}
 `
 
+const slideUp = keyframes`
+	from {
+		opacity: 1;
+		transform: translateY(80px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0px);
+	}
+`
+
 const btnAnimation = keyframes`
 	from {
 		opacity: 0;
@@ -41,6 +52,8 @@ const Container = styled('div')`
 	left: 0;
 	width: 100%;
 	height: 80px;
+	animation: ${slideUp} 0.5s 0.3s ease forwards;
+	opacity: 0;
 
 	.overflow {
 		height: 200px;

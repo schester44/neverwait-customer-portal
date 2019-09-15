@@ -91,7 +91,7 @@ const CrateAccount = ({ history }) => {
 				alert('Failed to create an account.')
 			}
 		} catch (error) {
-			console.log(error)
+			console.error(error)
 		}
 	}
 

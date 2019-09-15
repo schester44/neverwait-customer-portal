@@ -73,7 +73,15 @@ const Container = styled('div')`
 	${themeStyles}
 `
 
-const RecentAppointmentOverview = ({ history, profile, appointmentId, appointment: passedInAppointment, setTime }) => {
+const AppointmentOverview = ({
+	history,
+	location,
+	profile,
+	appointmentId,
+	appointment: passedInAppointment,
+	setTime
+}) => {
+
 	const appointment = React.useMemo(() => {
 		if (passedInAppointment) return passedInAppointment
 
@@ -102,7 +110,11 @@ const RecentAppointmentOverview = ({ history, profile, appointmentId, appointmen
 				</div>
 				<div className="block">
 					<div className="flex">
-						<h4>{appointment.services[0].name}</h4>
+						{appointment.services.length > 1 ? (
+							<h4>Multiple Services</h4>
+						) : (
+							appointment.services.length === 1 && <h4>{appointment.services[0].name}</h4>
+						)}
 						<h5>with {appointment.employee.firstName}</h5>
 					</div>
 
@@ -130,4 +142,4 @@ const RecentAppointmentOverview = ({ history, profile, appointmentId, appointmen
 	)
 }
 
-export default RecentAppointmentOverview
+export default AppointmentOverview

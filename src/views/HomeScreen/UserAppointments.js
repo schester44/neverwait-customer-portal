@@ -1,8 +1,10 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
-import { format } from 'date-fns'
-import { Link } from 'react-router-dom'
+import { generatePath, Link } from 'react-router-dom'
 import Swipe from 'react-easy-swipe'
+import format from 'date-fns/format'
+
+import { USER_APPOINTMENTS, APPOINTMENT_OVERVIEW } from '../../routes'
 
 const Container = styled('div')`
 	padding: 16px 10px;
@@ -11,7 +13,6 @@ const Container = styled('div')`
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-content: flex-start;
-	
 
 	${({ padBottom }) =>
 		padBottom &&
@@ -104,13 +105,13 @@ const placeholder = type => (
 const UserAppointments = ({ type, appointments = [], history }) => {
 	const onSwipeRight = () => {
 		if (type !== 'upcoming') {
-			history.push('/appointments/upcoming')
+			history.push(generatePath(USER_APPOINTMENTS, { type: 'upcoming' }))
 		}
 	}
 
 	const onSwipeLeft = () => {
 		if (type !== 'past') {
-			history.push('/appointments/past')
+			history.push(generatePath(USER_APPOINTMENTS, { type: 'past' }))
 		}
 	}
 
@@ -121,7 +122,15 @@ const UserAppointments = ({ type, appointments = [], history }) => {
 					? placeholder(type)
 					: appointments.map((appointment, index) => {
 							return (
-								<Link to={`/appointment/${appointment.id}`} key={index}>
+								<Link
+									to={{
+										pathname: generatePath(APPOINTMENT_OVERVIEW, { id: appointment.id }),
+										state: {
+											type
+										}
+									}}
+									key={index}
+								>
 									<Appointment key={index}>
 										<div className="time">
 											<h4>{format(appointment.startTime, 'h:mma')}</h4>

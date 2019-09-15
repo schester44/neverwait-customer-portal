@@ -85,6 +85,5 @@ export const PlingProvider = ({
 
 export const usePling = () => {
 	const pling = React.useContext(PlingContext)
-	console.log(pling)
 	return pling
 }

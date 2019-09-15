@@ -63,10 +63,6 @@ const Header = ({ title, children }) => {
 			{title && <h1 className="title">{title}</h1>}
 			{children}
 
-			{/* <div className="menu" onClick={() => setVisible(prev => ({ userMenu: !prev.userMenu }))}> */}
-			{/* <FiMenu size="28" /> */}
-			{/* </div> */}
-
 			{visible.userMenu && <UserSettingsMenu onClose={() => setVisible(prev => ({ userMenu: false }))} />}
 		</Container>
 	)

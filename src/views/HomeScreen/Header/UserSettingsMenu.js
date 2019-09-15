@@ -10,7 +10,6 @@ const UserSettingsMenu = ({ onClose }) => {
 	const [logout] = useMutation(customerLogout)
 
 	const onLogout = async () => {
-		console.log('logout')
 		await logout()
 		window.location.reload()
 	}

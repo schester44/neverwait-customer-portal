@@ -70,7 +70,7 @@ const CustomerAuthView = ({ onLogin }) => {
 				alert('Failed to create an account.')
 			}
 		} catch (error) {
-			console.log(error)
+			console.error(error)
 		}
 	}
 

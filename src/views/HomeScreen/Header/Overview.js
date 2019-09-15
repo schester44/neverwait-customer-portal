@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import isToday from 'date-fns/is_today'
 import format from 'date-fns/format'
 import { FiChevronLeft } from 'react-icons/fi'
+import { isAfter } from 'date-fns'
 
 const Container = styled('div')`
 	position: relative;
@@ -44,7 +45,7 @@ const Overview = ({ info, onBack }) => {
 					{isToday(info.time) ? 'Today' : format(info.time, 'MMMM Do')} at {format(info.time, 'h:mma')}
 				</h3>
 			)}
-			<Pill>Confirmed</Pill>
+			<Pill>{isAfter(new Date(), new Date(info.time)) ? 'Completed' : 'Confirmed'}</Pill>
 		</Container>
 	)
 }

@@ -13,7 +13,7 @@ import pling from '../components/Pling'
 const onErrorLink = onError(({ graphQLErrors = [] }) => {
 	if (graphQLErrors.length > 0) {
 		for (let error of graphQLErrors) {
-			console.log(error)
+			console.error(error)
 			pling({ message: error.message })
 		}
 	}

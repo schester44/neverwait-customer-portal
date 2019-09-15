@@ -161,14 +161,21 @@ const UserHomeScreen = ({ profile, locations, history, routeLocation }) => {
 
 	const onSetTime = React.useCallback((time, employee) => setInfo({ time, employee }), [setInfo])
 
+	const isShowingOverview = height !== DEFAULT_HEIGHT
+
 	return (
 		<Container containerHeight={height}>
 			<Header title="NeverWait">
-				{height === DEFAULT_HEIGHT ? (
+				{!isShowingOverview ? (
 					<NavBar />
 				) : (
 					<div className="overview">
-						<Overview info={activeInfo} onBack={() => history.push('/')} />
+						<Overview
+							info={activeInfo}
+							onBack={() => {
+								history.push(generatePath(USER_APPOINTMENTS, { type: history.location?.state?.type || 'upcoming' }))
+							}}
+						/>
 					</div>
 				)}
 			</Header>
@@ -198,7 +205,12 @@ const UserHomeScreen = ({ profile, locations, history, routeLocation }) => {
 
 											if (appointment && isRecent) {
 												return (
-													<AppointmentOverview setTime={onSetTime} history={props.history} appointment={appointment} />
+													<AppointmentOverview
+														setTime={onSetTime}
+														location={props.location}
+														history={props.history}
+														appointment={appointment}
+													/>
 												)
 											} else {
 												return <Redirect to={USER_DASHBOARD} />
@@ -222,7 +234,9 @@ const UserHomeScreen = ({ profile, locations, history, routeLocation }) => {
 					</React.Suspense>
 				</CSSTransition>
 			</TransitionGroup>
-			<NavFooter disableCheckins={profile.appointments.upcoming.length >= 5} locations={locations} />
+			{!isShowingOverview && (
+				<NavFooter disableCheckins={profile.appointments.upcoming.length >= 5} locations={locations} />
+			)}
 		</Container>
 	)
 }

@@ -54,7 +54,10 @@ const Finished = ({ price, estimates, appointment, locationData, selectedService
 
 			<div className="block">
 				<p>Please arrive 15 minutes early ({format(subMinutes(appointment.startTime, 15), 'h:mma')}).</p>
-				<p>To cancel, please call the shop at {appointment.location.contactNumber}.</p>
+				<p>
+					To cancel, please call the shop at
+					<span> {appointment.location.contactNumber}.</span>
+				</p>
 			</div>
 
 			<FormFooter>

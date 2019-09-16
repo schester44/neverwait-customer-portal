@@ -6,7 +6,9 @@ import format from 'date-fns/format'
 import isSameDay from 'date-fns/is_same_day'
 import isAfter from 'date-fns/is_after'
 import addMinutes from 'date-fns/add_minutes'
-import { distanceInWordsToNow, setSeconds } from 'date-fns'
+import { distanceInWordsToNow, setSeconds, startOfDay } from 'date-fns'
+
+export const dateFromMinutes = (minutes, date = new Date()) => addMinutes(startOfDay(date), minutes)
 
 export function dateFromTimeString(time, date) {
 	const [hours, minutes] = time.split(':')

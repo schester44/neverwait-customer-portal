@@ -63,7 +63,7 @@ const Employee = ({ employee, onClick }) => {
 		<>
 			{show && (
 				<Modal title="Great News!" onClose={() => set(false)}>
-					<h3 style={{ textAlign: 'center' }}>There is no need to checkin because there is no wait!</h3>
+					<h3 style={{ textAlign: 'center' }}>There is no need to check in because there is no wait!</h3>
 				</Modal>
 			)}
 			<Container canSchedule={status.canSchedule} onClick={e => handleClick(status)}>

@@ -1,12 +1,13 @@
 import React from 'react'
-import { startOfDay, format, addMinutes, isAfter } from 'date-fns'
+import { format, addMinutes, isAfter } from 'date-fns'
+import { dateFromMinutes } from '../Employee/utils/isWorking'
 
 const ClosingSoon = ({ today }) => {
 	if (!today || !today.open) return null
 
-	const closingTime = addMinutes(startOfDay(new Date()), today.endTime)
+	const closingTime = dateFromMinutes(today.endTime)
 
-	if (!isAfter(addMinutes(new Date(), 45), closingTime)) return null
+	if (!isAfter(addMinutes(new Date(), 45), closingTime) || isAfter(new Date(), closingTime)) return null
 
 	return (
 		<div

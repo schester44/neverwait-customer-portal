@@ -8,6 +8,8 @@ import format from 'date-fns/format'
 import isWithinRange from 'date-fns/is_within_range'
 import startOfDay from 'date-fns/start_of_day'
 import endOfDay from 'date-fns/end_of_day'
+import isAfter from 'date-fns/is_after'
+import { dateFromMinutes } from './Employee/utils/isWorking'
 
 const Overview = React.lazy(() => import('./Overview/LocationOverview'))
 const Form = React.lazy(() => import('./FormContainer'))
@@ -46,7 +48,9 @@ const LocationCheckin = ({ match, uuid, profileId }) => {
 
 		if (closedDate) return closedDate
 
-		return !location.working_hours[todaysName].open
+		if (!location.working_hours[todaysName].open) return false
+
+		return isAfter(new Date(), dateFromMinutes(location.working_hours[todaysName].endTime))
 	}, [location])
 
 	// Effect is needed because this component initializes without a locationId to subscribe to and there is no skip property to prevent from subscribing with an empty location

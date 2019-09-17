@@ -15,9 +15,7 @@ const WaitTime = ({ status, currentWait }) => {
 
 	if (!status.canSchedule) return status.reason || 'Unavailable'
 
-	return currentWait < 15 ? (
-		'No Wait'
-	) : (
+	return (
 		<span>
 			Live Wait Time:{' '}
 			{time.hours > 0 ? (

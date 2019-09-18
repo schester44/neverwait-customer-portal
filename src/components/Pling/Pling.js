@@ -24,6 +24,15 @@ const enterAnimation = keyframes`
     }
 `
 
+const intentColors = {
+	danger: 'tomato',
+	info: 'white'
+}
+
+const intentStyles = ({ intent }) => css`
+	background: ${intentColors[intent]};
+`
+
 const Container = styled('div')`
 	width: 250px;
 	padding: 10px;
@@ -45,9 +54,10 @@ const Container = styled('div')`
 	}
 
 	${positionStyles}
+	${intentStyles};
 `
 
-const Pling = ({ position = { top: 10, left: 'calc(50% - 125px)' }, pling, offset = 0, onDismiss }) => {
+const Pling = ({ intent, position = { top: 10, left: 'calc(50% - 125px)' }, pling, offset = 0, onDismiss }) => {
 	React.useEffect(() => {
 		let timeout
 
@@ -59,7 +69,7 @@ const Pling = ({ position = { top: 10, left: 'calc(50% - 125px)' }, pling, offse
 	}, [pling, onDismiss])
 
 	return (
-		<Container offset={offset} position={position}>
+		<Container intent={intent} offset={offset} position={position}>
 			{pling.title && <div className="title">{pling.title}</div>}
 			{pling.message && <div className="message">{pling.message}</div>}
 		</Container>

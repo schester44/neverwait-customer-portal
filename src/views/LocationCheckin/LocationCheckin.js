@@ -85,8 +85,6 @@ const LocationCheckin = ({ match, uuid, profileId }) => {
 					}
 				})
 
-				console.log('employee data updated')
-
 				client.writeQuery({
 					query: locationDataQuery,
 					...queryOptions,
@@ -111,8 +109,6 @@ const LocationCheckin = ({ match, uuid, profileId }) => {
 	if (isClosed) {
 		return <ClosedPlaceholder showBackButton={!!profileId} location={location} reason={isClosed.description} />
 	}
-
-	console.log(isClosed)
 
 	return (
 		<div style={{ minHeight: '100vh' }}>

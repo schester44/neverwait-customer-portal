@@ -4,7 +4,7 @@ import Pling from './Pling'
 
 export { PlingProvider, usePling } from './context'
 
-export default ({ title, message, duration = 2500 }) => {
+export default ({ intent = 'danger', title, message, duration = 2500 }) => {
 	const div = document.createElement('div')
 	document.body.appendChild(div)
 
@@ -15,6 +15,7 @@ export default ({ title, message, duration = 2500 }) => {
 
 	render(
 		<Pling
+			intent={intent}
 			onDismiss={onDismiss}
 			pling={{
 				id: 'MY_ID',

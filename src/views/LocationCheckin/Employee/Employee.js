@@ -14,7 +14,14 @@ const WaitTime = ({ status, currentWait }) => {
 
 	if (!status.canSchedule) return status.reason || 'Unavailable'
 
-	return <span>Next Available Time: {format(addMinutes(new Date(), currentWait), 'h:mm a')}</span>
+	if (currentWait < 10) return <span>Currently no wait</span>
+
+	return (
+		<span>
+			<span style={{ opacity: 0.5 }}>Next Available Time:</span>
+			<span> {format(addMinutes(new Date(), currentWait), 'h:mma')}</span>
+		</span>
+	)
 }
 
 const Employee = ({ employee, onClick }) => {

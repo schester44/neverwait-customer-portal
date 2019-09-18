@@ -4,6 +4,7 @@ import { format } from 'date-fns'
 
 import Button from '../../components/Button'
 import FormFooter from '../../components/FormFooter'
+import pling from '../../components/Pling'
 
 const Wrapper = styled('div')`
 	padding: 10px 10px 80px 10px;
@@ -26,7 +27,24 @@ const Wrapper = styled('div')`
 	}
 `
 
-const Review = ({ price, selectedServices, selectedServiceIds, estimates, locationData, handleConfirm }) => {
+const Review = ({
+	submitting,
+	loading,
+	price,
+	selectedServices,
+	selectedServiceIds,
+	estimates,
+	locationData,
+	handleConfirm
+}) => {
+	const currentEstimates = React.useRef(estimates)
+
+	React.useEffect(() => {
+		if (!loading && !submitting && estimates !== currentEstimates.current) {
+			pling({ intent: 'info', message: 'Someone checked in. Estimated service time has been adjusted.' })
+		}
+	}, [loading, submitting, estimates])
+
 	return (
 		<Wrapper>
 			<div className="block location">
@@ -59,8 +77,8 @@ const Review = ({ price, selectedServices, selectedServiceIds, estimates, locati
 			</h4>
 
 			<FormFooter>
-				<Button style={{ width: '100%' }} onClick={handleConfirm}>
-					Confirm
+				<Button disabled={loading} style={{ width: '100%' }} onClick={handleConfirm}>
+					{loading ? 'Confirming...' : 'Confirm'}
 				</Button>
 			</FormFooter>
 		</Wrapper>

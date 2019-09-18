@@ -38,6 +38,9 @@ const getAppointmentDuration = (appointment, services) => {
 }
 
 const RootContainer = ({ profileId, locationId, locationData, employee, history }) => {
+	// submitting is needed to prevent race conditions from graphql in the Review view
+	const [submitting, setSubmitting] = React.useState(false)
+
 	const [createdAppt, setCreatedAppointment] = React.useState(undefined)
 
 	const [estimates, setEstimates] = React.useState({
@@ -57,7 +60,6 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 	const [step, setStep] = React.useState(1)
 
 	const [state, setState] = React.useState({
-		loading: false,
 		selectedServices: {},
 		price: 0,
 		services: employee.services.reduce((acc, service) => {
@@ -66,7 +68,7 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 		}, {})
 	})
 
-	const [createAppointment, { createAppointmentLoaded }] = useMutation(sequentialUpsertMutation, {
+	const [createAppointment, { loading }] = useMutation(sequentialUpsertMutation, {
 		update: (cache, { data: { checkinOnline } }) => {
 			const data = cache.readQuery({
 				query: profileQuery
@@ -155,7 +157,9 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 	}
 
 	const handleCreate = async () => {
-		if (createAppointmentLoaded) return
+		if (loading) return
+
+		setSubmitting(true)
 
 		const { data } = await createAppointment({
 			variables: {
@@ -164,6 +168,7 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 		})
 
 		setStep(3)
+		setCreatedAppointment(data.checkinOnline)
 
 		ReactGA.event({
 			category: 'OnlineCheckin',
@@ -172,8 +177,6 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 		})
 
 		localStorage.setItem('last-appt', JSON.stringify(data.checkinOnline))
-
-		setCreatedAppointment(data.checkinOnline)
 	}
 
 	return (
@@ -220,6 +223,8 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 			<React.Suspense fallback={null}>
 				{step === 2 && !createdAppt && customer.id && (
 					<Review
+						submitting={submitting}
+						loading={loading}
 						price={state.price}
 						selectedServices={state.selectedServices}
 						selectedServiceIds={appointment.services}
@@ -230,13 +235,14 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 				)}
 				{step === 2 && !createdAppt && !customer.id && (
 					<AuthView
+						loading={loading}
 						onLogin={customer => {
 							getEstimates()
 							setCustomer(customer)
 						}}
 					/>
 				)}
-				{((step === 3 && createdAppt) || createdAppt) && (
+				{createdAppt && (
 					<Finished
 						price={state.price}
 						estimates={estimates}

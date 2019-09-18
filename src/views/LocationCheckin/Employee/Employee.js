@@ -3,34 +3,18 @@ import ReactGA from 'react-ga'
 
 import { FiChevronRight } from 'react-icons/fi'
 import Container from './Container'
-import timeFragmentsFromMinutes from './utils/timeFragments'
 import { useWaitTime } from '../../../graphql/hooks'
 
 import Modal from '../../Auth/Modal'
+import addMinutes from 'date-fns/add_minutes'
+import format from 'date-fns/format'
 
 const WaitTime = ({ status, currentWait }) => {
-	const time = timeFragmentsFromMinutes(currentWait)
-
 	if (!status.working) return 'Not working right now'
 
 	if (!status.canSchedule) return status.reason || 'Unavailable'
 
-	return (
-		<span>
-			Live Wait Time:{' '}
-			{time.hours > 0 ? (
-				<span>
-					{time.hours}
-					<span className="small"> hr{time.hours > 1 && 's'}</span> {time.minutes}
-					<span className="small"> minutes</span>
-				</span>
-			) : (
-				<span>
-					{time.minutes} <span className="small">minutes</span>
-				</span>
-			)}
-		</span>
-	)
+	return <span>Next Available Time: {format(addMinutes(new Date(), currentWait), 'h:mm a')}</span>
 }
 
 const Employee = ({ employee, onClick }) => {

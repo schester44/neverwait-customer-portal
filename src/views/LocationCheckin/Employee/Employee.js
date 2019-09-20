@@ -3,7 +3,6 @@ import ReactGA from 'react-ga'
 
 import { FiChevronRight } from 'react-icons/fi'
 import Container from './Container'
-import { useWaitTime } from '../../../graphql/hooks'
 
 import Modal from '../../Auth/Modal'
 import addMinutes from 'date-fns/add_minutes'
@@ -24,9 +23,7 @@ const WaitTime = ({ status, currentWait }) => {
 	)
 }
 
-const Employee = ({ employee, onClick }) => {
-	const { status, waitTime } = useWaitTime(employee)
-
+const Employee = ({ waitTime, status, employee, onClick }) => {
 	const [show, set] = React.useState(false)
 
 	const handleClick = e => {
@@ -46,7 +43,7 @@ const Employee = ({ employee, onClick }) => {
 		}
 	}
 
-	if (!status.working) return null
+	if (!status || typeof waitTime === 'undefined' || !status.working) return null
 
 	return (
 		<>

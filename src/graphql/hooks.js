@@ -39,19 +39,46 @@ export const waitTimeInMinutes = (appointments = [], blockedTimes = []) => {
 	return 0
 }
 
-export const useWaitTime = employee => {
+export const useWaitTime = employees => {
 	const [state, setState] = React.useState({
-		waitTime: undefined,
-		status: {}
+		waitTime: {},
+		status: {},
+		nextAvailableTime: {},
+		employeesWorkingCount: 0
 	})
 
 	React.useEffect(() => {
 		const update = () => {
 			setState(() => {
-				const waitTime = waitTimeInMinutes(employee.appointments, employee.blockedTimes)
-				const status = isWorking(employee, addMinutes(new Date(), waitTime || 0))
+				const waitTime = {}
+				const status = {}
 
-				return { waitTime, status }
+				let nextAvailableTime = {
+					id: undefined,
+					time: Infinity
+				}
+
+				let employeesWorkingCount = 0
+
+				for (let i = 0; i < employees.length; i++) {
+					const employee = employees[i]
+					const waitTimeMinutes = waitTimeInMinutes(employee.appointments, employee.blockedTimes)
+					const details = isWorking(employee, addMinutes(new Date(), waitTimeMinutes || 0))
+
+					if (waitTimeMinutes < nextAvailableTime.time) {
+						nextAvailableTime.id = employee.id
+						nextAvailableTime.time = waitTimeMinutes
+					}
+
+					if (details.working && details.canSchedule) {
+						employeesWorkingCount++
+					}
+
+					waitTime[employee.id] = waitTimeMinutes
+					status[employee.id] = details
+				}
+
+				return { waitTime, status, employeesWorkingCount, nextAvailableTime }
 			})
 		}
 
@@ -62,7 +89,7 @@ export const useWaitTime = employee => {
 		return () => {
 			window.clearInterval(timer)
 		}
-	}, [employee])
+	}, [employees])
 
 	return state
 }

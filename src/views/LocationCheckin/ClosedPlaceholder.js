@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { FiClock, FiChevronLeft } from 'react-icons/fi'
-import useRouter from '../../utils/useRouter'
+import { useHistory } from 'react-router-dom'
 
 const Container = styled('div')`
 	width: 100%;
@@ -51,7 +51,7 @@ const Container = styled('div')`
 `
 
 const ClosedPlaceholder = ({ location, reason, showBackButton }) => {
-	const { history } = useRouter()
+	const history = useHistory()
 
 	return (
 		<Container>

@@ -2,7 +2,7 @@ import React from 'react'
 import omit from 'lodash/omit'
 import ReactGA from 'react-ga'
 import styled from 'styled-components'
-import { withRouter } from 'react-router-dom'
+import { useHistory, useParams, Redirect } from 'react-router-dom'
 import { addMinutes, isAfter } from 'date-fns'
 import { useMutation } from '@apollo/react-hooks'
 import determineStartTime from './utils/determineStartTime'
@@ -37,11 +37,16 @@ const getAppointmentDuration = (appointment, services) => {
 	return appointment.services.reduce((acc, id) => acc + services[id].sources?.[0]?.duration, 0)
 }
 
-const RootContainer = ({ profileId, locationId, locationData, employee, history }) => {
+const RootContainer = ({ profileId, location }) => {
+	const history = useHistory()
+	const { employeeId } = useParams()
+
 	// submitting is needed to prevent race conditions from graphql in the Review view
 	const [submitting, setSubmitting] = React.useState(false)
 
 	const [createdAppt, setCreatedAppointment] = React.useState(undefined)
+
+	const [employee] = React.useState(location.employees.find(({ id }) => Number(id) === Number(employeeId)))
 
 	const [estimates, setEstimates] = React.useState({
 		lastAppointment: undefined,
@@ -52,7 +57,7 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 	const [customer, setCustomer] = React.useState({ id: profileId })
 
 	const [appointment, setAppointment] = React.useState({
-		locationId,
+		locationId: location.id,
 		userId: employee.id,
 		services: []
 	})
@@ -179,6 +184,8 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 		localStorage.setItem('last-appt', JSON.stringify(data.checkinOnline))
 	}
 
+	if (!employee) return <Redirect to="/" />
+
 	return (
 		<Wrapper>
 			<Header
@@ -228,7 +235,7 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 						price={state.price}
 						selectedServices={state.selectedServices}
 						selectedServiceIds={appointment.services}
-						locationData={locationData}
+						locationData={location}
 						estimates={estimates}
 						handleConfirm={handleCreate}
 					/>
@@ -247,7 +254,7 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 						price={state.price}
 						estimates={estimates}
 						appointment={createdAppt}
-						locationData={locationData}
+						locationData={location}
 						selectedServiceIds={appointment.services}
 						selectedServices={state.selectedServices}
 					/>
@@ -257,4 +264,4 @@ const RootContainer = ({ profileId, locationId, locationData, employee, history 
 	)
 }
 
-export default withRouter(RootContainer)
+export default RootContainer

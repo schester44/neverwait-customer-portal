@@ -1,11 +1,12 @@
 import React from 'react'
+import ReactGA from 'react-ga'
 import { Link } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 import styled from 'styled-components'
 import LoginForm from './LoginForm'
 
 import { loginProfileMutation } from '../../graphql/mutations'
-import { AUTH_REGISTER } from '../../routes'
+import { AUTH_REGISTER, AUTH_LOGIN } from '../../routes'
 import Button from '../../components/Button'
 
 const themeStyles = ({ theme }) => `
@@ -20,17 +21,37 @@ const Container = styled('div')`
 	margin: 0 auto;
 	padding-bottom: 40px;
 
-	.register-btn {
-		position: fixed;
-		bottom: 0;
+	.separator {
 		width: 100%;
-		padding-bottom: 20px;
 		text-align: center;
-		left: 0;
+		position: relative;
+		margin: 20px 5px;
 
-		p {
-			margin-bottom: 8px;
+		& > div {
+			&:before {
+				left: 0;
+				top: 10px;
+				position: absolute;
+				content: ' ';
+				width: calc(50% - 15px);
+				height: 1px;
+				background: rgba(249, 249, 249, 0.2);
+			}
+
+			&:after {
+				right: 0;
+				top: 10px;
+				position: absolute;
+				content: ' ';
+				width: calc(50% - 15px);
+				height: 1px;
+				background: rgba(249, 249, 249, 0.2);
+			}
 		}
+	}
+
+	.create-account-btn {
+		width: 100%;
 	}
 
 	.title {
@@ -47,6 +68,10 @@ const Container = styled('div')`
 `
 
 const LoginPage = () => {
+	React.useEffect(() => {
+		ReactGA.pageview(AUTH_LOGIN)
+	}, [])
+
 	const [login, { loading }] = useMutation(loginProfileMutation)
 
 	const [fields, set] = React.useState({
@@ -83,15 +108,15 @@ const LoginPage = () => {
 
 			<LoginForm loading={loading} values={fields} setFieldValue={setFieldValue} handleSubmit={handleSubmit} />
 
-			<div className="register-btn">
-				<p>Don't have an account?</p>
-
-				<Link to={AUTH_REGISTER}>
-					<Button className="create-account-btn" size="small" ghost>
-						Create An Account
-					</Button>
-				</Link>
+			<div className="separator">
+				<div>or</div>
 			</div>
+
+			<Link to={AUTH_REGISTER}>
+				<Button className="create-account-btn" size="small" ghost>
+					Create An Account
+				</Button>
+			</Link>
 		</Container>
 	)
 }

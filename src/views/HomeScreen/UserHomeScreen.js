@@ -1,13 +1,12 @@
 import React from 'react'
-import { generatePath, Switch, Route, Redirect } from 'react-router-dom'
+import { generatePath, Switch, Route, Redirect, useLocation, useHistory } from 'react-router-dom'
 import styled, { css, keyframes } from 'styled-components'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import Appointments from './UserAppointments'
 import NavFooter from './NavFooter'
 import { Header, Overview, NavBar } from './Header'
 
-import isRecentAppointment from '../../utils/isRecentAppointment'
-import { USER_APPOINTMENTS, APPOINTMENT_OVERVIEW, USER_DASHBOARD } from '../../routes'
+import { USER_APPOINTMENTS, APPOINTMENT_OVERVIEW } from '../../routes'
 
 const AppointmentOverview = React.lazy(() => import('./AppointmentOverview'))
 
@@ -153,9 +152,12 @@ const Container = styled('div')`
 	${themeStyles}
 `
 
-const UserHomeScreen = ({ profile, locations, history, routeLocation }) => {
+const UserHomeScreen = ({ profile, locations }) => {
+	const history = useHistory()
+	const location = useLocation()
+
 	// TODO: Wont scale as routes are added.
-	const height = routeLocation.pathname.indexOf('/appointments') > -1 ? DEFAULT_HEIGHT : SECONDARY_HEIGHT
+	const height = location.pathname.indexOf('/appointments') > -1 ? DEFAULT_HEIGHT : SECONDARY_HEIGHT
 
 	const [activeInfo, setInfo] = React.useState({ time: undefined, employee: undefined })
 
@@ -181,52 +183,17 @@ const UserHomeScreen = ({ profile, locations, history, routeLocation }) => {
 			</Header>
 
 			<TransitionGroup className="transition-group">
-				<CSSTransition key={routeLocation.pathname} timeout={{ enter: 300, exit: 200 }} classNames="fade">
+				<CSSTransition key={location.pathname} timeout={{ enter: 300, exit: 200 }} classNames="fade">
 					<React.Suspense fallback={null}>
 						<div className="view">
-							<Switch location={routeLocation}>
-								<Route
-									path={USER_APPOINTMENTS}
-									render={props => {
-										const type = props.match.params.type
-										const appointments = profile.appointments[type]
-										return <Appointments history={props.history} type={type} appointments={appointments} />
-									}}
-								/>
+							<Switch location={location}>
+								<Route path={USER_APPOINTMENTS}>
+									<Appointments profileAppointments={profile.appointments || {}} />
+								</Route>
 
-								<Route
-									path={APPOINTMENT_OVERVIEW}
-									render={props => {
-										if (!profile) return <Redirect to={USER_DASHBOARD} />
-
-										if (props.match.params.id === 'recent') {
-											const appointment = JSON.parse(localStorage.getItem('last-appt'))
-											const isRecent = isRecentAppointment(appointment)
-
-											if (appointment && isRecent) {
-												return (
-													<AppointmentOverview
-														setTime={onSetTime}
-														location={props.location}
-														history={props.history}
-														appointment={appointment}
-													/>
-												)
-											} else {
-												return <Redirect to={USER_DASHBOARD} />
-											}
-										}
-
-										return (
-											<AppointmentOverview
-												setTime={onSetTime}
-												history={props.history}
-												profile={profile}
-												appointmentId={props.match.params.id}
-											/>
-										)
-									}}
-								/>
+								<Route path={APPOINTMENT_OVERVIEW}>
+									<AppointmentOverview setTime={onSetTime} profile={profile} />
+								</Route>
 
 								<Redirect to={generatePath(USER_APPOINTMENTS, { type: 'upcoming' })} />
 							</Switch>

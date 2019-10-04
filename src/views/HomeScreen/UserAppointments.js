@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { generatePath, Link } from 'react-router-dom'
+import { generatePath, Link, useParams, useHistory } from 'react-router-dom'
 import Swipe from 'react-easy-swipe'
 import format from 'date-fns/format'
 
@@ -96,7 +96,12 @@ const placeholder = type => (
 	</Placeholder>
 )
 
-const UserAppointments = ({ type, appointments = [], history }) => {
+const UserAppointments = ({ profileAppointments }) => {
+	const { type } = useParams()
+	const history = useHistory()
+
+	const appointments = profileAppointments[type]
+
 	const onSwipeRight = () => {
 		if (type !== 'upcoming') {
 			history.push(generatePath(USER_APPOINTMENTS, { type: 'upcoming' }))

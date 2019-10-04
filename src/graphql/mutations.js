@@ -7,6 +7,17 @@ export const authWithToken = gql`
 		}
 	}
 `
+export const forgotPasswordMutation = gql`
+	mutation forgotPassword($phoneNumber: String!) {
+		forgotProfilePassword(phoneNumber: $phoneNumber)
+	}
+`
+
+export const resetPasswordMutation = gql`
+	mutation resetPassword($input: ResetProfileInput!) {
+		resetProfilePassword(input: $input)
+	}
+`
 
 export const registerProfileMutation = gql`
 	mutation registerProfile($input: CreateOnlineProfileInput!) {

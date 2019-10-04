@@ -10,3 +10,6 @@ export const USER_PAYMENT_METHODS = '/profile/billing'
 export const USER_PREFERENCES = '/profile/settings'
 
 export const AUTH_REGISTER = '/auth/register'
+export const AUTH_LOGIN = '/auth/login'
+
+export const AUTH_FORGOT_PASSWORD = '/auth/forgot-password'

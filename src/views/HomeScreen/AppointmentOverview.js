@@ -1,10 +1,12 @@
 import React from 'react'
-import { Redirect } from 'react-router-dom'
+import { Redirect, useParams, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import format from 'date-fns/format'
 import Swipe from 'react-easy-swipe'
 import Button from '../../components/Button'
 import { MobileView } from 'react-device-detect'
+import { USER_DASHBOARD } from '../../routes'
+import isRecentAppointment from '../../utils/isRecentAppointment'
 
 const themeStyles = ({ theme }) => `
 	background: ${theme.colors.headerBg};
@@ -73,22 +75,24 @@ const Container = styled('div')`
 	${themeStyles}
 `
 
-const AppointmentOverview = ({
-	history,
-	location,
-	profile,
-	appointmentId,
-	appointment: passedInAppointment,
-	setTime
-}) => {
+const AppointmentOverview = ({ profile, setTime }) => {
+	const history = useHistory()
+	const { id: appointmentId } = useParams()
 
 	const appointment = React.useMemo(() => {
-		if (passedInAppointment) return passedInAppointment
+		if (appointmentId === 'recent') {
+			const appointment = JSON.parse(localStorage.getItem('last-appt'))
+			const isRecent = isRecentAppointment(appointment)
+			if (isRecent) return appointment
+
+			// when we return undefiend, we need to redirect the user back to the overview screen. tehy're trying to view a recent appointment but there isn't one.
+			return isRecent ? appointment : undefined
+		}
 
 		const compare = appt => Number(appt.id) === Number(appointmentId)
 
 		return profile.appointments.upcoming.find(compare) || profile.appointments.past.find(compare)
-	}, [profile, appointmentId, passedInAppointment])
+	}, [profile, appointmentId])
 
 	React.useEffect(() => {
 		if (appointment) {
@@ -96,7 +100,7 @@ const AppointmentOverview = ({
 		}
 	}, [appointment, setTime])
 
-	if (!appointment) return <Redirect to="/" />
+	if (!appointment) return <Redirect to={USER_DASHBOARD} />
 
 	const onSwipeRight = () => history.goBack()
 

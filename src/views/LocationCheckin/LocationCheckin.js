@@ -1,5 +1,6 @@
 import React from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
+
+import { Switch, Route, Redirect, useParams, useRouteMatch } from 'react-router-dom'
 import { useQuery, useApolloClient } from '@apollo/react-hooks'
 import { locationDataQuery } from '../../graphql/queries'
 import { appointmentsSubscription } from '../../graphql/subscriptions'
@@ -15,7 +16,10 @@ const Overview = React.lazy(() => import('./Overview/LocationOverview'))
 const Form = React.lazy(() => import('./FormContainer'))
 const ClosedPlaceholder = React.lazy(() => import('./ClosedPlaceholder'))
 
-const LocationCheckin = ({ match, uuid, profileId }) => {
+const LocationCheckin = ({ profileId }) => {
+	const { uuid } = useParams()
+	const match = useRouteMatch()
+
 	const startTime = startOfDay(new Date())
 	const endTime = endOfDay(new Date())
 
@@ -49,7 +53,6 @@ const LocationCheckin = ({ match, uuid, profileId }) => {
 		if (closedDate) return closedDate
 
 		if (!location.working_hours[todaysName].open) return false
-
 		return isAfter(new Date(), dateFromMinutes(location.working_hours[todaysName].endTime))
 	}, [location])
 
@@ -133,21 +136,9 @@ const LocationCheckin = ({ match, uuid, profileId }) => {
 						)
 					}}
 				/>
-
-				<Route
-					path={`${match.path}/sign-in/:employeeId`}
-					render={props => {
-						const employee = location.employees.find(emp => +emp.id === +props.match.params.employeeId)
-						return (
-							<Form
-								match={props.match}
-								locationId={location.id}
-								locationData={location}
-								profileId={profileId}
-								employee={employee}
-							/>
-						)
-					}}
+				<Route path={`${match.path}/sign-in/:employeeId`}>
+					<Form location={location} profileId={profileId} />
+				</Route>
 				/>
 			</Switch>
 		</div>

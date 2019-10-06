@@ -1,8 +1,11 @@
 import React from 'react'
-import { withRouter } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import Employee from './Employee/Employee'
 
-const EmployeeList = ({ employees, match, history }) => {
+const EmployeeList = ({ employees }) => {
+	const history = useHistory()
+	const match = useRouteMatch()
+
 	return (
 		<div>
 			{employees.map(employee => (
@@ -18,4 +21,4 @@ const EmployeeList = ({ employees, match, history }) => {
 	)
 }
 
-export default withRouter(EmployeeList)
+export default EmployeeList

@@ -1,13 +1,16 @@
 import React from 'react'
+import ReactGA from 'react-ga'
+import { Link, useHistory } from 'react-router-dom'
+import styled from 'styled-components'
+import { useMutation } from '@apollo/react-hooks'
 import omit from 'lodash/omit'
 import { FiChevronLeft } from 'react-icons/fi'
-import { Link } from 'react-router-dom'
-import { useMutation } from '@apollo/react-hooks'
-import styled from 'styled-components'
-import ReactGA from 'react-ga'
+
+import CreateAccountForm from './CreateAccountForm'
 
 import { loginProfileMutation, registerProfileMutation } from '../../graphql/mutations'
-import CreateAccountForm from './CreateAccountForm'
+
+import { USER_DASHBOARD } from '../../routes'
 
 const themeStyles = ({ theme }) => `
 	background: ${theme.colors.n700};
@@ -53,7 +56,9 @@ const Container = styled('div')`
 	${themeStyles};
 `
 
-const CrateAccount = ({ history }) => {
+const CreateAccount = () => {
+	const history = useHistory()
+
 	const [login, { loading }] = useMutation(loginProfileMutation)
 	const [registerProfile, { loading: createLoading }] = useMutation(registerProfileMutation)
 
@@ -105,8 +110,9 @@ const CrateAccount = ({ history }) => {
 			}
 		})
 
-		if (data.loginProfile) {
-			history.push('/')
+		if (data?.loginProfile) {
+			history.push(USER_DASHBOARD)
+			window.location.reload()
 		}
 	}
 
@@ -130,4 +136,4 @@ const CrateAccount = ({ history }) => {
 	)
 }
 
-export default CrateAccount
+export default CreateAccount

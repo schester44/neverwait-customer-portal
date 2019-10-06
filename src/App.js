@@ -1,6 +1,6 @@
 import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
-import { Redirect, withRouter, Switch, Route } from 'react-router-dom'
+import { Redirect, Switch, Route } from 'react-router-dom'
 import styled from 'styled-components'
 
 import Loading from './components/Loading'
@@ -41,6 +41,8 @@ const App = () => {
 
 	if (loading) return <Loading />
 
+	console.log(profile)
+
 	return (
 		<React.Suspense fallback={<Loading />}>
 			<Container>
@@ -78,4 +80,4 @@ const App = () => {
 	)
 }
 
-export default withRouter(App)
+export default App

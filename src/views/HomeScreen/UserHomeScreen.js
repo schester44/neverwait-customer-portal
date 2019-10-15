@@ -156,7 +156,6 @@ const UserHomeScreen = ({ profile, locations }) => {
 	const history = useHistory()
 	const location = useLocation()
 
-	// TODO: Wont scale as routes are added.
 	const height = location.pathname.indexOf('/appointments') > -1 ? DEFAULT_HEIGHT : SECONDARY_HEIGHT
 
 	const [activeInfo, setInfo] = React.useState({ time: undefined, employee: undefined })
@@ -175,7 +174,9 @@ const UserHomeScreen = ({ profile, locations }) => {
 						<Overview
 							info={activeInfo}
 							onBack={() => {
-								history.push(generatePath(USER_APPOINTMENTS, { type: history.location?.state?.type || 'upcoming' }))
+								history.push(generatePath(USER_APPOINTMENTS, { type: history.location?.state?.type || 'upcoming' }), {
+									returningFromOverview: true
+								})
 							}}
 						/>
 					</div>
@@ -201,8 +202,15 @@ const UserHomeScreen = ({ profile, locations }) => {
 					</React.Suspense>
 				</CSSTransition>
 			</TransitionGroup>
+
 			{!isShowingOverview && (
-				<NavFooter disableCheckins={profile.appointments.upcoming.length >= 5} locations={locations} />
+				<NavFooter
+					highlightCheckin={true}
+					animate={location?.state?.returningFromOverview}
+					disableCheckins={profile.appointments.upcoming.length >= 5}
+					locations={locations}
+					appointments={profile.appointments || { past: [], upcoming: [] }}
+				/>
 			)}
 		</Container>
 	)

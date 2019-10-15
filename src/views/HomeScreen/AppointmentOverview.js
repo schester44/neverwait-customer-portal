@@ -1,6 +1,6 @@
 import React from 'react'
 import { Redirect, useParams, useHistory } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import format from 'date-fns/format'
 import Swipe from 'react-easy-swipe'
 import Button from '../../components/Button'
@@ -8,12 +8,11 @@ import { MobileView } from 'react-device-detect'
 import { USER_DASHBOARD } from '../../routes'
 import isRecentAppointment from '../../utils/isRecentAppointment'
 
-const themeStyles = ({ theme }) => `
+const themeStyles = ({ theme }) => css`
 	background: ${theme.colors.headerBg};
 	box-shadow: 0px 4px 3px ${theme.colors.shadow};
 	font-size: ${theme.typography.text.medium.fontSize};
 	border-radius: ${theme.borderRadius.medium};
-
 
 	.times {
 		h1 {

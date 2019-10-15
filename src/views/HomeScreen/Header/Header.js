@@ -1,8 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import UserSettingsMenu from './UserSettingsMenu'
-
 const themeStyles = ({ theme }) => `
 	background: ${theme.colors.headerBg};
 	color: ${theme.colors.headerColor};
@@ -14,13 +12,12 @@ const Container = styled('div')`
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 80px;
+	height: 45px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	overflow: hidden;
 	transition: height 0.3s ease;
-	height: 100%;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -54,16 +51,10 @@ const Container = styled('div')`
 `
 
 const Header = ({ title, children }) => {
-	const [visible, setVisible] = React.useState({
-		userMenu: false
-	})
-
 	return (
 		<Container className="app-header">
 			{title && <h1 className="title">{title}</h1>}
 			{children}
-
-			{visible.userMenu && <UserSettingsMenu onClose={() => setVisible(prev => ({ userMenu: false }))} />}
 		</Container>
 	)
 }

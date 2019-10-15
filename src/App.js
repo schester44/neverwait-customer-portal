@@ -1,15 +1,23 @@
 import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
-import { Redirect, Switch, Route } from 'react-router-dom'
+import { Redirect, Switch, Route, generatePath } from 'react-router-dom'
 import styled from 'styled-components'
+import ReactGA from 'react-ga'
 
 import Loading from './components/Loading'
 import AddToHomeScreen from './components/AddToHomeScreen'
 
 import { profileQuery } from './graphql/queries'
 import getCookie from './utils/getCookie'
-import { LOCATION_WAITLIST, AUTH_REGISTER, AUTH_LOGIN, AUTH_FORGOT_PASSWORD, USER_DASHBOARD } from './routes'
-import ReactGA from 'react-ga'
+import {
+	LOCATION_WAITLIST,
+	AUTH_REGISTER,
+	AUTH_LOGIN,
+	AUTH_FORGOT_PASSWORD,
+	USER_APPOINTMENTS,
+	USER_PREFERENCES,
+	LOCATION_SEARCH
+} from './routes'
 
 const LoginPage = React.lazy(() => import('./views/Auth/LoginPage'))
 const RegisterPage = React.lazy(() => import('./views/Auth/RegisterPage'))
@@ -17,6 +25,9 @@ const ForgotPasswordPage = React.lazy(() => import('./views/Auth/ForgotPasswordP
 
 const HomeScreen = React.lazy(() => import('./views/HomeScreen'))
 const LocationCheckin = React.lazy(() => import('./views/LocationCheckin'))
+const UserSettings = React.lazy(() => import('./views/Settings'))
+
+const Explore = React.lazy(() => import('./views/Explore'))
 
 const Container = styled('div')`
 	position: relative;
@@ -41,8 +52,6 @@ const App = () => {
 
 	if (loading) return <Loading />
 
-	console.log(profile)
-
 	return (
 		<React.Suspense fallback={<Loading />}>
 			<Container>
@@ -51,13 +60,22 @@ const App = () => {
 				{profile ? (
 					<Switch>
 						<Route path={LOCATION_WAITLIST}>
-							<LocationCheckin profileId={profile?.id} />
+							<LocationCheckin profileId={profile.id} />
 						</Route>
 
-						<Route path={USER_DASHBOARD}>
+						<Route path={USER_PREFERENCES}>
+							<UserSettings profile={profile} />
+						</Route>
+
+						<Route path="/profile/appointments">
 							<HomeScreen locations={data.locations} profile={profile} />
 						</Route>
-						<Redirect to={USER_DASHBOARD} />
+
+						<Route path={LOCATION_SEARCH}>
+							<Explore locations={data.locations} profile={profile} />
+						</Route>
+
+						<Redirect to={generatePath(USER_APPOINTMENTS, { type: 'upcoming' })} />
 					</Switch>
 				) : (
 					<Switch>

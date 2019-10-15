@@ -58,7 +58,7 @@ const LocationOverview = ({ isClosed, history, profileId, employees, location })
 					<div
 						className="back"
 						onClick={() => {
-							history.push('/')
+							history.goBack()
 						}}
 					>
 						<FiChevronLeft />
@@ -81,7 +81,7 @@ const LocationOverview = ({ isClosed, history, profileId, employees, location })
 					AVAILABLE STAFF
 				</h4>
 
-				{hasEmployees && <EmployeeList employees={employees} />}
+				{hasEmployees && <EmployeeList location={location} employees={employees} />}
 			</Card>
 
 			{!hasEmployees && (

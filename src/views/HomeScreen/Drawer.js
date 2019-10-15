@@ -41,7 +41,7 @@ const Container = styled('div')`
 	padding: 10px;
 	z-index: 3;
 	height: 80vh;
-	max-height: 250px;
+	max-height: ${({ maxHeight }) => maxHeight || 250}px;
 	animation: ${slideUp} 0.3s ease forwards;
 
 	@media (min-width: 900px) {
@@ -69,7 +69,7 @@ const Mask = styled('div')`
 	z-index: 2;
 `
 
-const Drawer = ({ onClose, title, children }) => {
+const Drawer = ({ onClose, title, children, maxHeight = 250 }) => {
 	const ref = React.useRef()
 	const [leave, setLeave] = React.useState(false)
 
@@ -84,7 +84,7 @@ const Drawer = ({ onClose, title, children }) => {
 
 	return (
 		<>
-			<Container leave={leave} ref={ref}>
+			<Container maxHeight={maxHeight} leave={leave} ref={ref}>
 				{title && <div className="title">{title}</div>}
 				{children}
 			</Container>

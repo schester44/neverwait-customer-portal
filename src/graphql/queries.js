@@ -12,6 +12,7 @@ const fragments = {
 				firstName
 			}
 			location {
+				id
 				name
 				address
 				contactNumber
@@ -26,6 +27,7 @@ const fragments = {
 export const profileQuery = gql`
 	{
 		locations {
+			id
 			name
 			uuid
 			address
@@ -35,6 +37,7 @@ export const profileQuery = gql`
 			id
 			firstName
 			lastName
+			phoneNumber
 			appointments(limit: 10) {
 				past {
 					...appointment

@@ -1,23 +1,14 @@
 import React from 'react'
-import ReactGA from 'react-ga'
 
-import { generatePath, Link } from 'react-router-dom'
-import styled, { keyframes } from 'styled-components'
-import { FiX, FiLogIn } from 'react-icons/fi'
-import { LOCATION_WAITLIST } from '../../routes'
-import Button from '../../components/Button'
+import { NavLink } from 'react-router-dom'
+import styled, { keyframes, css } from 'styled-components'
 
-const Drawer = React.lazy(() => import('./Drawer'))
+import { FiUser, FiSettings, FiScissors } from 'react-icons/fi'
+import { LOCATION_SEARCH, USER_PREFERENCES } from '../../routes'
 
-const themeStyles = ({ theme }) => `
+const themeStyles = ({ theme }) => css`
 	background: ${theme.colors.headerBg};
 	box-shadow: 0 -2px 5px ${theme.colors.shadow};
-
-	.close-button {
-		background: ${theme.colors.p500};
-		color: ${theme.colors.n500};
-		box-shadow: 0px -2px 3px ${theme.colors.shadow};
-	}
 `
 
 const slideUp = keyframes`
@@ -31,127 +22,118 @@ const slideUp = keyframes`
 	}
 `
 
-const btnAnimation = keyframes`
-	from {
+const animateStyles = ({ animate }) =>
+	animate &&
+	css`
+		animation: ${slideUp} 0.5s 0.3s ease forwards;
 		opacity: 0;
-		transform: translateY(20px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
+	`
+
+const highlightStyles = ({ highlight }) =>
+	highlight &&
+	css`
+		border-radius: 50px;
+		flex-direction: column;
+		line-height: 1;
+		width: 80px;
+		height: 80px;
+		justify-content: center;
+		margin: -40px auto 0 auto;
+		background: rgba(242, 209, 116, 1);
+		color: rgba(26, 30, 32, 1);
+	`
+
+const Button = styled('button')`
+	cursor: pointer;
+	font-size: 24px;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	background: transparent;
+	color: #fff;
+	border: 0;
+
+	${highlightStyles};
 `
 
 const Container = styled('div')`
 	position: fixed;
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	padding: 10px;
+	justify-content: space-between;
+	padding: 20px 0;
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	height: 80px;
-	animation: ${slideUp} 0.5s 0.3s ease forwards;
-	opacity: 0;
 
-	.overflow {
-		height: 200px;
-		overflow: auto;
-		padding-bottom: 100px;
+	a {
+		flex: 1;
+
+		&:not(:last-of-type) {
+			border-right: 1px solid rgba(200, 200, 200, 0.1);
+		}
+
+		&.active {
+			.action {
+				.text {
+					color: rgba(237, 209, 129, 1);
+					opacity: 1;
+				}
+			}
+		}
 	}
 
-	.close-button {
-		cursor: pointer;
-		position: absolute;
-		z-index: 10;
-		bottom: 20px;
-		left: calc(50% - 25px);
-		width: 50px;
-		height: 50px;
-		border-radius: 50%;
-		opacity: 0;
-
+	.action {
+		font-size: 24px;
+		height: 100%;
 		display: flex;
-		justify-content: center;
 		align-items: center;
-		font-size: 28px;
-		animation: ${btnAnimation} 0.4s 0.3s ease forwards;
+		flex-direction: column;
+		justify-content: center;
+		width: 100%;
+
+		.text {
+			padding-top: 4px;
+			font-size: 12px;
+			font-weight: 500;
+			opacity: 0.5;
+		}
 	}
 
+	${animateStyles};
 	${themeStyles};
 `
 
-const locationThemeStyles = ({ theme }) => `
-	background: ${theme.colors.n100};
-	color: ${theme.colors.n700};
-
-	&:hover {
-		background: ${theme.colors.n200};
-	}
-
-`
-
-const Location = styled('div')`
-	padding: 15px;
-	border-radius: 8px;
-	margin-bottom: 8px;
-	cursor: pointer;
-
-	${locationThemeStyles};
-`
-
-const NavFooter = ({ disableCheckins = false, locations }) => {
-	const [visible, setVisible] = React.useState({ locations: undefined })
-
-	if (disableCheckins) return null
-
+const NavFooter = ({ animate = false, highlightCheckin = false }) => {
 	return (
-		<Container>
-			{!visible.locations && (
-				<Button
-					data-cy="checkin-btn"
-					onClick={() => {
-						setVisible({ locations: true })
-						ReactGA.event({
-							category: 'User',
-							action: 'Check-in Button clicked',
-							label: 'HomeScreen'
-						})
-					}}
-					style={{ display: 'flex', alignItems: 'center', lineHeight: 1, padding: 20 }}
-				>
-					<FiLogIn />
-					<span style={{ paddingLeft: 8 }}>Check In To Location</span>
-				</Button>
-			)}
-
-			{visible.locations && (
-				<div className="close-button" onClick={() => setVisible({ locations: false })}>
-					<FiX />
+		<Container className="app-nav-footer" animate={animate}>
+			<NavLink to="/profile/appointments">
+				<div className="action">
+					<FiUser />
+					<span className="text">Appointments</span>
 				</div>
-			)}
+			</NavLink>
 
-			<React.Suspense fallback={null}>
-				{visible.locations && (
-					<Drawer onClose={() => setVisible({ locations: undefined })} title="Select a location to check in">
-						<div className="overflow">
-							{locations.map(location => {
-								if (location.uuid.includes('demo')) return null
-
-								return (
-									<Link key={location.uuid} to={generatePath(LOCATION_WAITLIST, { uuid: location.uuid })}>
-										<Location>
-											<h4>{location.name}</h4>
-											<h5>{location.address}</h5>
-										</Location>
-									</Link>
-								)
-							})}
-						</div>
-					</Drawer>
+			<NavLink to={LOCATION_SEARCH}>
+				{highlightCheckin ? (
+					<Button highlight={true}>
+						<FiScissors />
+						<div style={{ fontSize: 10, marginTop: 4, fontWeight: 700, opacity: 0.8 }}>CHECK-IN</div>
+					</Button>
+				) : (
+					<div className="action">
+						<FiScissors />
+						<span className="text">Check-in</span>
+					</div>
 				)}
-			</React.Suspense>
+			</NavLink>
+
+			<NavLink to={USER_PREFERENCES}>
+				<div className="action">
+					<FiSettings />
+					<span className="text">Settings</span>
+				</div>
+			</NavLink>
 		</Container>
 	)
 }

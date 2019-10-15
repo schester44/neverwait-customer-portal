@@ -2,7 +2,7 @@ import React from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Employee from './Employee/Employee'
 
-const EmployeeList = ({ employees }) => {
+const EmployeeList = ({ employees, location }) => {
 	const history = useHistory()
 	const match = useRouteMatch()
 
@@ -10,6 +10,7 @@ const EmployeeList = ({ employees }) => {
 		<div>
 			{employees.map(employee => (
 				<Employee
+					location={location}
 					employee={employee}
 					key={employee.id}
 					onClick={status => {

@@ -52,7 +52,8 @@ const LocationCheckin = ({ profileId }) => {
 
 		if (closedDate) return closedDate
 
-		if (!location.working_hours[todaysName].open) return false
+		if (!location.working_hours[todaysName] || !location.working_hours[todaysName].open) return true
+
 		return isAfter(new Date(), dateFromMinutes(location.working_hours[todaysName].endTime))
 	}, [location])
 

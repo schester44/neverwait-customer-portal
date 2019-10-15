@@ -88,11 +88,14 @@ const Placeholder = styled('div')`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-direction: column;
+	line-height: 1.5;
 `
 
 const placeholder = type => (
 	<Placeholder>
-		<h4>You have no {type} appointments.</h4>
+		<h3>You have no {type} appointments.</h3>
+		<h4>Lets get you cleaned up!</h4>
 	</Placeholder>
 )
 

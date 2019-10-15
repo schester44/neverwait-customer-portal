@@ -54,6 +54,7 @@ export const sequentialUpsertMutation = gql`
 			duration
 			price
 			location {
+				id
 				name
 				address
 				uuid
@@ -72,6 +73,22 @@ export const sequentialUpsertMutation = gql`
 				firstName
 				lastName
 			}
+		}
+	}
+`
+
+export const changePasswordMutation = gql`
+	mutation changePassword($newPassword: String!, $currentPassword: String!) {
+		changeProfilePassword(currentPassword: $currentPassword, newPassword: $newPassword)
+	}
+`
+
+export const updateProfileMutation = gql`
+	mutation updateProfile($input: UpdateOnlineProfileInput!) {
+		updateProfile(input: $input) {
+			firstName
+			lastName
+			phoneNumber
 		}
 	}
 `

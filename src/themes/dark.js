@@ -21,6 +21,7 @@ const greens = {
 }
 
 const misc = {
+	brand: primary.p500,
 	shadow: 'rgba(26, 30, 32, 0.05)',
 	bodyBg: neutrals.n700,
 	bodyColor: neutrals.n100,
@@ -74,6 +75,5 @@ export const colors = {
 }
 
 export const fontStack = {
-	default: '-apple-system, Lato, sans-serif',
-	lafx: 'marguerite, Lato, sans-serif'
+	default: '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif'
 }

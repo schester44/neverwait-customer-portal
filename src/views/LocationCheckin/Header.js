@@ -1,12 +1,28 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { FiChevronLeft, FiCheck } from 'react-icons/fi'
+import { darken } from 'polished'
 
 const Container = styled('div')`
 	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 150px;
 	padding: 10px 5px;
 	font-size: 90%;
-	color: ${({ theme }) => theme.colors.n100};
+	background: red;
+	color: white;
+
+	.details {
+		padding-left: 10px;
+	}
+
+	${({ theme }) => css`
+		background-image: linear-gradient(${theme.colors.brand}, ${darken(0.05, theme.colors.brand)});
+	`};
+
+	clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 20px));
 
 	.back {
 		font-size: 36px;
@@ -19,9 +35,9 @@ const Container = styled('div')`
 function renderStepTitle({ step, loggedIn }) {
 	switch (step) {
 		case 1:
-			return 'Select a service'
+			return 'Select Services'
 		case 2:
-			return !loggedIn ? 'Login' : 'Review and confirm'
+			return !loggedIn ? 'Login' : 'Review and Confirm'
 		case 3:
 			return (
 				<span>
@@ -44,7 +60,7 @@ const Header = ({ step, loggedIn, title, showBack = true, onBack }) => {
 			)}
 
 			{(step !== 2 || (step === 2 && loggedIn)) && (
-				<div>
+				<div className="details">
 					{step && displayStep <= 3 && <span>Step {displayStep} of 3</span>}
 					<h1>{title || renderStepTitle({ step, loggedIn })}</h1>
 				</div>

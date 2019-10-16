@@ -27,7 +27,7 @@ const ServiceSelector = ({ price, selectedServiceIds = [], selectedServices = {}
 								? `${totalSelected} ${totalSelected === 1 ? 'service' : 'services'} selected`
 								: 'No services selected'}
 						</span>
-						<h4>${price}</h4>
+						<p className="price">${price}</p>
 					</div>
 					<Button onClick={onNext} style={{ width: '50%' }}>
 						Book Now

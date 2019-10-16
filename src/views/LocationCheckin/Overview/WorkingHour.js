@@ -1,15 +1,15 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { startOfDay, addMinutes, format } from 'date-fns'
 
-const todayStyles = ({ isToday }) =>
+const todayStyles = ({ isToday, theme }) =>
 	isToday &&
+	css`
+		color: ${theme.colors.brandSecondary};
 	`
-    color: rgba(237, 209, 129, 1.0);
-`
 
 const Container = styled('div')`
-	margin-bottom: 8px;
+	margin-bottom: 10px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;

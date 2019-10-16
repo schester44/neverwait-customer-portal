@@ -50,7 +50,7 @@ const Container = styled('div')`
 	}
 `
 
-const ClosedPlaceholder = ({ location, reason, showBackButton }) => {
+const ClosedPlaceholder = ({ location, reason }) => {
 	const history = useHistory()
 
 	return (
@@ -59,7 +59,7 @@ const ClosedPlaceholder = ({ location, reason, showBackButton }) => {
 				<div
 					className="back"
 					onClick={() => {
-						history.push('/')
+						history.push(history.location.state?.from || '/')
 					}}
 				>
 					<FiChevronLeft />

@@ -5,6 +5,7 @@ import styled, { keyframes, css } from 'styled-components'
 
 import { FiUser, FiSettings, FiScissors } from 'react-icons/fi'
 import { LOCATION_SEARCH, USER_PREFERENCES } from '../../routes'
+import { transparentize } from 'polished'
 
 const themeStyles = ({ theme }) => css`
 	background: ${theme.colors.headerBg};
@@ -29,18 +30,27 @@ const animateStyles = ({ animate }) =>
 		opacity: 0;
 	`
 
-const highlightStyles = ({ highlight }) =>
+const highlightStyles = ({ highlight, theme }) =>
 	highlight &&
 	css`
 		border-radius: 50px;
 		flex-direction: column;
 		line-height: 1;
-		width: 80px;
-		height: 80px;
+		width: 65px;
+		height: 65px;
 		justify-content: center;
-		margin: -40px auto 0 auto;
-		background: rgba(242, 209, 116, 1);
-		color: rgba(26, 30, 32, 1);
+		margin: -60px auto 0 auto;
+		background: ${theme.colors.brand};
+		color: white;
+		border: 5px solid rgba(255, 255, 255, 1);
+		box-shadow: 0px 0px 0px 8px ${transparentize(0.9, theme.colors.brand)}, 1px 1px 3px rgba(32, 32, 32, 0.05);
+
+		.text {
+			font-size: 8px;
+			margin-top: 4px;
+			font-weight: 700;
+			opacity: 0.8;
+		}
 	`
 
 const Button = styled('button')`
@@ -61,10 +71,10 @@ const Container = styled('div')`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 20px 0;
 	bottom: 0;
 	left: 0;
 	width: 100%;
+	padding: 5px 0;
 
 	a {
 		flex: 1;
@@ -76,7 +86,7 @@ const Container = styled('div')`
 		&.active {
 			.action {
 				.text {
-					color: rgba(237, 209, 129, 1);
+					color: ${({ theme }) => theme.colors.brand};
 					opacity: 1;
 				}
 			}
@@ -91,6 +101,7 @@ const Container = styled('div')`
 		flex-direction: column;
 		justify-content: center;
 		width: 100%;
+		padding: 5px 0 20px 0;
 
 		.text {
 			padding-top: 4px;
@@ -118,7 +129,11 @@ const NavFooter = ({ animate = false, highlightCheckin = false }) => {
 				{highlightCheckin ? (
 					<Button highlight={true}>
 						<FiScissors />
-						<div style={{ fontSize: 10, marginTop: 4, fontWeight: 700, opacity: 0.8 }}>CHECK-IN</div>
+						<div className="text">
+							CHECK
+							<br />
+							IN
+						</div>
 					</Button>
 				) : (
 					<div className="action">

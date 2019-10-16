@@ -18,6 +18,19 @@ const FormFooter = styled('div')`
 	background: ${({ theme }) => theme.colors.headerBg};
 	color: ${({ theme }) => theme.colors.headerColor};
 
+	.price,
+	span {
+		text-transform: uppercase;
+		font-size: 14px;
+		opacity: 0.7;
+		font-weight: 700;
+	}
+
+	.price {
+		font-weight: 700;
+		font-size: 14px;
+	}
+
 	@media (min-width: 1200px) {
 		left: calc(50% - 600px);
 		padding: 20px;

@@ -10,6 +10,6 @@ const style = {
 
 export default () => (
 	<div style={style}>
-		<h1>NeverWait</h1>
+		<h1>NEVERWAIT</h1>
 	</div>
 )

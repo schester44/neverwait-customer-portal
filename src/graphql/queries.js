@@ -19,6 +19,7 @@ const fragments = {
 			}
 			services {
 				name
+				price
 			}
 		}
 	`
@@ -26,18 +27,19 @@ const fragments = {
 
 export const profileQuery = gql`
 	{
-		locations {
-			id
-			name
-			uuid
-			address
-		}
-
 		profile {
 			id
 			firstName
 			lastName
 			phoneNumber
+
+			locations {
+				id
+				name
+				uuid
+				address
+			}
+
 			appointments(limit: 10) {
 				past {
 					...appointment

@@ -1,18 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
 
-const themeStyles = ({ theme }) => `
-	background: ${theme.colors.headerBg};
-	color: ${theme.colors.headerColor};
-	box-shadow: 0px 3px 10px ${theme.colors.shadow};
-`
-
 const Container = styled('div')`
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 45px;
+	height: 65px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -24,6 +18,7 @@ const Container = styled('div')`
 	z-index: 2;
 	padding-top: 10px;
 	text-align: center;
+	background: ${({ theme }) => theme.colors.bodyBg};
 
 	.menu {
 		position: absolute;
@@ -31,8 +26,6 @@ const Container = styled('div')`
 		right: 10px;
 		cursor: pointer;
 	}
-
-	${themeStyles};
 
 	@media (min-width: 900px) {
 		border-radius: 0;

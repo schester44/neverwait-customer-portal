@@ -100,7 +100,7 @@ const CustomerAuthView = ({ onLogin }) => {
 				</Modal>
 			)}
 
-			<h4>Create an account or login to continue.</h4>
+			<p>Create an account or login to continue.</p>
 			<Button
 				style={{ width: '100%' }}
 				onClick={() => {

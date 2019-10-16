@@ -1,4 +1,4 @@
-export const LOCATION_SEARCH = '/search'
+export const LOCATION_SEARCH = '/explore'
 
 export const LOCATION_WAITLIST = '/l/:uuid'
 

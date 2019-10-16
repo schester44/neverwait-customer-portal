@@ -15,11 +15,18 @@ const Container = styled('div')`
 		left: 10px;
 		top: 6px;
 	}
+
+	.date {
+		padding-top: 4px;
+		font-size: 14px;
+		font-weight: 700;
+		opacity: 0.6;
+	}
 `
 
 const styles = ({ theme }) => `
 	color: ${theme.colors.bodyBg};
-	background: ${theme.colors.success};
+	background: ${theme.colors.brand};
 	border-radius: ${theme.borderRadius.large};
 `
 
@@ -28,8 +35,7 @@ const Pill = styled('div')`
 	margin-top: 5px;
 	display: inline-block;
 	box-sizing: border-box;
-	font-size: 10px;
-	font-weight: 700;
+	font-size: 12px;
 	${styles};
 `
 
@@ -41,9 +47,9 @@ const Overview = ({ info, onBack }) => {
 			</div>
 
 			{info.time && (
-				<h3 className="subtitle">
+				<div className="date">
 					{isToday(info.time) ? 'Today' : format(info.time, 'MMMM Do')} at {format(info.time, 'h:mma')}
-				</h3>
+				</div>
 			)}
 			<Pill>{isAfter(new Date(), new Date(info.time)) ? 'Completed' : 'Confirmed'}</Pill>
 		</Container>

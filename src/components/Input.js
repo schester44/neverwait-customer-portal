@@ -1,14 +1,15 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { shade } from 'polished'
 
 const themeStyles = ({ theme }) => `
 	input {
 		background: ${theme.colors.inputBg};
 		color: ${theme.colors.inputColor};
+		box-shadow: 1px 1px 2px rgba(32,32,32, 0.1), 0px 1px 5px rgba(32,32,32,0.05);
+		-webkit-appearance: none;
 
-		&:focus,&:active,&:hover {
-			background: ${shade(0.05, theme.colors.inputBg)};
+		&:focus,&:hover {
+			border: 1px solid ${theme.colors.brand};
 		}
 	}
 `
@@ -20,26 +21,27 @@ const Wrapper = styled('div')`
 
 	label {
 		text-transform: uppercase;
-		font-size: 16px;
-		font-weight: 300;
+		font-size: 12px;
+		font-weight: 600;
 		margin: 0;
 		line-height: 1;
 		opacity: 0.6;
+		letter-spacing: 1px;
 	}
 
 	.input-wrapper {
 		width: 100%;
-		padding-top: 10px;
+		padding-top: 6px;
 	}
 
 	input {
 		font-size: 16px;
-		border: 0;
 		border-radius: 5px;
 		width: 100%;
 		outline: none;
 		padding: 20px;
 		font-weight: 400;
+		border: 1px solid transparent;
 	}
 
 	${themeStyles};

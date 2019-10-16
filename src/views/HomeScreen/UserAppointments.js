@@ -1,13 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
-import { generatePath, Link, useParams, useHistory } from 'react-router-dom'
+import { generatePath, Link, useParams, useHistory, useLocation } from 'react-router-dom'
 import Swipe from 'react-easy-swipe'
-import format from 'date-fns/format'
 
 import { USER_APPOINTMENTS, APPOINTMENT_OVERVIEW } from '../../routes'
+import Appointment from './Appointment'
 
 const Container = styled('div')`
-	padding: 16px 10px;
+	padding: 20px 10px;
 	height: 100%;
 	display: flex;
 	flex-direction: row;
@@ -30,58 +30,6 @@ const Container = styled('div')`
 	}
 `
 
-const appointmentThemeStyles = ({ theme }) => `
-	background: ${theme.colors.headerBg};
-	color: ${theme.colors.headerColor};
-	border-radius: ${theme.borderRadius.medium};
-	box-shadow: 0px 4px 3px ${theme.colors.shadow};
-
-	.time {
-		h4 {
-			color: ${theme.colors.s500}
-		}
-	}
-`
-
-const Appointment = styled('div')`
-	width: 100%;
-
-	margin-bottom: 10px;
-	padding: 15px;
-	font-size: 14px;
-
-	.time {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-
-		h4 {
-			margin-right: 8px;
-			font-size: 18px;
-		}
-	}
-
-	.location {
-		margin-top: 8px;
-	}
-
-	.details {
-		margin-top: 8px;
-
-		ul {
-			list-style: none;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-
-			li {
-				display: inline;
-			}
-		}
-	}
-	${appointmentThemeStyles};
-`
-
 const Placeholder = styled('div')`
 	width: 100%;
 	height: 90%;
@@ -95,13 +43,14 @@ const Placeholder = styled('div')`
 const placeholder = type => (
 	<Placeholder>
 		<h3>You have no {type} appointments.</h3>
-		<h4>Lets get you cleaned up!</h4>
+		{type === 'upcoming' ? <h4>Lets get you cleaned up!</h4> : <h4>Nothing to see here.</h4>}
 	</Placeholder>
 )
 
 const UserAppointments = ({ profileAppointments }) => {
 	const { type } = useParams()
 	const history = useHistory()
+	const location = useLocation()
 
 	const appointments = profileAppointments[type]
 
@@ -127,30 +76,11 @@ const UserAppointments = ({ profileAppointments }) => {
 								<Link
 									to={{
 										pathname: generatePath(APPOINTMENT_OVERVIEW, { id: appointment.id }),
-										state: {
-											type
-										}
+										state: { type, from: location.pathname }
 									}}
 									key={index}
 								>
-									<Appointment key={index}>
-										<div className="time">
-											<h4>{format(appointment.startTime, 'h:mma')}</h4>
-											<h4>{format(appointment.startTime, 'MMM Do')}</h4>
-										</div>
-										<div className="location">
-											<h4>{appointment.location.name}</h4>
-											<h5>{appointment.location.address}</h5>
-										</div>
-										<div className="details">
-											<ul>
-												<li>
-													${appointment.price}{' '}
-													{appointment.services.length > 0 && <span> - {appointment.services[0].name}</span>}
-												</li>
-											</ul>
-										</div>
-									</Appointment>
+									<Appointment isPrimary={type === 'upcoming' && index === 0} key={index} appointment={appointment} />
 								</Link>
 							)
 					  })}

@@ -10,6 +10,14 @@ const Wrapper = styled('div')`
 	padding: 10px 10px 80px 10px;
 	width: 100%;
 
+	.sub {
+		font-size: 10px;
+		text-transform: uppercase;
+		font-weight: 700;
+		opacity: 0.8;
+		line-height: 1.5;
+	}
+
 	.block {
 		padding-bottom: 24px;
 		margin-bottom: 24px;
@@ -49,32 +57,35 @@ const Review = ({
 		<Wrapper>
 			<div className="block location">
 				<h3>{locationData.name}</h3>
-				<h5>{locationData.address}</h5>
-				<h5>{locationData.contactNumber}</h5>
+				<p className="sub">{locationData.address}</p>
+				<p className="sub">{locationData.contactNumber}</p>
 			</div>
 
 			<div className="block service">
 				<div>
 					{selectedServiceIds.map((id, index) => {
 						return (
-							<h3 key={index} style={{ marginTop: index > 0 ? 4 : 0 }}>
+							<h3 key={index} style={{ fontFamily: 'inherit', marginTop: index > 0 ? 4 : 0 }}>
 								{selectedServices[id].name}
 							</h3>
 						)
 					})}
-					<h5>{estimates.duration} minutes</h5>
+					<p className="sub">{estimates.duration} minutes</p>
 				</div>
 				<h3>${price}</h3>
 			</div>
 
 			<div className="block">
-				<p>Your estimated service time is:</p>
-				<h1 style={{ color: 'rgba(242, 209, 116, 1)', fontSize: 60 }}>{format(estimates.startTime, 'h:mma')}</h1>
+				<p style={{ opacity: 0.7, textTransform: 'uppercase', fontSize: 12, fontWeight: 700 }}>
+					Your estimated service time is:
+				</p>
+
+				<h1 style={{ fontSize: 60, lineHeight: 1 }}>{format(estimates.startTime, 'h:mma')}</h1>
 			</div>
 
-			<h4 style={{ opactiy: 0.5, fontWeight: 100 }}>
+			<p className="sub">
 				The above time has not been secured and is only an estimate. Click confirm to lock in your scheduled time.
-			</h4>
+			</p>
 
 			<FormFooter>
 				<Button disabled={loading} style={{ width: '100%' }} onClick={handleConfirm}>

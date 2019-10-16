@@ -7,14 +7,14 @@ const Container = styled('div')`
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 100%;
-	background: ${({ theme }) => theme.colors.headerBg};
-	color: ${({ theme }) => theme.colors.headerColor};
+	height: 100vh;
+	background: ${({ theme }) => theme.colors.bodyBg};
+	color: ${({ theme }) => theme.colors.bodyColor};
 	display: flex;
 	flex-direction: column;
 	overflow: scroll;
 	padding: 10px;
-	z-index: 999;
+	z-index: 99;
 
 	.title {
 		width: 100%;
@@ -29,6 +29,7 @@ const Container = styled('div')`
 		right: 10px;
 		cursor: pointer;
 		font-size: 24px;
+		z-index: 999;
 	}
 
 	@media (min-width: 1200px) {

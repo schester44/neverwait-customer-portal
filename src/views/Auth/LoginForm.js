@@ -13,10 +13,21 @@ const Container = styled('div')`
 		width: 100%;
 		padding: 8px 0;
 	}
+
+	.forgot-password-link {
+		margin-top: 16px;
+
+		color: ${({ theme }) => theme.colors.brand};
+		font-size: 0.8rem;
+		line-height: 1;
+	}
 `
 
 const LoginForm = ({ loading = false, values = {}, setFieldValue, handleSubmit }) => {
 	const handleChange = ({ target: { name, value } }) => setFieldValue(name, value)
+
+	const disabled = values.phoneNumber.trim().length < 10 || values.password.trim().length < 4
+
 	return (
 		<Container>
 			<form onSubmit={handleSubmit}>
@@ -34,17 +45,16 @@ const LoginForm = ({ loading = false, values = {}, setFieldValue, handleSubmit }
 					<Input type="password" value={values.password} name="password" label="Password" onChange={handleChange} />
 				</div>
 
-				<div>
-					<Link style={{ color: 'rgba(237, 209, 129, 1.0)', fontSize: '.8rem', lineHeight: 1 }} to={AUTH_FORGOT_PASSWORD}>
-						Forgot Password?
-					</Link>
+				<div className="forgot-password-link">
+					<Link to={AUTH_FORGOT_PASSWORD}>Forgot Password?</Link>
 				</div>
 
 				<Button
+					intent={disabled ? 'primary' : 'success'}
 					className="login-submit-btn"
 					onClick={handleSubmit}
 					style={{ width: '100%', marginTop: 24 }}
-					disabled={values.phoneNumber.trim().length < 10 || values.password.trim().length < 4 || loading}
+					disabled={disabled || loading}
 				>
 					Log In
 				</Button>

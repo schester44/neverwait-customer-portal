@@ -1,5 +1,5 @@
 import React from 'react'
-import { generatePath, Link } from 'react-router-dom'
+import { generatePath, Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { LOCATION_WAITLIST } from '../../../routes'
 
@@ -16,8 +16,15 @@ const Container = styled('div')`
 `
 
 const Location = ({ location }) => {
+	const routerLocation = useLocation()
+
 	return (
-		<Link to={generatePath(LOCATION_WAITLIST, { uuid: location.uuid })}>
+		<Link
+			to={{
+				pathname: generatePath(LOCATION_WAITLIST, { uuid: location.uuid }),
+				state: { from: routerLocation.pathname }
+			}}
+		>
 			<Container>
 				<h1>{location.name}</h1>
 				<h3>{location.address}</h3>

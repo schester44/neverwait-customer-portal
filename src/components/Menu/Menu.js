@@ -8,7 +8,7 @@ const Container = styled('div')`
 const MenuItem = styled('div')`
 	padding: 8px;
 	border-top: 1px solid ${({ theme }) => theme.colors.n700};
-    cursor: pointer;
+	cursor: pointer;
 `
 
 const Menu = ({ children }) => {

@@ -1,70 +1,47 @@
 import React from 'react'
-import { generatePath, Switch, Route, Redirect, useLocation, useHistory } from 'react-router-dom'
-import styled, { css, keyframes } from 'styled-components'
+import { generatePath, Switch, Route, Redirect, useLocation } from 'react-router-dom'
+import styled, { css } from 'styled-components'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import Appointments from './UserAppointments'
 import NavFooter from './NavFooter'
-import { Header, Overview, NavBar } from './Header'
+import { Header, NavBar } from './Header'
 
 import { USER_APPOINTMENTS, APPOINTMENT_OVERVIEW } from '../../routes'
 
 const AppointmentOverview = React.lazy(() => import('./AppointmentOverview'))
 
-const DEFAULT_HEIGHT = 80
-const SECONDARY_HEIGHT = 60
-
-const slideUp = keyframes`
-	from {
-		opacity: 0;
-		transform: translateY(0px);
-	}
-
-	to {
-		opacity: 1;
-		transform: translateY(-31px);
-	}
-`
-
-const fadeIn = keyframes`
-	from {
-		opacity: 0;
-		transform: translateY(10px);
-
-	}
-
-	to {
-		opacity: 1;
-		transform: translateY(0px);
-	}
-`
-
-const heightStyles = ({ containerHeight }) =>
-	containerHeight === SECONDARY_HEIGHT &&
-	css`
-		.app-header {
-			height: ${SECONDARY_HEIGHT}px;
-
-			.back {
-				opacity: 0;
-				animation: ${fadeIn} 0.5s 0.2s ease forwards;
-			}
-
-			.overview {
-				animation: ${slideUp} 0.3s 0.1s ease forwards;
-			}
-
-			.title {
-				transform: translateY(-50px);
-				opacity: 0.5;
-				transition: all 0.4s ease;
-			}
-		}
-	`
+const DEFAULT_HEIGHT = 95
 
 const themeStyles = ({ theme }) => `
 	background: ${theme.colors.bodyBg};
 	color: ${theme.colors.bodyColor};
 `
+
+const overviewStyles = ({ isShowingOverview }) =>
+	isShowingOverview &&
+	css`
+		.view {
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+
+		.fade-enter {
+			transform: translateY(0);
+		}
+
+		.fade-enter.fade-enter-active {
+			transform: translateY(0px);
+			transition: none;
+		}
+
+		.fade-exit {
+			opacity: 0;
+		}
+
+		.fade-exit.fade-exit-active {
+			opacity: 0;
+		}
+	`
 
 const Container = styled('div')`
 	width: 100%;
@@ -83,43 +60,24 @@ const Container = styled('div')`
 		height: 100vh;
 	}
 
-	${({ containerHeight }) =>
-		containerHeight === SECONDARY_HEIGHT
-			? css`
-					.fade-enter {
-						opacity: 0;
-					}
+	.fade-enter {
+		transform: translateX(${({ isShowingPast }) => (isShowingPast ? '100vw' : '-100vw')});
+	}
 
-					.fade-enter.fade-enter-active {
-						opacity: 1;
-					}
-			  `
-			: css`
-					.fade-enter {
-						transform: translateX(-100vw);
-					}
-
-					.fade-enter.fade-enter-active {
-						transform: translateX(0px);
-						transition: all 0.3s ease;
-					}
-			  `}
+	.fade-enter.fade-enter-active {
+		transform: translateX(0px);
+		transition: all 0.3s ease;
+	}
 
 	.fade-exit {
 		opacity: 1;
-		transform: translateX(0px);
+		transform: translateX(0);
 	}
 
 	.fade-exit.fade-exit-active {
-		${({ containerHeight }) =>
-			containerHeight === SECONDARY_HEIGHT
-				? css`
-						opacity: 0;
-				  `
-				: css`
-						transform: translateX(100vw);
-				  `}
 		transition: all 0.3s ease;
+		opacity: 0;
+		transform: translateX(${({ isShowingPast }) => (isShowingPast ? '-100vw' : '100vw')});
 	}
 
 	.app-header {
@@ -140,48 +98,31 @@ const Container = styled('div')`
 		padding-top: 80px;
 		flex: 1;
 		padding-bottom: 80px;
-		overflow: auto;
 
 		.swipe-container {
 			width: 100%;
 			height: 100%;
+			overflow: auto;
 		}
 	}
 
-	${heightStyles}
-	${themeStyles}
+	${themeStyles};
+	${overviewStyles};
 `
 
 const UserHomeScreen = ({ profile, locations }) => {
-	const history = useHistory()
 	const location = useLocation()
 
-	const height = location.pathname.indexOf('/appointments') > -1 ? DEFAULT_HEIGHT : SECONDARY_HEIGHT
-
-	const [activeInfo, setInfo] = React.useState({ time: undefined, employee: undefined })
-
-	const onSetTime = React.useCallback((time, employee) => setInfo({ time, employee }), [setInfo])
-
-	const isShowingOverview = height !== DEFAULT_HEIGHT
+	const isShowingOverview = location.pathname.indexOf('/appointments') === -1
+	const isShowingPast = location.pathname.indexOf('/past') !== -1
 
 	return (
-		<Container containerHeight={height}>
-			<Header title="NeverWait">
-				{!isShowingOverview ? (
+		<Container isShowingPast={isShowingPast} isShowingOverview={isShowingOverview}>
+			{!isShowingOverview && (
+				<Header title="NEVERWAIT">
 					<NavBar />
-				) : (
-					<div className="overview">
-						<Overview
-							info={activeInfo}
-							onBack={() => {
-								history.push(generatePath(USER_APPOINTMENTS, { type: history.location?.state?.type || 'upcoming' }), {
-									returningFromOverview: true
-								})
-							}}
-						/>
-					</div>
-				)}
-			</Header>
+				</Header>
+			)}
 
 			<TransitionGroup className="transition-group">
 				<CSSTransition key={location.pathname} timeout={{ enter: 300, exit: 200 }} classNames="fade">
@@ -193,7 +134,7 @@ const UserHomeScreen = ({ profile, locations }) => {
 								</Route>
 
 								<Route path={APPOINTMENT_OVERVIEW}>
-									<AppointmentOverview setTime={onSetTime} profile={profile} />
+									<AppointmentOverview profile={profile} />
 								</Route>
 
 								<Redirect to={generatePath(USER_APPOINTMENTS, { type: 'upcoming' })} />

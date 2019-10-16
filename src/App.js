@@ -15,6 +15,7 @@ import {
 	AUTH_LOGIN,
 	AUTH_FORGOT_PASSWORD,
 	USER_APPOINTMENTS,
+	APPOINTMENT_OVERVIEW,
 	USER_PREFERENCES,
 	LOCATION_SEARCH
 } from './routes'
@@ -33,8 +34,6 @@ const Container = styled('div')`
 	position: relative;
 	margin: 0 auto;
 	max-width: 1200px;
-	height: 100vh;
-	overflow-y: scroll;
 `
 
 const App = () => {
@@ -67,18 +66,22 @@ const App = () => {
 							<UserSettings profile={profile} />
 						</Route>
 
-						<Route path="/profile/appointments">
-							<HomeScreen locations={data.locations} profile={profile} />
+						<Route path={['/profile/appointments', APPOINTMENT_OVERVIEW]}>
+							<HomeScreen locations={profile.locations} profile={profile} />
 						</Route>
 
 						<Route path={LOCATION_SEARCH}>
-							<Explore locations={data.locations} profile={profile} />
+							<Explore locations={profile.locations} profile={profile} />
 						</Route>
 
 						<Redirect to={generatePath(USER_APPOINTMENTS, { type: 'upcoming' })} />
 					</Switch>
 				) : (
 					<Switch>
+						<Route path={LOCATION_WAITLIST}>
+							<LocationCheckin />
+						</Route>
+
 						<Route path={AUTH_REGISTER}>
 							<RegisterPage />
 						</Route>

@@ -1,47 +1,126 @@
 import React from 'react'
+import { FiChevronLeft } from 'react-icons/fi'
 import { Redirect, useParams, useHistory } from 'react-router-dom'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import format from 'date-fns/format'
 import Swipe from 'react-easy-swipe'
 import Button from '../../components/Button'
 import { MobileView } from 'react-device-detect'
 import { USER_DASHBOARD } from '../../routes'
 import isRecentAppointment from '../../utils/isRecentAppointment'
+import { darken } from 'polished'
+
+const slideIn = keyframes`
+	from {
+		transform: translateY(-50vh);
+	}
+	to {
+		transform: translateY(0vh);
+	}
+`
+
+const headerSlideDown = keyframes`
+	from {
+		transform: translateY(-120px);
+	}
+	to {
+		transform: translateY(0px);
+	}
+`
 
 const themeStyles = ({ theme }) => css`
 	background: ${theme.colors.headerBg};
 	box-shadow: 0px 4px 3px ${theme.colors.shadow};
 	font-size: ${theme.typography.text.medium.fontSize};
-	border-radius: ${theme.borderRadius.medium};
 
-	.times {
-		h1 {
-			font-size: 40px;
-			color: ${theme.colors.p500};
-		}
+	.header {
+		min-height: 100px;
+		background-image: linear-gradient(${theme.colors.brand}, ${darken(0.05, theme.colors.brand)});
+		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 20px));
+		animation: ${headerSlideDown} 0.4s ease forwards;
 	}
 
-	.block {
-		margin-top: 8px;
-		margin-bottom: 16px;
-		padding-bottom: 16px;
+	.location {
+		position: relative;
+		color: white;
+		padding: 10px;
+	}
 
-		&:not(:last-of-type) {
-			border-bottom: 1px solid ${theme.colors.n500};
+	.service-block {
+		border-bottom: 1px solid ${theme.colors.n500};
+	}
+
+	.times {
+		border-bottom: 1px solid ${theme.colors.n500};
+		display: flex;
+		justify-content: space-between;
+
+		p {
+			font-size: 10px;
+			text-transform: uppercase;
+			font-weight: 700;
+			opacity: 0.4;
+			line-height: 1;
+		}
+
+		h1 {
+			line-height: 1;
+			margin: 0;
+			margin-top: -5px;
+			font-size: 40px;
+			color: ${theme.colors.p500};
 		}
 	}
 `
 
 const Container = styled('div')`
-	padding: 10px;
-	margin: 0 10px;
-	width: calc(100% - 20px);
-	padding: 15px;
+	overflow: hidden;
+	height: 100%;
+	position: relative;
 
-	@media (min-width: 768px) {
-		width: 740px;
-		min-width: 350px;
-		margin: 10px auto;
+	.header {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		z-index: 999;
+
+		.back {
+			position: absolute;
+			top: 16px;
+			left: 10px;
+			font-size: 36px;
+			line-height: 1;
+			z-index: 999;
+			color: white;
+			cursor: pointer;
+		}
+
+		.location {
+			padding-left: 52px;
+			padding-top: 16px;
+		}
+	}
+
+	.price {
+		padding-top: 8px;
+	}
+
+	.location {
+		margin-bottom: 16px;
+		padding-bottom: 16px;
+
+		h3 {
+			line-height: 1.5;
+		}
+
+		.sub {
+			font-size: 10px;
+			text-transform: uppercase;
+			font-weight: 700;
+			opacity: 0.8;
+			line-height: 1.5;
+		}
 	}
 
 	.flex {
@@ -50,31 +129,53 @@ const Container = styled('div')`
 		align-items: center;
 	}
 
-	.block {
-		margin-top: 8px;
-		margin-bottom: 16px;
-		padding-bottom: 16px;
+	.call-btn {
+		padding: 10px 20px;
+	}
+
+	.date {
+		padding: 20px 20px 20px 20px;
+		text-transform: uppercase;
+		opacity: 0.7;
+		font-size: 12px;
+		font-weight: 700;
+	}
+
+	.call-btn {
+		margin-top: 20px;
+	}
+
+	.service-block {
+		padding: 20px;
+	}
+
+	.times {
+		padding: 0 20px 10px 20px;
 	}
 
 	.details {
-		margin-top: 8px;
+		padding-top: 100px;
+		transform: translateY(-100vh);
+		animation: ${slideIn} 0.5s 0.2s ease forwards;
+	}
 
-		ul {
-			list-style: none;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
+	@media (min-width: 768px) {
+		width: 740px;
+		margin: 0 auto;
 
-			li {
-				display: inline;
-			}
+		.header {
+			min-height: 120px !important;
+		}
+
+		.details {
+			padding-top: 140px;
 		}
 	}
 
 	${themeStyles}
 `
 
-const AppointmentOverview = ({ profile, setTime }) => {
+const AppointmentOverview = ({ profile }) => {
 	const history = useHistory()
 	const { id: appointmentId } = useParams()
 
@@ -93,53 +194,68 @@ const AppointmentOverview = ({ profile, setTime }) => {
 		return profile.appointments.upcoming.find(compare) || profile.appointments.past.find(compare)
 	}, [profile, appointmentId])
 
-	React.useEffect(() => {
-		if (appointment) {
-			setTime(appointment.startTime, appointment.employee.firstName)
-		}
-	}, [appointment, setTime])
-
 	if (!appointment) return <Redirect to={USER_DASHBOARD} />
 
-	const onSwipeRight = () => history.goBack()
+	const onSwipeRight = () => {
+		history.push(history.location.state?.from || '/')
+	}
 
 	return (
 		<Swipe className="swipe-container" onSwipeRight={onSwipeRight}>
 			<Container>
-				<div className="block location">
-					<h3>{appointment.location.name}</h3>
-					<h5>{appointment.location.address}</h5>
-					<h5>{appointment.location.contactNumber}</h5>
-				</div>
-				<div className="block">
-					<div className="flex">
-						{appointment.services.length > 1 ? (
-							<h4>Multiple Services</h4>
-						) : (
-							appointment.services.length === 1 && <h4>{appointment.services[0].name}</h4>
-						)}
-						<h5>with {appointment.employee.firstName}</h5>
+				<div className="header">
+					<div
+						className="back"
+						onClick={() => {
+							history.push(history.location.state?.from || '/')
+						}}
+					>
+						<FiChevronLeft />
 					</div>
 
-					<h3>${appointment.price}</h3>
-				</div>
-				<div className="block times">
-					<div style={{ marginBottom: 8 }}>
-						<p>Start Time</p>
-						<h1>{format(appointment.startTime, 'h:mma')}</h1>
-					</div>
-
-					<div>
-						<p>End Time</p>
-						<h1>{format(appointment.endTime, 'h:mma')}</h1>
+					<div className="location">
+						<h3>{appointment.location.name}</h3>
+						<p className="sub">{appointment.location.address}</p>
+						<p className="sub">{appointment.location.contactNumber}</p>
 					</div>
 				</div>
 
-				<MobileView>
-					<a href={`tel:${appointment.location.contactNumber}`}>
-						<Button style={{ width: '100%', fontSize: 12 }}>Call {appointment.location.name}</Button>
-					</a>
-				</MobileView>
+				<div className="details">
+					<div className="date">{format(appointment.startTime, 'dddd, MMM Do, YYYY')}</div>
+
+					<div className="times">
+						<div style={{ marginBottom: 16 }}>
+							<p>Start Time</p>
+							<h1>{format(appointment.startTime, 'h:mma')}</h1>
+						</div>
+
+						<div>
+							<p>End Time</p>
+							<h1>{format(appointment.endTime, 'h:mma')}</h1>
+						</div>
+					</div>
+
+					<div className="service-block">
+						{appointment.services.length > 0 &&
+							appointment.services.map((service, index) => (
+								<div className="flex" key={index}>
+									<p className="services">{service.name}</p>
+									<p className="employee">with {appointment.employee.firstName}</p>
+								</div>
+							))}
+
+						<p className="price">${appointment.price}</p>
+					</div>
+					<MobileView>
+						<div className="call-btn">
+							<a href={`tel:${appointment.location.contactNumber}`}>
+								<Button intent="secondary" style={{ width: '100%', fontSize: 14, textTransform: 'uppercase' }}>
+									Call {appointment.location.name}
+								</Button>
+							</a>
+						</div>
+					</MobileView>
+				</div>
 			</Container>
 		</Swipe>
 	)

@@ -9,21 +9,36 @@ const neutrals = {
 }
 
 const primary = {
-	p500: 'rgba(237, 209, 129, 1.0)'
+	p500: 'rgba(55, 66, 161, 1.0)'
 }
 
 const greens = {
-	g500: 'rgba(101, 211, 110, 1)'
+	g500: 'rgba(95, 192, 155, 1.0)'
+}
+
+export const elements = {
+	card: {
+		background: neutrals.n700
+	},
+	input: {
+		background: white,
+		text: neutrals.n100
+	},
+	button: {
+		text: white,
+		background: primary.p500
+	}
 }
 
 const misc = {
+	brandSecondary: 'rgba(236, 90, 87, 1.0)',
+	brand: primary.p500,
 	shadow: neutrals.n500,
-	bodyBg: 'rgba(246, 248, 250, 1.0)',
+	bodyBg: 'rgba(245, 247, 251, 1.0)',
 	bodyColor: neutrals.n100,
 	success: greens.g500,
 	headerBg: white,
 	headerColor: neutrals.n100,
-	primaryCardBg: neutrals.n700,
 	secondaryHeaderBg: neutrals.n700
 }
 
@@ -67,6 +82,5 @@ export const colors = {
 }
 
 export const fontStack = {
-	default: '-apple-system, Lato, sans-serif',
-	lafx: 'marguerite, Lato, sans-serif'
+	default: '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif'
 }

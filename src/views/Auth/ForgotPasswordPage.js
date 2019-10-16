@@ -140,7 +140,7 @@ const LoginPage = () => {
 
 	return (
 		<Container>
-			<h1 className="title">NeverWait</h1>
+			<h1 className="title">NEVERWAIT</h1>
 			{!state.pinFormVisible ? (
 				<div>
 					<h2 className="subtitle">Forgot Password</h2>

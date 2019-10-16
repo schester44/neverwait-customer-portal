@@ -1,7 +1,7 @@
 import React from 'react'
 import omit from 'lodash/omit'
 import ReactGA from 'react-ga'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { useHistory, useParams, Redirect } from 'react-router-dom'
 import { addMinutes, isAfter } from 'date-fns'
 import { useMutation } from '@apollo/react-hooks'
@@ -19,14 +19,25 @@ import pling from '../../components/Pling'
 const AuthView = React.lazy(() => import('../CustomerAuthView'))
 const Finished = React.lazy(() => import('./FinishedView'))
 
+const expandAnimation = keyframes`
+	from { 
+		transform: translateY(-50px);
+	} to {
+		transform: translateY(0px);
+	}
+`
+
 const Wrapper = styled('div')`
 	width: 100%;
-	height: 100%;
+	height: 100vh;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: space-between;
 	padding: 0px 10px;
+	padding-top: 160px;
+	transform: translateY(-50px);
+	animation: ${expandAnimation} .2s ease forwards;
 
 	.button {
 		width: 100%;

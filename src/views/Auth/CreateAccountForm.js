@@ -18,6 +18,12 @@ const CreateAccountForm = ({ values = {}, setFieldValue, loading = false, handle
 		return setFieldValue(name, name === 'phoneNumber' ? value.replace(/[^0-9]/g, '') : value)
 	}
 
+	const disabled =
+		values.phoneNumber.trim().length < 10 ||
+		values.password.trim().length < 4 ||
+		values.password.trim() !== values.confirmPassword.trim() ||
+		values.firstName.trim().length === 0
+
 	return (
 		<Container>
 			<div className="form-input">
@@ -47,16 +53,11 @@ const CreateAccountForm = ({ values = {}, setFieldValue, loading = false, handle
 			</div>
 
 			<Button
+				intent={disabled ? 'primary' : 'success'}
 				className="submit-btn"
 				onClick={handleSubmit}
 				style={{ width: '100%', marginTop: 24 }}
-				disabled={
-					loading ||
-					values.phoneNumber.trim().length < 10 ||
-					values.password.trim().length < 4 ||
-					values.password.trim() !== values.confirmPassword.trim() ||
-					values.firstName.trim().length === 0
-				}
+				disabled={disabled || loading}
 			>
 				Create Account
 			</Button>

@@ -36,6 +36,7 @@ const LocationCheckin = ({ profileId }) => {
 	}, [startTime, endTime, uuid])
 
 	// TODO: We really don't care about the Location's appointments until the Review page
+	// TODO: the only thing we care about is employee wait time and any employee/location changes (need to subscribe to ScheduleChange events)
 	const { data = {}, loading } = useQuery(locationDataQuery, queryOptions)
 	const client = useApolloClient()
 	const location = data.locationByUUID
@@ -115,34 +116,32 @@ const LocationCheckin = ({ profileId }) => {
 	}
 
 	return (
-		<div style={{ minHeight: '100vh' }}>
-			<Switch>
-				<Route
-					exact
-					path={match.path}
-					render={props => {
-						const employees = location.employees.filter(employee => {
-							if (employee.services.length === 0) return false
+		<Switch>
+			<Route
+				exact
+				path={match.path}
+				render={props => {
+					const employees = location.employees.filter(employee => {
+						if (employee.services.length === 0) return false
 
-							return true
-						})
-						return (
-							<Overview
-								isClosed={isClosed}
-								history={props.history}
-								profileId={profileId}
-								employees={employees}
-								location={location}
-							/>
-						)
-					}}
-				/>
-				<Route path={`${match.path}/sign-in/:employeeId`}>
-					<Form location={location} profileId={profileId} />
-				</Route>
-				/>
-			</Switch>
-		</div>
+						return true
+					})
+					return (
+						<Overview
+							isClosed={isClosed}
+							history={props.history}
+							profileId={profileId}
+							employees={employees}
+							location={location}
+						/>
+					)
+				}}
+			/>
+			<Route path={`${match.path}/sign-in/:employeeId`}>
+				<Form location={location} profileId={profileId} />
+			</Route>
+			/>
+		</Switch>
 	)
 }
 

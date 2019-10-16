@@ -8,14 +8,17 @@ import LoginForm from './LoginForm'
 import { loginProfileMutation } from '../../graphql/mutations'
 import { AUTH_REGISTER, AUTH_LOGIN } from '../../routes'
 import Button from '../../components/Button'
+import { lighten } from 'polished'
 
 const themeStyles = ({ theme }) => `
-	background: ${theme.colors.n700};
+
+	.title  {
+		color: ${theme.colors.brand};
+	}
 `
 
 const Container = styled('div')`
 	width: 100%;
-	min-height: 100vh;
 	padding: 10px;
 	max-width: 768px;
 	margin: 0 auto;
@@ -26,6 +29,7 @@ const Container = styled('div')`
 		text-align: center;
 		position: relative;
 		margin: 20px 5px;
+		color: ${({ theme }) => lighten(0.2, theme.colors.brand)};
 
 		& > div {
 			&:before {
@@ -35,17 +39,17 @@ const Container = styled('div')`
 				content: ' ';
 				width: calc(50% - 15px);
 				height: 1px;
-				background: rgba(249, 249, 249, 0.2);
+				background: ${({ theme }) => lighten(0.5, theme.colors.brand)};
 			}
 
 			&:after {
-				right: 0;
+				right: 5px;
 				top: 10px;
 				position: absolute;
 				content: ' ';
-				width: calc(50% - 15px);
+				width: calc(50% - 20px);
 				height: 1px;
-				background: rgba(249, 249, 249, 0.2);
+				background: ${({ theme }) => lighten(0.5, theme.colors.brand)};
 			}
 		}
 	}
@@ -56,12 +60,8 @@ const Container = styled('div')`
 
 	.title {
 		text-align: center;
-		padding: 24px;
-	}
-
-	.subtitle {
-		padding: 0 0 10px 10px;
-		font-weight: 400;
+		padding: 16px;
+		font-size: 18px;
 	}
 
 	${themeStyles};
@@ -102,9 +102,7 @@ const LoginPage = () => {
 
 	return (
 		<Container>
-			<h1 className="title">NeverWait</h1>
-
-			<h2 className="subtitle">Login</h2>
+			<h1 className="title">LOG IN</h1>
 
 			<LoginForm loading={loading} values={fields} setFieldValue={setFieldValue} handleSubmit={handleSubmit} />
 

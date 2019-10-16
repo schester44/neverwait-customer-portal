@@ -51,7 +51,12 @@ const Employee = ({ employee, location, onClick }) => {
 	return (
 		<>
 			{show && (
-				<Modal title="You're in luck!" onClose={() => set(false)}>
+				<Modal
+					title="You're in luck!"
+					onClose={() => {
+						set(false)
+					}}
+				>
 					<div
 						style={{
 							lineHeight: 1.5,
@@ -61,14 +66,14 @@ const Employee = ({ employee, location, onClick }) => {
 							flexDirection: 'column'
 						}}
 					>
-						<h2 style={{ color: 'rgba(237, 209, 129, 1.0)', margin: '0 auto', textAlign: 'center', maxWidth: '80%' }}>
+						<h1 style={{ margin: '0 auto', textAlign: 'center', maxWidth: '80%' }}>
 							The line isn't long so there's no need to check in with {employee.firstName}.
-						</h2>
+						</h1>
 
-						<h4 style={{ lineHeight: 1.5, margin: '50px auto', textAlign: 'center', maxWidth: '80%' }}>
+						<p style={{ opacity: 0.8, lineHeight: 1.5, margin: '50px auto', textAlign: 'center', maxWidth: '80%' }}>
 							Act fast since the wait time can change by the time you get to {location.name}. There's no guarantee that
 							there won't be a line by the time you get there.
-						</h4>
+						</p>
 					</div>
 				</Modal>
 			)}

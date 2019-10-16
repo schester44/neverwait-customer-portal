@@ -13,7 +13,9 @@ import { loginProfileMutation, registerProfileMutation } from '../../graphql/mut
 import { USER_DASHBOARD } from '../../routes'
 
 const themeStyles = ({ theme }) => `
-	background: ${theme.colors.n700};
+	.back {
+		color: ${theme.colors.brand};
+	}
 `
 
 const Container = styled('div')`
@@ -35,22 +37,16 @@ const Container = styled('div')`
 
 	.back {
 		position: absolute;
-		top: 10px;
+		top: 24px;
 		left: 10px;
-		font-size: 36px;
+		font-size: 28px;
 		line-height: 1;
 	}
 
 	.title {
 		text-align: center;
-		font-size: 20px;
-		padding: 4px;
-		margin-bottom: 24px;
-	}
-
-	.subtitle {
-		padding: 0 0 10px 10px;
-		font-weight: 400;
+		padding: 16px;
+		font-size: 18px;
 	}
 
 	${themeStyles};
@@ -124,7 +120,7 @@ const CreateAccount = () => {
 				</div>
 			</Link>
 
-			<h1 className="title">Register</h1>
+			<h1 className="title">SIGN UP</h1>
 
 			<CreateAccountForm
 				loading={loading || createLoading}

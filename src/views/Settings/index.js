@@ -11,6 +11,7 @@ import { FiEdit, FiLogOut, FiLock } from 'react-icons/fi'
 
 import { USER_SETTINGS_EDIT_ACCOUNT, USER_SETTINGS_CHANGE_PASSWORD, USER_PREFERENCES } from '../../routes'
 import PasswordForm from './PasswordForm'
+import { lighten } from 'polished'
 
 const EditAccount = React.lazy(() => import('./Account'))
 
@@ -34,7 +35,7 @@ const MenuItemContainer = styled('div')`
 	align-items: center;
 	font-size: 20px;
 	cursor: pointer;
-	border-bottom: 1px solid rgba(249, 249, 249, 0.1);
+	border-bottom: 1px solid ${({ theme }) => lighten(0.7, theme.colors.bodyColor)};
 
 	.text {
 		opacity: 0.7;
@@ -47,7 +48,6 @@ const MenuItemContainer = styled('div')`
 	}
 
 	.icon {
-		color: white;
 		opacity: 1 !important;
 		margin-right: 16px;
 		font-size: 24px;

@@ -34,6 +34,7 @@ const Container = styled('div')`
 	position: relative;
 	margin: 0 auto;
 	max-width: 1200px;
+	width: 100%;
 `
 
 const App = () => {

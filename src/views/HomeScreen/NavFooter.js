@@ -9,7 +9,7 @@ import { transparentize } from 'polished'
 
 const themeStyles = ({ theme }) => css`
 	background: ${theme.colors.headerBg};
-	box-shadow: 0 -2px 5px ${theme.colors.shadow};
+	box-shadow: 0 -2px 3px ${theme.colors.shadow};
 `
 
 const slideUp = keyframes`

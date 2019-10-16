@@ -57,7 +57,7 @@ const Container = styled('div')`
 	div.transition-group {
 		position: relative;
 		width: 100%;
-		height: 100vh;
+		height: calc(100vh - ${DEFAULT_HEIGHT}px);
 	}
 
 	.fade-enter {
@@ -95,7 +95,6 @@ const Container = styled('div')`
 		left: 0;
 		width: 100%;
 		height: 100%;
-		padding-top: 80px;
 		flex: 1;
 		padding-bottom: 80px;
 
@@ -144,15 +143,13 @@ const UserHomeScreen = ({ profile, locations }) => {
 				</CSSTransition>
 			</TransitionGroup>
 
-			{!isShowingOverview && (
-				<NavFooter
-					highlightCheckin={true}
-					animate={location?.state?.returningFromOverview}
-					disableCheckins={profile.appointments.upcoming.length >= 5}
-					locations={locations}
-					appointments={profile.appointments || { past: [], upcoming: [] }}
-				/>
-			)}
+			<NavFooter
+				highlightCheckin={true}
+				animate={location?.state?.returningFromOverview}
+				disableCheckins={profile.appointments.upcoming.length >= 5}
+				locations={locations}
+				appointments={profile.appointments || { past: [], upcoming: [] }}
+			/>
 		</Container>
 	)
 }

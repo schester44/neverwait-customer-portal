@@ -1,8 +1,8 @@
 {
   "name": "NeverWait",
   "short_name": "NeverWait",
-  "theme_color": "rgba(46, 50, 53)",
-  "background_color": "rgb(26, 30, 32)",
+  "theme_color": "rgb(56, 68, 155)",
+  "background_color": "rgb(245, 247, 251)",
   "display": "standalone",
   "orientation": "portrait",
   "start_url": "/",

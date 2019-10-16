@@ -49,9 +49,11 @@ const Container = styled('div')`
 const Modal = ({ children, title, onClose }) => {
 	return (
 		<Container>
-			<div className="close" onClick={onClose}>
-				<FiX />
-			</div>
+			{typeof onClose !== 'undefined' && (
+				<div className="close" onClick={onClose}>
+					<FiX />
+				</div>
+			)}
 			{title && <div className="title">{title}</div>}
 
 			<div className="contents">{children}</div>

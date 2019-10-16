@@ -76,12 +76,16 @@ const Container = styled('div')`
 	width: 100%;
 	padding: 5px 0;
 
+	.border-left {
+		border-left: 1px solid ${({ theme }) => theme.colors.bodyBg};
+	}
+
+	.border-right {
+		border-right: 1px solid ${({ theme }) => theme.colors.bodyBg};
+	}
+
 	a {
 		flex: 1;
-
-		&:not(:last-of-type) {
-			border-right: 1px solid rgba(200, 200, 200, 0.1);
-		}
 
 		&.active {
 			.action {
@@ -91,6 +95,11 @@ const Container = styled('div')`
 				}
 			}
 		}
+	}
+
+	.placeholder {
+		flex: 1;
+		height: 50px;
 	}
 
 	.action {
@@ -115,7 +124,7 @@ const Container = styled('div')`
 	${themeStyles};
 `
 
-const NavFooter = ({ animate = false, highlightCheckin = false }) => {
+const NavFooter = ({ animate = false, highlightCheckin = false, hideCheckin = false }) => {
 	return (
 		<Container className="app-nav-footer" animate={animate}>
 			<NavLink to="/profile/appointments">
@@ -125,23 +134,31 @@ const NavFooter = ({ animate = false, highlightCheckin = false }) => {
 				</div>
 			</NavLink>
 
-			<NavLink to={LOCATION_SEARCH}>
-				{highlightCheckin ? (
-					<Button highlight={true}>
-						<FiScissors />
-						<div className="text">
-							CHECK
-							<br />
-							IN
+			{!hideCheckin && (
+				<NavLink className="border-left border-right" to={LOCATION_SEARCH}>
+					{highlightCheckin ? (
+						<Button highlight={true}>
+							<FiScissors />
+							<div className="text">
+								CHECK
+								<br />
+								IN
+							</div>
+						</Button>
+					) : (
+						<div className="action">
+							<FiScissors />
+							<span className="text">Check-in</span>
 						</div>
-					</Button>
-				) : (
-					<div className="action">
-						<FiScissors />
-						<span className="text">Check-in</span>
-					</div>
-				)}
-			</NavLink>
+					)}
+				</NavLink>
+			)}
+
+			{hideCheckin && (
+				<div className="placeholder border-left border-right">
+					<div className="action"></div>
+				</div>
+			)}
 
 			<NavLink to={USER_PREFERENCES}>
 				<div className="action">

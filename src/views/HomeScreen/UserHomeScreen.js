@@ -143,13 +143,7 @@ const UserHomeScreen = ({ profile, locations }) => {
 				</CSSTransition>
 			</TransitionGroup>
 
-			<NavFooter
-				highlightCheckin={true}
-				animate={location?.state?.returningFromOverview}
-				disableCheckins={profile.appointments.upcoming.length >= 5}
-				locations={locations}
-				appointments={profile.appointments || { past: [], upcoming: [] }}
-			/>
+			<NavFooter highlightCheckin={true} animate={location?.state?.returningFromOverview} />
 		</Container>
 	)
 }

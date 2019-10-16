@@ -11,6 +11,7 @@ import startOfDay from 'date-fns/start_of_day'
 import endOfDay from 'date-fns/end_of_day'
 import isAfter from 'date-fns/is_after'
 import { dateFromMinutes } from './Employee/utils/isWorking'
+import NavFooter from '../HomeScreen/NavFooter'
 
 const Overview = React.lazy(() => import('./Overview/LocationOverview'))
 const Form = React.lazy(() => import('./FormContainer'))
@@ -116,32 +117,35 @@ const LocationCheckin = ({ profileId }) => {
 	}
 
 	return (
-		<Switch>
-			<Route
-				exact
-				path={match.path}
-				render={props => {
-					const employees = location.employees.filter(employee => {
-						if (employee.services.length === 0) return false
+		<>
+			<Switch>
+				<Route
+					exact
+					path={match.path}
+					render={props => {
+						const employees = location.employees.filter(employee => {
+							if (employee.services.length === 0) return false
 
-						return true
-					})
-					return (
-						<Overview
-							isClosed={isClosed}
-							history={props.history}
-							profileId={profileId}
-							employees={employees}
-							location={location}
-						/>
-					)
-				}}
-			/>
-			<Route path={`${match.path}/sign-in/:employeeId`}>
-				<Form location={location} profileId={profileId} />
-			</Route>
-			/>
-		</Switch>
+							return true
+						})
+						return (
+							<Overview
+								isClosed={isClosed}
+								history={props.history}
+								profileId={profileId}
+								employees={employees}
+								location={location}
+							/>
+						)
+					}}
+				/>
+				<Route path={`${match.path}/sign-in/:employeeId`}>
+					<Form location={location} profileId={profileId} />
+				</Route>
+				/>
+			</Switch>
+			<NavFooter hideCheckin={true} animate={false} />
+		</>
 	)
 }
 

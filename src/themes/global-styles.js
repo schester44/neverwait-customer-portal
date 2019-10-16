@@ -49,6 +49,12 @@ export const createStyles = ({ theme, custom = '' }) => {
             -moz-osx-font-smoothing: grayscale;
         }
 
+        body {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         h1,h2,h3,h4,h5,h6 {
             font-family: jaf-domus;
         }

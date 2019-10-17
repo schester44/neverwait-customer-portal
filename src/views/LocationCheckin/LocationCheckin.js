@@ -144,7 +144,7 @@ const LocationCheckin = ({ profileId }) => {
 				</Route>
 				/>
 			</Switch>
-			<NavFooter hideCheckin={true} animate={false} />
+			{/* <NavFooter hideCheckin={true} animate={false} /> */}
 		</>
 	)
 }

@@ -7,7 +7,7 @@ const ServiceSelector = ({ price, selectedServiceIds = [], selectedServices = {}
 	const totalSelected = selectedServiceIds.length
 
 	return (
-		<div style={{ width: '100%', paddingBottom: 100 }}>
+		<div style={{ width: '100%', paddingBottom: 100, overflow: 'auto' }}>
 			{services.map(service => {
 				return (
 					<Service

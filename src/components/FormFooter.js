@@ -13,7 +13,7 @@ const FormFooter = styled('div')`
 
 	padding: 15px 25px 25px 25px;
 	margin: 0 auto;
-	z-index: 99;
+	z-index: 999;
 
 	background: ${({ theme }) => theme.colors.headerBg};
 	color: ${({ theme }) => theme.colors.headerColor};

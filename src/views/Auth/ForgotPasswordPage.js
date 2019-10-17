@@ -1,10 +1,8 @@
 import React from 'react'
-import ReactGA from 'react-ga'
 import { useHistory } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 import styled from 'styled-components'
 
-import { AUTH_FORGOT_PASSWORD } from '../../routes'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 
@@ -18,7 +16,7 @@ const Container = styled('div')`
 	width: 100%;
 	min-height: 100vh;
 	padding: 10px 20px;
-	max-width: 768px;
+	max-width: 1200px;
 	margin: 0 auto;
 
 	.form-input {
@@ -93,10 +91,6 @@ const LoginPage = () => {
 		code: '',
 		password: ''
 	})
-
-	React.useEffect(() => {
-		ReactGA.pageview(AUTH_FORGOT_PASSWORD)
-	}, [])
 
 	const handleChange = ({ target: { name, value } }) => setState(prev => ({ ...prev, [name]: value }))
 

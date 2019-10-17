@@ -14,7 +14,7 @@ import ReactGA from 'react-ga'
 
 import * as Sentry from '@sentry/browser'
 
-ReactGA.initialize(process.env.REACT_APP_GATRACKINGID, { debug: true })
+ReactGA.initialize(process.env.REACT_APP_GATRACKINGID, { debug: process.env.NODE_ENV !== 'production' })
 
 if (process.env.NODE_ENV === 'production') {
 	Sentry.init({

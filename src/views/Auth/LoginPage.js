@@ -1,12 +1,11 @@
 import React from 'react'
-import ReactGA from 'react-ga'
 import { Link } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 import styled from 'styled-components'
 import LoginForm from './LoginForm'
 
 import { loginProfileMutation } from '../../graphql/mutations'
-import { AUTH_REGISTER, AUTH_LOGIN } from '../../routes'
+import { AUTH_REGISTER } from '../../routes'
 import Button from '../../components/Button'
 import { lighten } from 'polished'
 
@@ -20,7 +19,7 @@ const themeStyles = ({ theme }) => `
 const Container = styled('div')`
 	width: 100%;
 	padding: 10px;
-	max-width: 768px;
+	max-width: 1200px;
 	margin: 0 auto;
 	padding-bottom: 40px;
 
@@ -68,9 +67,6 @@ const Container = styled('div')`
 `
 
 const LoginPage = () => {
-	React.useEffect(() => {
-		ReactGA.pageview(AUTH_LOGIN)
-	}, [])
 
 	const [login, { loading }] = useMutation(loginProfileMutation)
 

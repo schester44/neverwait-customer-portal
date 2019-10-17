@@ -16,7 +16,9 @@ const Container = styled('div')`
 	padding-top: 10px;
 	text-align: center;
 	background: ${({ theme }) => theme.colors.bodyBg};
-
+	max-width: 700px;
+	margin: 0 auto;
+	
 	.menu {
 		position: absolute;
 		top: 5px;

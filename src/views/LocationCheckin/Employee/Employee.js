@@ -5,7 +5,6 @@ import { FiChevronRight } from 'react-icons/fi'
 import Container from './Container'
 import { useWaitTime } from '../../../graphql/hooks'
 
-import Modal from '../../Auth/Modal'
 import addMinutes from 'date-fns/add_minutes'
 import format from 'date-fns/format'
 import Button from '../../../components/Button'

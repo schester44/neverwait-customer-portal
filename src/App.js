@@ -1,6 +1,6 @@
 import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
-import { Redirect, Switch, Route, generatePath } from 'react-router-dom'
+import { Redirect, Switch, Route, generatePath, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import ReactGA from 'react-ga'
 
@@ -35,9 +35,17 @@ const Container = styled('div')`
 	margin: 0 auto;
 	max-width: 1200px;
 	width: 100%;
+	height: 100%;
+	overflow-x: hidden;
 `
 
 const App = () => {
+	const location = useLocation()
+
+	React.useEffect(() => {
+		ReactGA.pageview(location.pathname)
+	}, [location.pathname])
+
 	const { data, loading } = useQuery(profileQuery, {
 		skip: !getCookie('cusid-access') && !getCookie('cusid-refresh')
 	})

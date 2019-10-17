@@ -12,9 +12,11 @@ import { darken } from 'polished'
 
 const slideIn = keyframes`
 	from {
+		opacity: 0;
 		transform: translateY(-50vh);
 	}
 	to {
+		opacity: 1;
 		transform: translateY(0vh);
 	}
 `
@@ -77,6 +79,7 @@ const Container = styled('div')`
 	overflow: hidden;
 	height: 100%;
 	position: relative;
+	max-width: 1200px;
 
 	.header {
 		position: absolute;
@@ -156,11 +159,10 @@ const Container = styled('div')`
 	.details {
 		padding-top: 100px;
 		transform: translateY(-100vh);
-		animation: ${slideIn} 0.5s 0.2s ease forwards;
+		animation: ${slideIn} 0.7s ease forwards;
 	}
 
 	@media (min-width: 768px) {
-		width: 740px;
 		margin: 0 auto;
 
 		.header {

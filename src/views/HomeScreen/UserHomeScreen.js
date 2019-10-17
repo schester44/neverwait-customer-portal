@@ -57,7 +57,7 @@ const Container = styled('div')`
 	div.transition-group {
 		position: relative;
 		width: 100%;
-		height: calc(100vh - ${DEFAULT_HEIGHT}px);
+		height: calc(100vh - 95px);
 	}
 
 	.fade-enter {
@@ -96,7 +96,7 @@ const Container = styled('div')`
 		width: 100%;
 		height: 100%;
 		flex: 1;
-		padding-bottom: 80px;
+		padding-bottom: 73px;
 
 		.swipe-container {
 			width: 100%;

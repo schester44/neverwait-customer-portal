@@ -8,8 +8,10 @@ import { LOCATION_SEARCH, USER_PREFERENCES } from '../../routes'
 import { transparentize } from 'polished'
 
 const themeStyles = ({ theme }) => css`
-	background: ${theme.colors.headerBg};
-	box-shadow: 0 -2px 3px ${theme.colors.shadow};
+	.contents {
+		border-top: 1px solid ${theme.colors.shadow};
+		background: ${theme.colors.headerBg};
+	}
 `
 
 const slideUp = keyframes`
@@ -68,13 +70,20 @@ const Button = styled('button')`
 
 const Container = styled('div')`
 	position: fixed;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+
 	bottom: 0;
 	left: 0;
 	width: 100%;
 	padding: 5px 0;
+
+	.contents {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		max-width: 1200px;
+		margin: 0 auto;
+	}
 
 	.border-left {
 		border-left: 1px solid ${({ theme }) => theme.colors.bodyBg};
@@ -127,45 +136,47 @@ const Container = styled('div')`
 const NavFooter = ({ animate = false, highlightCheckin = false, hideCheckin = false }) => {
 	return (
 		<Container className="app-nav-footer" animate={animate}>
-			<NavLink to="/profile/appointments">
-				<div className="action">
-					<FiUser />
-					<span className="text">Appointments</span>
-				</div>
-			</NavLink>
-
-			{!hideCheckin && (
-				<NavLink className="border-left border-right" to={LOCATION_SEARCH}>
-					{highlightCheckin ? (
-						<Button highlight={true}>
-							<FiScissors />
-							<div className="text">
-								CHECK
-								<br />
-								IN
-							</div>
-						</Button>
-					) : (
-						<div className="action">
-							<FiScissors />
-							<span className="text">Check-in</span>
-						</div>
-					)}
+			<div className="contents">
+				<NavLink to="/profile/appointments">
+					<div className="action">
+						<FiUser />
+						<span className="text">Appointments</span>
+					</div>
 				</NavLink>
-			)}
 
-			{hideCheckin && (
-				<div className="placeholder border-left border-right">
-					<div className="action"></div>
-				</div>
-			)}
+				{!hideCheckin && (
+					<NavLink className="border-left border-right" to={LOCATION_SEARCH}>
+						{highlightCheckin ? (
+							<Button highlight={true}>
+								<FiScissors />
+								<div className="text">
+									CHECK
+									<br />
+									IN
+								</div>
+							</Button>
+						) : (
+							<div className="action">
+								<FiScissors />
+								<span className="text">Check-in</span>
+							</div>
+						)}
+					</NavLink>
+				)}
 
-			<NavLink to={USER_PREFERENCES}>
-				<div className="action">
-					<FiSettings />
-					<span className="text">Settings</span>
-				</div>
-			</NavLink>
+				{hideCheckin && (
+					<div className="placeholder border-left border-right">
+						<div className="action"></div>
+					</div>
+				)}
+
+				<NavLink to={USER_PREFERENCES}>
+					<div className="action">
+						<FiSettings />
+						<span className="text">Settings</span>
+					</div>
+				</NavLink>
+			</div>
 		</Container>
 	)
 }

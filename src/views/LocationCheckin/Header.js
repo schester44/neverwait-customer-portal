@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
-import { FiChevronLeft, FiCheck } from 'react-icons/fi'
+import { FiArrowLeft, FiCheck } from 'react-icons/fi'
 import { darken } from 'polished'
 
 const Container = styled('div')`
@@ -55,7 +55,7 @@ const Header = ({ step, loggedIn, title, showBack = true, onBack }) => {
 		<Container>
 			{showBack && (
 				<div className="back" onClick={onBack}>
-					<FiChevronLeft />
+					<FiArrowLeft />
 				</div>
 			)}
 

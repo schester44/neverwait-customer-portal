@@ -4,7 +4,7 @@ import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useMutation } from '@apollo/react-hooks'
 import omit from 'lodash/omit'
-import { FiChevronLeft } from 'react-icons/fi'
+import { FiArrowLeft } from 'react-icons/fi'
 
 import CreateAccountForm from './CreateAccountForm'
 
@@ -116,7 +116,7 @@ const CreateAccount = () => {
 		<Container>
 			<Link to="/">
 				<div className="back">
-					<FiChevronLeft />
+					<FiArrowLeft />
 				</div>
 			</Link>
 

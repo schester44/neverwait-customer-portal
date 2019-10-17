@@ -39,6 +39,55 @@ export const waitTimeInMinutes = (appointments = [], blockedTimes = []) => {
 	return 0
 }
 
+export const useEnhancedEmployees = ({ employees = [] }) => {
+	const [state, setState] = React.useState({
+		loading: true,
+		hasWorkingEmployees: false,
+		employees: []
+	})
+
+	React.useEffect(() => {
+		console.log('hook running')
+
+		const update = () => {
+			setState(() => {
+				let hasWorkingEmployees = false
+
+				const enhancedEmployees = employees.map(employee => {
+					const waitTime = waitTimeInMinutes(employee.appointments, employee.blockedTimes)
+					const status = isWorking(employee, addMinutes(new Date(), waitTime || 0))
+
+					if (status.working) {
+						hasWorkingEmployees = true
+					}
+
+					return {
+						...employee,
+						waitTime,
+						status
+					}
+				})
+
+				return {
+					hasWorkingEmployees,
+					loading: false,
+					employees: enhancedEmployees
+				}
+			})
+		}
+
+		const timer = window.setInterval(update, 60000)
+
+		update()
+
+		return () => {
+			window.clearInterval(timer)
+		}
+	}, [employees])
+
+	return state
+}
+
 export const useWaitTime = employee => {
 	const [state, setState] = React.useState({
 		waitTime: undefined,

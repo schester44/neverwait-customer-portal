@@ -12,12 +12,15 @@ const ClosingSoon = ({ today }) => {
 	return (
 		<div
 			style={{
-				margin: '0px 20px',
-				background: 'tomato',
-				padding: 10,
-				color: '#000',
+				textTransform: 'uppercase',
+				margin: '0px 10px',
+				background: 'rgba(236, 90, 87, 1.0)',
+				padding: 5,
 				borderRadius: 4,
-				fontSize: 12
+				fontSize: 12,
+				textAlign: 'center',
+				color: '#fff',
+				fontWeight: 700
 			}}
 		>
 			This location is closing soon ({format(closingTime, 'h:mma')})

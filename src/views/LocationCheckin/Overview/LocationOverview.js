@@ -1,13 +1,15 @@
 import React from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { darken } from 'polished'
+import { FiArrowLeft, FiCalendar, FiUser } from 'react-icons/fi'
+import format from 'date-fns/format'
 
+import NoWaitModal from './NoWaitModal'
 import EmployeeList from '../EmployeeList'
-import { FiChevronLeft, FiCalendar, FiUser } from 'react-icons/fi'
 import WorkingHour from './WorkingHour'
 import ClosingSoon from './ClosingSoon'
 
-import format from 'date-fns/format'
+import { useEnhancedEmployees } from '../../../graphql/hooks'
 
 const headerSlideDown = keyframes`
 	from {
@@ -20,11 +22,11 @@ const headerSlideDown = keyframes`
 
 const Header = styled('div')`
 	min-height: 100px;
-	position: absolute;
+	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
-	z-index: 999;
+	z-index: 99;
 	animation: ${headerSlideDown} 0.4s ease forwards;
 
 	.back {
@@ -80,12 +82,32 @@ const Contents = styled('div')`
 	opacity: 0;
 	transform: translateY(-100vw);
 	animation: ${slideIn} 0.5s ease forwards;
+	padding-top: 20px;
+	padding-bottom: 80px;
+`
+
+const Alert = styled('div')`
+	padding: 8px;
+	color: white;
+	background: rgba(32, 32, 32, 1);
+	font-size: 10px;
+	border-radius: 4px;
+	font-weight: 700;
+	text-align: center;
+	margin: 0 10px;
+	margin: 10px;
 `
 
 const Card = styled('div')`
-	margin: 24px 10px 0 10px;
-	padding: 10px;
+	margin: 10px;
 	border-radius: 8px;
+
+	.inverted {
+		background: white;
+		box-shadow: 0px 1px 3px rgba(32, 32, 32, 0.05);
+		border-radius: 10px;
+		padding: 10px;
+	}
 
 	.title {
 		font-size: 12px;
@@ -96,22 +118,18 @@ const Card = styled('div')`
 	}
 `
 
-const Placeholder = styled('div')`
-	max-width: 80%;
-	margin: 0 auto;
-	text-align: center;
-
-	.title {
-		color: rgba(237, 209, 129, 1);
-	}
-`
-
-const LocationOverview = ({ history, employees, location }) => {
-	const hasEmployees = employees.length > 0
+const LocationOverview = ({ history, employees: defaultEmployees, location }) => {
 	const todaysName = format(new Date(), 'dddd').toLowerCase()
+	const { employees, loading, hasWorkingEmployees } = useEnhancedEmployees({ employees: defaultEmployees })
+
+	const [state, setState] = React.useState({ isNoWaitModalVisible: false })
 
 	return (
 		<div style={{ width: '100%', height: '100%', paddingTop: 90 }}>
+			{state.isNoWaitModalVisible && (
+				<NoWaitModal location={location} onClose={() => setState(prev => ({ ...prev, isNoWaitModalVisible: false }))} />
+			)}
+
 			<Header>
 				<div
 					className="back"
@@ -119,35 +137,36 @@ const LocationOverview = ({ history, employees, location }) => {
 						history.push(history.location.state?.from || '/')
 					}}
 				>
-					<FiChevronLeft />
+					<FiArrowLeft />
 				</div>
 
-				{hasEmployees && (
-					<div className="location">
-						<h3>{location.name}</h3>
-						<p className="sub">{location.address}</p>
-						<p className="sub">{location.contactNumber}</p>
-					</div>
-				)}
+				<div className="location">
+					<h3>{location.name}</h3>
+					<p className="sub">{location.address}</p>
+					<p className="sub">{location.contactNumber}</p>
+				</div>
 			</Header>
 
 			<Contents>
 				<ClosingSoon today={location.working_hours[todaysName]} />
 
-				<Card>
-					<p className="title">
-						<FiUser style={{ marginRight: 4 }} />
-						AVAILABLE STAFF
-					</p>
-
-					{hasEmployees && <EmployeeList location={location} employees={employees} />}
-				</Card>
-
-				{!hasEmployees && (
-					<Placeholder>
-						<div className="title">{location.name}</div>
-						No available staff at this location.
-					</Placeholder>
+				{hasWorkingEmployees ? (
+					<Card>
+						<p className="title">
+							<FiUser style={{ marginRight: 4 }} />
+							AVAILABLE STAFF
+						</p>
+						{loading ? (
+							<p>Loading...</p>
+						) : (
+							<EmployeeList
+								setNoWaitModal={isNoWaitModalVisible => setState(prev => ({ ...prev, isNoWaitModalVisible }))}
+								employees={employees}
+							/>
+						)}
+					</Card>
+				) : (
+					<Alert>There are no available staff members at this time. Please check back later.</Alert>
 				)}
 
 				<Card>
@@ -156,7 +175,7 @@ const LocationOverview = ({ history, employees, location }) => {
 						LOCATION HOURS
 					</p>
 
-					<div style={{ background: 'white', borderRadius: 10, padding: 10 }}>
+					<div className="inverted">
 						{Object.keys(location.working_hours).map(day => {
 							if (day === '__typename') return null
 

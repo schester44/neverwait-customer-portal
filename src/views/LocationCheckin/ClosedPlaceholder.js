@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { FiClock, FiChevronLeft } from 'react-icons/fi'
+import { FiClock, FiArrowLeft } from 'react-icons/fi'
 import { useHistory } from 'react-router-dom'
 
 const Container = styled('div')`
@@ -10,14 +10,18 @@ const Container = styled('div')`
 	flex-direction: column;
 	overflow: hidden;
 
+	.address {
+		font-size: 12px;
+		text-transform: uppercase;
+		font-weight: 700;
+		opacity: 0.7;
+		line-height: 1.5;
+	}
+
 	.header {
 		width: 100%;
 		padding: 24px 20px;
 		margin-bottom: 24px;
-
-		&-title {
-			color: rgba(237, 209, 129, 1);
-		}
 
 		.back {
 			position: relative;
@@ -62,12 +66,12 @@ const ClosedPlaceholder = ({ location, reason }) => {
 						history.push(history.location.state?.from || '/')
 					}}
 				>
-					<FiChevronLeft />
+					<FiArrowLeft />
 				</div>
 
 				<div>
 					<h1 className="header-title">{location.name}</h1>
-					<h3>{location.address}</h3>
+					<p className="address">{location.address}</p>
 				</div>
 			</div>
 

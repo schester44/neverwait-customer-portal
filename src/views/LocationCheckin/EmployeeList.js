@@ -2,7 +2,7 @@ import React from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Employee from './Employee/Employee'
 
-const EmployeeList = ({ employees, location }) => {
+const EmployeeList = ({ employees,  setNoWaitModal }) => {
 	const history = useHistory()
 	const match = useRouteMatch()
 
@@ -10,7 +10,7 @@ const EmployeeList = ({ employees, location }) => {
 		<div>
 			{employees.map(employee => (
 				<Employee
-					location={location}
+					setNoWaitModal={setNoWaitModal}
 					employee={employee}
 					key={employee.id}
 					onClick={status => {

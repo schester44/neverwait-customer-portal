@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
-import { FiChevronLeft } from 'react-icons/fi'
+import { FiArrowLeft } from 'react-icons/fi'
 
 import { changePasswordMutation } from '../../graphql/mutations'
 
@@ -62,7 +62,7 @@ const PasswordForm = () => {
 		<Container>
 			<Header title="Change Password">
 				<div className="back" onClick={onBack}>
-					<FiChevronLeft />
+					<FiArrowLeft />
 				</div>
 			</Header>
 

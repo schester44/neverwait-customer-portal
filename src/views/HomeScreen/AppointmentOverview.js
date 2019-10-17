@@ -1,5 +1,5 @@
 import React from 'react'
-import { FiChevronLeft } from 'react-icons/fi'
+import { FiArrowLeft } from 'react-icons/fi'
 import { Redirect, useParams, useHistory } from 'react-router-dom'
 import styled, { css, keyframes } from 'styled-components'
 import format from 'date-fns/format'
@@ -212,7 +212,7 @@ const AppointmentOverview = ({ profile }) => {
 							history.push(history.location.state?.from || '/')
 						}}
 					>
-						<FiChevronLeft />
+						<FiArrowLeft />
 					</div>
 
 					<div className="location">

@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import isToday from 'date-fns/is_today'
 import format from 'date-fns/format'
-import { FiChevronLeft } from 'react-icons/fi'
+import { FiArrowLeft } from 'react-icons/fi'
 import { isAfter } from 'date-fns'
 
 const Container = styled('div')`
@@ -43,7 +43,7 @@ const Overview = ({ info, onBack }) => {
 	return (
 		<Container>
 			<div className="back" onClick={onBack}>
-				<FiChevronLeft />
+				<FiArrowLeft />
 			</div>
 
 			{info.time && (

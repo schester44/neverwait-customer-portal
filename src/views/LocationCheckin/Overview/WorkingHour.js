@@ -1,6 +1,7 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
 import { startOfDay, addMinutes, format } from 'date-fns'
+import { FiCalendar } from 'react-icons/fi'
 
 const todayStyles = ({ isToday, theme }) =>
 	isToday &&
@@ -13,6 +14,7 @@ const Container = styled('div')`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	font-size: 14px;
 
 	.times {
 		display: flex;
@@ -23,6 +25,8 @@ const Container = styled('div')`
 	}
 
 	.day {
+		display: flex;
+		align-items: center;
 		text-transform: capitalize;
 	}
 
@@ -32,7 +36,10 @@ const Container = styled('div')`
 const WorkingHour = ({ isToday, day, details }) => {
 	return (
 		<Container isToday={isToday}>
-			<div className="day">{day}</div>
+			<div className="day">
+				{isToday && <FiCalendar style={{ marginRight: 4 }} />}
+				{day}
+			</div>
 
 			{details.open ? (
 				<div className="times">

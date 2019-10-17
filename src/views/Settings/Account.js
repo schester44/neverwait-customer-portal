@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
-import { FiChevronLeft } from 'react-icons/fi'
+import { FiArrowLeft } from 'react-icons/fi'
 
 import { updateProfileMutation } from '../../graphql/mutations'
 
@@ -65,7 +65,7 @@ const Account = ({ profile }) => {
 		<Container>
 			<Header title="Edit Account">
 				<div className="back" onClick={onBack}>
-					<FiChevronLeft />
+					<FiArrowLeft />
 				</div>
 			</Header>
 

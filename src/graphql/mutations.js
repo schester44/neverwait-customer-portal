@@ -45,6 +45,38 @@ export const customerLogout = gql`
 	}
 `
 
+export const createProfileAppointmentMutation = gql`
+	mutation createProfileAppointment($input: CreateProfileAppointmentInput!) {
+		createProfileAppointment(input: $input) {
+			id
+			startTime
+			endTime
+			duration
+			price
+			location {
+				id
+				name
+				address
+				uuid
+				contactNumber
+			}
+			services {
+				name
+				sources {
+					id
+					serviceId
+					price
+					duration
+				}
+			}
+			employee {
+				firstName
+				lastName
+			}
+		}
+	}
+`
+
 export const sequentialUpsertMutation = gql`
 	mutation upsert($input: OnlineCheckinInput!) {
 		checkinOnline(input: $input) {

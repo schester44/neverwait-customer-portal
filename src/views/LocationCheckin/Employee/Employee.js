@@ -10,8 +10,12 @@ import format from 'date-fns/format'
 const WaitTime = ({ status, currentWait }) => {
 	if (!status.working) return 'Not working right now'
 
-	if (!status.canSchedule) return status.reason || 'Unavailable'
+	if (!status.canSchedule) {
+		if (status.reasonFatal) return <span style={{ color: 'tomato' }}>{status.reason}</span>
 
+		return status.reason || 'Unavailable'
+	}
+	
 	if (currentWait < 10) return <span>Currently no wait</span>
 
 	return (
@@ -24,20 +28,21 @@ const WaitTime = ({ status, currentWait }) => {
 
 const Employee = ({ employee, setNoWaitModal, onClick }) => {
 	const handleClick = e => {
-		if (!employee.status.working || !employee.status.canSchedule) return
 
-		if (employee.waitTime >= 15) {
-			ReactGA.event({
-				category: 'Check-in Form',
-				action: 'Selected',
-				label: 'Employee',
-				value: Number(employee.id)
-			})
+		// if (!employee.status.working || !employee.status.canSchedule) return
+
+		// if (employee.waitTime >= 15) {
+		// 	ReactGA.event({
+		// 		category: 'Check-in Form',
+		// 		action: 'Selected',
+		// 		label: 'Employee',
+		// 		value: Number(employee.id)
+		// 	})
 
 			onClick(e)
-		} else {
-			setNoWaitModal(true)
-		}
+		// } else {
+		// 	setNoWaitModal(true)
+		// }
 	}
 
 	if (!employee.status.working) return null

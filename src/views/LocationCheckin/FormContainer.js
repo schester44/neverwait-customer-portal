@@ -15,7 +15,8 @@ import Header from './Header'
 import { profileQuery } from '../../graphql/queries'
 import { dateFromTimeString } from './Employee/utils/isWorking'
 import pling from '../../components/Pling'
-
+import SourceTypeSelection from './SourceTypeSelection'
+import AppointmentForm from './AppointmentForm'
 const AuthView = React.lazy(() => import('../CustomerAuthView'))
 const Finished = React.lazy(() => import('./FinishedView'))
 
@@ -37,7 +38,7 @@ const Wrapper = styled('div')`
 	padding: 0px 10px;
 	padding-top: 160px;
 	transform: translateY(-50px);
-	animation: ${expandAnimation} .2s ease forwards;
+	animation: ${expandAnimation} 0.2s ease forwards;
 
 	.button {
 		width: 100%;
@@ -46,6 +47,11 @@ const Wrapper = styled('div')`
 
 const getAppointmentDuration = (appointment, services) => {
 	return appointment.services.reduce((acc, id) => acc + services[id].sources?.[0]?.duration, 0)
+}
+
+const sourceTypes = {
+	appointment: 1,
+	checkin: 2
 }
 
 const RootContainer = ({ profileId, location }) => {
@@ -77,6 +83,7 @@ const RootContainer = ({ profileId, location }) => {
 
 	const [state, setState] = React.useState({
 		selectedServices: {},
+		sourceType: undefined,
 		price: 0,
 		services: employee.services.reduce((acc, service) => {
 			acc[service.id] = service
@@ -195,25 +202,47 @@ const RootContainer = ({ profileId, location }) => {
 		localStorage.setItem('last-appt', JSON.stringify(data.checkinOnline))
 	}
 
+	const handleAppointmentCreated = appointment => {
+		setStep(3)
+		setCreatedAppointment(appointment)
+
+		ReactGA.event({
+			category: 'OnlineAppointment',
+			action: 'Created',
+			value: Number(appointment.id)
+		})
+
+		localStorage.setItem('last-appt', JSON.stringify(appointment))
+	}
+
 	if (!employee) return <Redirect to="/" />
 
 	return (
 		<Wrapper>
-			<Header
-				onBack={() => {
-					if (step === 1) {
-						return history.goBack()
-					}
+			{(step !== 2 || state.sourceType) && (
+				<Header
+					isAppointment={state.sourceType === sourceTypes.appointment}
+					stepModifier={state.sourceType === sourceTypes.checkin ? 1 : 0}
+					onBack={() => {
+						if (step === 1) {
+							return history.goBack()
+						}
 
-					if (step === 3) {
-						return history.push('/')
-					}
+						if (step === 3) {
+							return history.push('/')
+						}
 
-					setStep(step - 1)
-				}}
-				loggedIn={!!customer.id}
-				step={step}
-			/>
+						if (step === 2) {
+							setState(prev => ({ ...prev, sourceType: undefined }))
+						}
+
+						setStep(step - 1)
+					}}
+					loggedIn={!!customer.id}
+					step={step}
+				/>
+			)}
+
 			{step === 1 && (
 				<ServiceSelector
 					services={employee.services}
@@ -222,10 +251,12 @@ const RootContainer = ({ profileId, location }) => {
 							// check service durations against employee end time
 							const shiftEndTime = dateFromTimeString(history.location.state?.status?.currentShift.end_time, new Date())
 
-							if (isAfter(estimates.endTime, shiftEndTime)) {
-								pling({ message: `Selected service duration exceeds ${employee.firstName}'s work hours.` })
-								return false
-							}
+							console.log(shiftEndTime)
+
+							// if (isAfter(estimates.endTime, shiftEndTime)) {
+							// 	pling({ message: `Selected service duration exceeds ${employee.firstName}'s work hours.` })
+							// 	return false
+							// }
 						}
 						setStep(2)
 					}}
@@ -239,7 +270,14 @@ const RootContainer = ({ profileId, location }) => {
 			)}
 
 			<React.Suspense fallback={null}>
-				{step === 2 && !createdAppt && customer.id && (
+				{step === 2 && !createdAppt && customer.id && !state.sourceType && (
+					<SourceTypeSelection
+						onSelectCheckin={() => setState(prev => ({ ...prev, sourceType: sourceTypes.checkin }))}
+						onSelectAppointment={() => setState(prev => ({ ...prev, sourceType: sourceTypes.appointment }))}
+					/>
+				)}
+
+				{step === 2 && !createdAppt && customer.id && state.sourceType == sourceTypes.checkin && (
 					<Review
 						submitting={submitting}
 						loading={loading}
@@ -251,7 +289,18 @@ const RootContainer = ({ profileId, location }) => {
 						handleConfirm={handleCreate}
 					/>
 				)}
+
+				{step === 2 && !createdAppt && customer.id && state.sourceType === sourceTypes.appointment && (
+					<AppointmentForm
+						services={appointment.services}
+						location={location}
+						employee={employee}
+						onAppointmentCreated={handleAppointmentCreated}
+					/>
+				)}
+
 				{step === 2 && !createdAppt && !customer.id && (
+					// Should be headed to the review page but they need to login first.
 					<AuthView
 						loading={loading}
 						onLogin={customer => {
@@ -262,8 +311,6 @@ const RootContainer = ({ profileId, location }) => {
 				)}
 				{createdAppt && (
 					<Finished
-						price={state.price}
-						estimates={estimates}
 						appointment={createdAppt}
 						locationData={location}
 						selectedServiceIds={appointment.services}

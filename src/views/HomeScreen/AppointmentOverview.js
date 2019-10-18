@@ -116,14 +116,6 @@ const Container = styled('div')`
 		h3 {
 			line-height: 1.5;
 		}
-
-		.sub {
-			font-size: 10px;
-			text-transform: uppercase;
-			font-weight: 700;
-			opacity: 0.8;
-			line-height: 1.5;
-		}
 	}
 
 	.flex {
@@ -217,8 +209,8 @@ const AppointmentOverview = ({ profile }) => {
 
 					<div className="location">
 						<h3>{appointment.location.name}</h3>
-						<p className="sub">{appointment.location.address}</p>
-						<p className="sub">{appointment.location.contactNumber}</p>
+						<p className="small-sub-text">{appointment.location.address}</p>
+						<p className="small-sub-text">{appointment.location.contactNumber}</p>
 					</div>
 				</div>
 

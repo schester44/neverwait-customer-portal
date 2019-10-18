@@ -13,14 +13,6 @@ const Wrapper = styled('div')`
 		color: ${({ theme }) => theme.colors.success};
 	}
 
-	.sub {
-		font-size: 10px;
-		text-transform: uppercase;
-		font-weight: 700;
-		opacity: 0.8;
-		line-height: 1.5;
-	}
-
 	.block {
 		padding-bottom: 24px;
 		margin-bottom: 24px;
@@ -37,12 +29,14 @@ const Wrapper = styled('div')`
 		}
 	}
 `
-const Finished = ({ price, estimates, appointment, locationData, selectedServices, selectedServiceIds }) => {
+const Finished = ({ appointment, locationData, selectedServices, selectedServiceIds }) => {
+
+	console.log({ appointment, locationData, selectedServices, selectedServiceIds });
 	return (
 		<Wrapper>
 			<div className="block location">
 				<h3>{locationData.name}</h3>
-				<p className="sub">{locationData.address}</p>
+				<p className="small-sub-text">{locationData.address}</p>
 			</div>
 
 			<div className="block service">
@@ -54,9 +48,9 @@ const Finished = ({ price, estimates, appointment, locationData, selectedService
 							</p>
 						)
 					})}
-					<p className="sub">{estimates.duration} minutes</p>
+					<p className="small-sub-text">{appointment.duration} minutes</p>
 				</div>
-				<h3>${price}</h3>
+				<h3>${appointment.price}</h3>
 			</div>
 			<div className="block">
 				<p style={{ opacity: 0.7, textTransform: 'uppercase', fontSize: 12, fontWeight: 700 }}>You're all set for:</p>
@@ -66,12 +60,12 @@ const Finished = ({ price, estimates, appointment, locationData, selectedService
 			</div>
 
 			<div className="block">
-				<p className="sub">
+				<p className="small-sub-text">
 					Please arrive 15 minutes early ({format(subMinutes(appointment.startTime, 15), 'h:mma')}).
 				</p>
-				<p className="sub">
+				<p className="small-sub-text">
 					To cancel, please call the shop at
-					<span> {appointment.location.contactNumber}.</span>
+					<span> {locationData.contactNumber}.</span>
 				</p>
 			</div>
 

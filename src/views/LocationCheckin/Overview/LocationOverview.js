@@ -51,14 +51,6 @@ const Header = styled('div')`
 		h3 {
 			line-height: 1.5;
 		}
-
-		.sub {
-			font-size: 10px;
-			text-transform: uppercase;
-			font-weight: 700;
-			opacity: 0.8;
-			line-height: 1.5;
-		}
 	}
 
 	${({ theme }) => css`
@@ -126,9 +118,9 @@ const LocationOverview = ({ history, employees: defaultEmployees, location }) =>
 
 	return (
 		<div style={{ width: '100%', height: '100%', paddingTop: 90 }}>
-			{state.isNoWaitModalVisible && (
+			{/* {state.isNoWaitModalVisible && (
 				<NoWaitModal location={location} onClose={() => setState(prev => ({ ...prev, isNoWaitModalVisible: false }))} />
-			)}
+			)} */}
 
 			<Header>
 				<div
@@ -142,8 +134,8 @@ const LocationOverview = ({ history, employees: defaultEmployees, location }) =>
 
 				<div className="location">
 					<h3>{location.name}</h3>
-					<p className="sub">{location.address}</p>
-					<p className="sub">{location.contactNumber}</p>
+					<p className="small-sub-text">{location.address}</p>
+					<p className="small-sub-text">{location.contactNumber}</p>
 				</div>
 			</Header>
 
@@ -156,9 +148,8 @@ const LocationOverview = ({ history, employees: defaultEmployees, location }) =>
 							<FiUser style={{ marginRight: 4 }} />
 							AVAILABLE STAFF
 						</p>
-						{loading ? (
-							<p>Loading...</p>
-						) : (
+
+						{!loading && (
 							<EmployeeList
 								setNoWaitModal={isNoWaitModalVisible => setState(prev => ({ ...prev, isNoWaitModalVisible }))}
 								employees={employees}

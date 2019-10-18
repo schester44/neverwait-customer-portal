@@ -11,7 +11,6 @@ const Container = styled('div')`
 	height: 150px;
 	padding: 10px 5px;
 	font-size: 90%;
-	background: red;
 	color: white;
 
 	.details {
@@ -32,11 +31,14 @@ const Container = styled('div')`
 	}
 `
 
-function renderStepTitle({ step, loggedIn }) {
+function renderStepTitle({ isAppointment, step, loggedIn }) {
 	switch (step) {
 		case 1:
 			return 'Select Services'
+
 		case 2:
+			if (isAppointment) return 'Select Date & Time'
+
 			return !loggedIn ? 'Login' : 'Review and Confirm'
 		case 3:
 			return (
@@ -49,8 +51,9 @@ function renderStepTitle({ step, loggedIn }) {
 	}
 }
 
-const Header = ({ step, loggedIn, title, showBack = true, onBack }) => {
-	const displayStep = step + 1
+const Header = ({ isAppointment, stepModifier, step, loggedIn, title, showBack = true, onBack }) => {
+	const displayStep = step + stepModifier
+
 	return (
 		<Container>
 			{showBack && (
@@ -62,7 +65,7 @@ const Header = ({ step, loggedIn, title, showBack = true, onBack }) => {
 			{(step !== 2 || (step === 2 && loggedIn)) && (
 				<div className="details">
 					{step && displayStep <= 3 && <span>Step {displayStep} of 3</span>}
-					<h1>{title || renderStepTitle({ step, loggedIn })}</h1>
+					<h1>{title || renderStepTitle({ step, loggedIn, isAppointment })}</h1>
 				</div>
 			)}
 		</Container>

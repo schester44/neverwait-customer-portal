@@ -11,7 +11,6 @@ import startOfDay from 'date-fns/start_of_day'
 import endOfDay from 'date-fns/end_of_day'
 import isAfter from 'date-fns/is_after'
 import { dateFromMinutes } from './Employee/utils/isWorking'
-import NavFooter from '../HomeScreen/NavFooter'
 
 const Overview = React.lazy(() => import('./Overview/LocationOverview'))
 const Form = React.lazy(() => import('./FormContainer'))
@@ -112,9 +111,9 @@ const LocationCheckin = ({ profileId }) => {
 	// TODO: This redirects when there is a network error.
 	if (!loading && !location) return <Redirect to="/" />
 
-	if (isClosed) {
-		return <ClosedPlaceholder showBackButton={!!profileId} location={location} reason={isClosed.description} />
-	}
+	// if (isClosed) {
+	// 	return <ClosedPlaceholder showBackButton={!!profileId} location={location} reason={isClosed.description} />
+	// }
 
 	return (
 		<>

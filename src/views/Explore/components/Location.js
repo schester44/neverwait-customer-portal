@@ -5,13 +5,21 @@ import { LOCATION_WAITLIST } from '../../../routes'
 
 const Container = styled('div')`
 	border-radius: 8px;
-	background: rgba(46, 50, 53, 1);
-	box-shadow: 0px 2px 3px rgba(32, 32, 32, 0.2);
+	background: white;
+	box-shadow: 0px 1px 2px rgba(32, 32, 32, 0.1);
 	padding: 20px;
 	margin-bottom: 16px;
 
 	h1 {
-		color: rgba(233, 209, 140, 1);
+		color: ${({ theme }) => theme.colors.bodyColor};
+	}
+
+	.sub {
+		font-size: 10px;
+		text-transform: uppercase;
+		font-weight: 700;
+		opacity: 0.8;
+		line-height: 1.5;
 	}
 `
 
@@ -27,7 +35,7 @@ const Location = ({ location }) => {
 		>
 			<Container>
 				<h1>{location.name}</h1>
-				<h3>{location.address}</h3>
+				<p class="sub">{location.address}</p>
 			</Container>
 		</Link>
 	)

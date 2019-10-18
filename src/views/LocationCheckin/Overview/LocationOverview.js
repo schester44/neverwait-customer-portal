@@ -156,9 +156,8 @@ const LocationOverview = ({ history, employees: defaultEmployees, location }) =>
 							<FiUser style={{ marginRight: 4 }} />
 							AVAILABLE STAFF
 						</p>
-						{loading ? (
-							<p>Loading...</p>
-						) : (
+
+						{loading && (
 							<EmployeeList
 								setNoWaitModal={isNoWaitModalVisible => setState(prev => ({ ...prev, isNoWaitModalVisible }))}
 								employees={employees}

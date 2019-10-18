@@ -157,7 +157,7 @@ const LocationOverview = ({ history, employees: defaultEmployees, location }) =>
 							AVAILABLE STAFF
 						</p>
 
-						{loading && (
+						{!loading && (
 							<EmployeeList
 								setNoWaitModal={isNoWaitModalVisible => setState(prev => ({ ...prev, isNoWaitModalVisible }))}
 								employees={employees}

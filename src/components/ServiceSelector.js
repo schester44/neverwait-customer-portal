@@ -7,7 +7,7 @@ const ServiceSelector = ({ price, selectedServiceIds = [], selectedServices = {}
 	const totalSelected = selectedServiceIds.length
 
 	return (
-		<div style={{ width: '100%', paddingBottom: 100, overflow: 'auto' }}>
+		<div style={{ width: '100%', paddingBottom: 100, overflow: 'auto', padding: "0 10px" }}>
 			{services.map(service => {
 				return (
 					<Service
@@ -22,15 +22,15 @@ const ServiceSelector = ({ price, selectedServiceIds = [], selectedServices = {}
 			{totalSelected > 0 && (
 				<FormFooter>
 					<div>
-						<span>
+						<p className="small-sub-text">
 							{totalSelected > 0
 								? `${totalSelected} ${totalSelected === 1 ? 'service' : 'services'} selected`
 								: 'No services selected'}
-						</span>
+						</p>
 						<p className="price">${price}</p>
 					</div>
 					<Button onClick={onNext} style={{ width: '50%' }}>
-						Book Now
+						Continue
 					</Button>
 				</FormFooter>
 			)}

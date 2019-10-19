@@ -79,7 +79,7 @@ const isWorking = (employee, date) => {
 		currentShift,
 		canSchedule: !!currentShift,
 		reasonFatal: true,
-		reason: !currentShift ? 'Fully booked' : undefined
+		reason: !currentShift ? 'Fully booked today' : undefined
 	}
 }
 

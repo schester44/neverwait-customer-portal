@@ -31,14 +31,14 @@ export default class SchedulerCreator {
 
 			while (isBefore(start, end)) {
 				// create a slot
-				const end_time = addMinutes(start, interval)
+				const end_time = addMinutes(start, interval - 1)
 
 				slots.push({
 					start_time: start,
 					end_time
 				})
 
-				start = end_time
+				start = addMinutes(end_time, 1)
 			}
 		}
 
@@ -69,7 +69,6 @@ export default class SchedulerCreator {
 				const end = range.end_date
 
 				if (range.day_of_week === format(date, 'dddd').toLowerCase()) {
-					console.log(date, start, end)
 					withinRange = isWithinRange(date, start, end) || isSameDay(start, date) || isSameDay(end, date)
 				}
 			} else {

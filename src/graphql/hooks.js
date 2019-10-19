@@ -47,8 +47,6 @@ export const useEnhancedEmployees = ({ employees = [] }) => {
 	})
 
 	React.useEffect(() => {
-		console.log('hook running')
-
 		const update = () => {
 			setState(() => {
 				let hasWorkingEmployees = false

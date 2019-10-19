@@ -2,6 +2,11 @@ import React from 'react'
 import styled from 'styled-components'
 import Button from '../../components/Button'
 import { lighten } from 'polished'
+import { FiArrowLeft } from 'react-icons/fi'
+import { format, isAfter } from 'date-fns'
+
+import { dateFromTimeString } from './Employee/utils/isWorking'
+import pling from '../../components/Pling'
 
 const Container = styled('div')`
 	text-align: center;
@@ -11,25 +16,17 @@ const Container = styled('div')`
 	display: flex;
 	flex-direction: column;
 
+	.back {
+		position: absolute;
+		top: 10px;
+		left: 5px;
+		font-size: 36px;
+		line-height: 1;
+	}
+
 	.title {
 		margin-top: 24px;
 		margin-bottom: 7px;
-	}
-
-	.highlight {
-		position: relative;
-
-		.text-to-highlight {
-			position: absolute;
-			top: -5px;
-			right: 10px;
-			background: ${({ theme }) => theme.colors.brandSecondary};
-			padding: 4px 10px;
-			border-radius: 25px;
-			color: white;
-			font-size: 10px;
-			font-weight: 700;
-		}
 	}
 
 	.actions {
@@ -68,28 +65,57 @@ const Container = styled('div')`
 	}
 `
 
-const SourceTypeSelection = ({ onSelectCheckin, onSelectAppointment }) => {
+const SourceTypeSelection = ({ employee, estimates, onSelectCheckin, onSelectAppointment, onBack }) => {
+	const [visible, setVisible] = React.useState({
+		noWait: false
+	})
+
+	const handleCheckinClick = () => {
+		// check service durations against employee end time
+		const shiftEndTime = dateFromTimeString(employee.status.currentShift.end_time, new Date())
+
+		// TODO: This shouldn't be visible because the UI would show which source actions are available
+		if (isAfter(estimates.endTime, shiftEndTime)) {
+			pling({
+				message: `Selected service duration exceeds ${employee.firstName}'s work hours. You could book an appointment instead.`
+			})
+
+			return false
+		}
+
+		if (employee.waitTime >= 15) {
+			onSelectCheckin()
+		} else {
+			setVisible(prev => ({ ...prev, noWait: true }))
+		}
+	}
+
 	return (
 		<Container>
+			<div className="back" onClick={onBack}>
+				<FiArrowLeft />
+			</div>
+
 			<h2 className="title">Choose service time </h2>
 			<p className="small-sub-text">Need it soon or need it when you need it?</p>
 
 			<div className="actions">
+				<p style={{ marginBottom: 14 }} className="small-sub-text">
+					First available time today is {format(estimates.startTime, 'h:mmA')}.
+				</p>
+
 				{/* Show, but disable this button if we can't book the employee (due to schedule reasons) */}
-				<Button onClick={onSelectCheckin} style={{ width: '100%' }}>
-					First Available Time Today
+				<Button onClick={handleCheckinClick} style={{ width: '100%' }}>
+					First available time today
 				</Button>
 
 				<div className="separator">
 					<div>or</div>
 				</div>
 
-				<div className="highlight">
-					<div className="text-to-highlight">NEW!</div>
-					<Button onClick={onSelectAppointment} style={{ width: '100%' }}>
-						Create Appointment
-					</Button>
-				</div>
+				<Button onClick={onSelectAppointment} style={{ background: 'rgba(49,49,49,1)', width: '100%' }}>
+					Create an appointment
+				</Button>
 			</div>
 		</Container>
 	)

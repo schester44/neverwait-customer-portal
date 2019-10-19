@@ -11,6 +11,7 @@ const selectedStyles = ({ isSelected, theme }) =>
 		.day {
 			background: ${theme.colors.brand};
 			color: white;
+			font-size: 14px;
 		}
 	`
 
@@ -25,26 +26,22 @@ const disabledStyles = ({ disabled }) =>
 
 const Container = styled('div')`
 	height: 80px;
-	flex: 1;
+	width: 80px;
 	padding: 10px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
 	border-right: 1px solid rgba(240, 240, 240, 1);
-	width: ${({ width }) => width}%;
 	user-select: none;
 	cursor: pointer;
 
-	.sub {
-		font-size: 14px;
-		font-weight: 700;
-		text-transform: uppsercase;
-		color: #6a6a6a;
-	}
-
 	.day {
-		padding: 0.5em;
+		width: 28px;
+		height: 28px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		border-radius: 100%;
 		font-weight: 700;
 	}
@@ -55,7 +52,7 @@ const Container = styled('div')`
 
 const scheduler = new ScheduleCreator()
 
-const DateCell = ({ date, scheduleRanges, width, isSelected, onClick }) => {
+const DateCell = ({ date, scheduleRanges, isSelected, onClick }) => {
 	const daySchedule = React.useMemo(() => scheduler.get(scheduleRanges, date), [scheduleRanges, date])
 	const disabled = !daySchedule
 
@@ -65,10 +62,10 @@ const DateCell = ({ date, scheduleRanges, width, isSelected, onClick }) => {
 	}
 
 	return (
-		<Container disabled={disabled} isSelected={isSelected} width={width} onClick={handleClick}>
-			<div className="sub">{format(date, 'ddd')}</div>
+		<Container disabled={disabled} isSelected={isSelected} onClick={handleClick}>
+			<div className="small-sub-text">{format(date, 'ddd')}</div>
 			<div className="day">{format(date, 'DD')}</div>
-			<div className="sub">{format(date, 'MMM')}</div>
+			<div className="small-sub-text">{format(date, 'MMM')}</div>
 		</Container>
 	)
 }

@@ -1,42 +1,62 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { useWindowSize } from '@withvoid/melting-pot'
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
-import { parse, isWithinRange, addDays, format, subDays, isBefore, startOfDay, isAfter } from 'date-fns'
+import { addDays, format, subDays, isBefore, startOfDay, isAfter } from 'date-fns'
 
 import DatePicker from './DatePicker/Picker'
 import SchedulerCreator from '../utils/ScheduleCreator'
 import TimePicker from './TimePicker'
 import FormFooter from '../../../components/FormFooter'
 import Button from '../../../components/Button'
+import LoadingIcon from '../../../components/LoadingIcon'
 
 import { createProfileAppointmentMutation } from '../../../graphql/mutations'
 import { employeeScheduleQuery } from './queries'
+import getAvailableShiftSlots from '../utils/getAvailableShiftSlots'
+import { FiArrowUp } from 'react-icons/fi'
 
 const scheduler = new SchedulerCreator()
 
-const getShiftSlots = (schedule, date) => {
-	const workDay = scheduler.find(schedule.schedule_ranges, date)
+const bounce = keyframes`
+		0% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-10px);
+		}
+		100% {
+			transform: translateY(0);
+		}
+`
 
-	// Create slots based on the time this person works.
-	return workDay
-		? scheduler.getShiftSlots(workDay.schedule_shifts, 30, date).map(slot => {
-				slot.isAvailable = schedule.appointments.every(appointment => {
-					return (
-						!isWithinRange(appointment.startTime, slot.start_time, slot.end_time) &&
-						!isWithinRange(appointment.endTime, slot.start_time, slot.end_time)
-					)
-				})
+const isMobileCheck = () => {
+	const ua = navigator.userAgent
+	const isAndroid = () => Boolean(ua.match(/Android/i))
+	const isIos = () => Boolean(ua.match(/iPhone|iPad|iPod/i))
+	const isOpera = () => Boolean(ua.match(/Opera Mini/i))
+	const isWindows = () => Boolean(ua.match(/IEMobile/i))
 
-				return slot
-		  })
-		: []
+	return Boolean(isAndroid() || isIos() || isOpera() || isWindows())
 }
+
+const isMobile = isMobileCheck()
 
 const Container = styled('div')`
 	height: 100%;
 	display: flex;
-	flex-direction: column;
+	flex-direction: ${isMobile ? 'column' : 'row'};
+	width: 100%;
+
+	.time-picker-placeholder {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding-bottom: 100px;
+		animation: ${bounce} 3s linear infinite;
+	}
 
 	.time-picker-container {
 		flex: 1;
@@ -45,7 +65,7 @@ const Container = styled('div')`
 	}
 `
 
-const AppointmentForm = ({ services, location, employee, onAppointmentCreated }) => {
+const AppointmentForm = ({ duration, services, location, employee, onAppointmentCreated }) => {
 	const dimensions = useWindowSize()
 	const maxVisibleDates = dimensions.width > 768 ? 7 : 5
 	const [createProfileAppointment, { loading: createLoading }] = useMutation(createProfileAppointmentMutation)
@@ -53,8 +73,7 @@ const AppointmentForm = ({ services, location, employee, onAppointmentCreated })
 	const [state, setState] = React.useState({
 		selectedDate: undefined,
 		selectedTime: undefined,
-		visibleDates: scheduler.datesFrom(new Date(), maxVisibleDates),
-		firstVisibleDate: new Date(),
+		visibleDates: scheduler.datesFrom(new Date(), 30),
 		shiftSlots: [],
 		schedule: {
 			appointments: [],
@@ -62,20 +81,25 @@ const AppointmentForm = ({ services, location, employee, onAppointmentCreated })
 		}
 	})
 
-	const setDateShifts = React.useCallback((schedule, date) => {
-		const shiftSlots = getShiftSlots(schedule, date)
+	const setShiftSlots = React.useCallback(
+		(schedule, date) => {
+			const shiftSlots = getAvailableShiftSlots(schedule, date, duration)
+			const isWorkingOnSelectedDay = shiftSlots.length > 0
 
-		setState(prev => ({
-			...prev,
-			schedule,
-			shiftSlots,
-			isWorkingOnSelectedDay: shiftSlots.length > 0
-		}))
-	}, [])
+			setState(prev => ({
+				...prev,
+				schedule,
+				shiftSlots,
+				isWorkingOnSelectedDay,
+				selectedDate: isWorkingOnSelectedDay ? new Date() : undefined
+			}))
+		},
+		[duration]
+	)
 
-	const [fetchSchedule, { loading }] = useLazyQuery(employeeScheduleQuery, {
+	const [fetchSchedule, { called, loading: fetchLoading }] = useLazyQuery(employeeScheduleQuery, {
 		onCompleted: data => {
-			setDateShifts(data.employeeSchedule, new Date())
+			setShiftSlots(data.employeeSchedule, new Date())
 		}
 	})
 
@@ -86,48 +110,11 @@ const AppointmentForm = ({ services, location, employee, onAppointmentCreated })
 				employeeId: employee.id,
 				input: {
 					start_date: new Date(),
-					end_date: addDays(new Date(), 7)
+					end_date: addDays(new Date(), 30)
 				}
 			}
 		})
 	}, [])
-
-	const handleNavigation = direction => {
-		let firstVisibleDate
-
-		if (direction === 'PREV') {
-			firstVisibleDate = subDays(state.firstVisibleDate, maxVisibleDates)
-
-			if (isBefore(startOfDay(firstVisibleDate), startOfDay(new Date()))) return
-		} else {
-			firstVisibleDate = addDays(state.firstVisibleDate, maxVisibleDates)
-		}
-
-		// Appointment is more than 30 days into the future
-		if (isAfter(firstVisibleDate, addDays(new Date(), 30))) return
-
-		fetchSchedule({
-			variables: {
-				locationId: location.id,
-				employeeId: employee.id,
-				input: {
-					start_date: firstVisibleDate,
-					end_date: addDays(firstVisibleDate, 7)
-				}
-			}
-		})
-
-		setState(prev => {
-			return {
-				...prev,
-				firstVisibleDate,
-				visibleDates: scheduler.datesFrom(firstVisibleDate, maxVisibleDates),
-				selectedDate: undefined,
-				selectedTime: undefined,
-				shiftSlots: []
-			}
-		})
-	}
 
 	const handleConfirm = async () => {
 		const { data } = await createProfileAppointment({
@@ -149,7 +136,7 @@ const AppointmentForm = ({ services, location, employee, onAppointmentCreated })
 	const handleDateSelect = selectedDate => {
 		setState(prev => {
 			// Create slots based on the time this person works.
-			const shiftSlots = getShiftSlots(prev.schedule, selectedDate)
+			const shiftSlots = getAvailableShiftSlots(prev.schedule, selectedDate, duration)
 
 			return {
 				...prev,
@@ -168,16 +155,22 @@ const AppointmentForm = ({ services, location, employee, onAppointmentCreated })
 	return (
 		<Container>
 			<DatePicker
+				isMobile={isMobile}
 				dates={state.visibleDates}
 				schedule={state.schedule}
-				firstVisibleDate={state.firstVisibleDate}
 				selectedDate={state.selectedDate}
 				maxVisibleDates={maxVisibleDates}
-				onNavigate={handleNavigation}
 				onSelect={handleDateSelect}
 			/>
 
-			{state.shiftSlots.length > 0 && state.selectedDate && (
+			{called && !fetchLoading && state.schedule.schedule_ranges.length > 0 && !state.selectedDate && (
+				<div className="time-picker-placeholder">
+					<FiArrowUp size={32} />
+					<h2>Select a date</h2>
+				</div>
+			)}
+
+			{called && !fetchLoading && state.shiftSlots.length > 0 && state.selectedDate && (
 				<div className="time-picker-container">
 					<TimePicker
 						slots={state.shiftSlots}
@@ -191,9 +184,9 @@ const AppointmentForm = ({ services, location, employee, onAppointmentCreated })
 			{state.selectedTime > 0 && (
 				<FormFooter>
 					<div>
-						<p>{format(state.selectedTime, 'h:mma')} appt.</p>
+						<p className="small-sub-text">{format(state.selectedTime, 'h:mma')} appt.</p>
 
-						<p>{format(state.selectedTime, 'dddd, MMMM Do')}</p>
+						<p className="small-sub-text">{format(state.selectedTime, 'dddd, MMMM Do')}</p>
 					</div>
 
 					<Button disabled={createLoading} onClick={handleConfirm} style={{ width: '50%' }}>

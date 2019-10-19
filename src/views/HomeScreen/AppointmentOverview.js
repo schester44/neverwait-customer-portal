@@ -124,10 +124,6 @@ const Container = styled('div')`
 		align-items: center;
 	}
 
-	.call-btn {
-		padding: 10px 20px;
-	}
-
 	.date {
 		padding: 20px 20px 20px 20px;
 		text-transform: uppercase;
@@ -136,8 +132,13 @@ const Container = styled('div')`
 		font-weight: 700;
 	}
 
-	.call-btn {
+	.actions {
+		padding: 10px 20px;
 		margin-top: 20px;
+	}
+
+	.call-btn {
+		margin-bottom: 16px;
 	}
 
 	.service-block {
@@ -240,15 +241,22 @@ const AppointmentOverview = ({ profile }) => {
 
 						<p className="price">${appointment.price}</p>
 					</div>
-					<MobileView>
-						<div className="call-btn">
-							<a href={`tel:${appointment.location.contactNumber}`}>
-								<Button intent="secondary" style={{ width: '100%', fontSize: 14, textTransform: 'uppercase' }}>
-									Call {appointment.location.name}
-								</Button>
-							</a>
-						</div>
-					</MobileView>
+
+					<div className="actions">
+						<MobileView>
+							<div className="call-btn">
+								<a href={`tel:${appointment.location.contactNumber}`}>
+									<Button style={{ width: '100%', fontSize: 14, textTransform: 'uppercase' }}>
+										Call {appointment.location.name}
+									</Button>
+								</a>
+							</div>
+						</MobileView>
+
+						<Button intent="secondary" style={{ width: '100%', fontSize: 14, textTransform: 'uppercase' }}>
+							Cancel Appointment
+						</Button>
+					</div>
 				</div>
 			</Container>
 		</Swipe>

@@ -1,9 +1,9 @@
 import React from 'react'
 import omit from 'lodash/omit'
 import ReactGA from 'react-ga'
-import styled, { keyframes } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { useHistory, useParams, Redirect } from 'react-router-dom'
-import { addMinutes, isAfter } from 'date-fns'
+import { addMinutes } from 'date-fns'
 import { useMutation } from '@apollo/react-hooks'
 import determineStartTime from './utils/determineStartTime'
 import getLastAppointment from './utils/getLastAppointment'
@@ -13,8 +13,7 @@ import { sequentialUpsertMutation } from '../../graphql/mutations'
 import ServiceSelector from '../../components/ServiceSelector'
 import Header from './Header'
 import { profileQuery } from '../../graphql/queries'
-import { dateFromTimeString } from './Employee/utils/isWorking'
-import pling from '../../components/Pling'
+
 import SourceTypeSelection from './SourceTypeSelection'
 import AppointmentForm from './AppointmentForm'
 const AuthView = React.lazy(() => import('../CustomerAuthView'))
@@ -28,6 +27,12 @@ const expandAnimation = keyframes`
 	}
 `
 
+const confirmedStyles = ({ confirmed }) =>
+	confirmed &&
+	css`
+		padding-top: 75px;
+	`
+
 const Wrapper = styled('div')`
 	width: 100%;
 	height: 100vh;
@@ -35,14 +40,14 @@ const Wrapper = styled('div')`
 	flex-direction: column;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0px 10px;
-	padding-top: 160px;
+	padding-top: 90px;
 	transform: translateY(-50px);
 	animation: ${expandAnimation} 0.2s ease forwards;
 
 	.button {
 		width: 100%;
 	}
+	${confirmedStyles};
 `
 
 const getAppointmentDuration = (appointment, services) => {
@@ -79,9 +84,8 @@ const RootContainer = ({ profileId, location }) => {
 		services: []
 	})
 
-	const [step, setStep] = React.useState(1)
-
-	const [state, setState] = React.useState({
+	const [{ step, ...state }, setState] = React.useState({
+		step: 1,
 		selectedServices: {},
 		sourceType: undefined,
 		price: 0,
@@ -90,6 +94,8 @@ const RootContainer = ({ profileId, location }) => {
 			return acc
 		}, {})
 	})
+
+	const setStep = step => setState(prev => ({ ...prev, step }))
 
 	const [createAppointment, { loading }] = useMutation(sequentialUpsertMutation, {
 		update: (cache, { data: { checkinOnline } }) => {
@@ -203,7 +209,7 @@ const RootContainer = ({ profileId, location }) => {
 	}
 
 	const handleAppointmentCreated = appointment => {
-		setStep(3)
+		setStep(4)
 		setCreatedAppointment(appointment)
 
 		ReactGA.event({
@@ -218,21 +224,18 @@ const RootContainer = ({ profileId, location }) => {
 	if (!employee) return <Redirect to="/" />
 
 	return (
-		<Wrapper>
+		<Wrapper confirmed={step === 4}>
 			{(step !== 2 || state.sourceType) && (
 				<Header
 					isAppointment={state.sourceType === sourceTypes.appointment}
 					stepModifier={state.sourceType === sourceTypes.checkin ? 1 : 0}
+					showBack={step !== 4}
 					onBack={() => {
-						if (step === 1) {
+						if (step === 1 || step === 4) {
 							return history.goBack()
 						}
 
 						if (step === 3) {
-							return history.push('/')
-						}
-
-						if (step === 2) {
 							setState(prev => ({ ...prev, sourceType: undefined }))
 						}
 
@@ -242,22 +245,10 @@ const RootContainer = ({ profileId, location }) => {
 					step={step}
 				/>
 			)}
-
 			{step === 1 && (
 				<ServiceSelector
 					services={employee.services}
 					onNext={() => {
-						if (history.location.state?.status) {
-							// check service durations against employee end time
-							const shiftEndTime = dateFromTimeString(history.location.state?.status?.currentShift.end_time, new Date())
-
-							console.log(shiftEndTime)
-
-							// if (isAfter(estimates.endTime, shiftEndTime)) {
-							// 	pling({ message: `Selected service duration exceeds ${employee.firstName}'s work hours.` })
-							// 	return false
-							// }
-						}
 						setStep(2)
 					}}
 					selectedServiceIds={appointment.services}
@@ -272,12 +263,15 @@ const RootContainer = ({ profileId, location }) => {
 			<React.Suspense fallback={null}>
 				{step === 2 && !createdAppt && customer.id && !state.sourceType && (
 					<SourceTypeSelection
-						onSelectCheckin={() => setState(prev => ({ ...prev, sourceType: sourceTypes.checkin }))}
-						onSelectAppointment={() => setState(prev => ({ ...prev, sourceType: sourceTypes.appointment }))}
+						employee={employee}
+						estimates={estimates}
+						onBack={() => setState(prev => ({ ...prev, step: prev.step - 1 }))}
+						onSelectCheckin={() => setState(prev => ({ ...prev, step: 3, sourceType: sourceTypes.checkin }))}
+						onSelectAppointment={() => setState(prev => ({ ...prev, step: 3, sourceType: sourceTypes.appointment }))}
 					/>
 				)}
 
-				{step === 2 && !createdAppt && customer.id && state.sourceType == sourceTypes.checkin && (
+				{step === 3 && !createdAppt && customer.id && state.sourceType == sourceTypes.checkin && (
 					<Review
 						submitting={submitting}
 						loading={loading}
@@ -290,8 +284,9 @@ const RootContainer = ({ profileId, location }) => {
 					/>
 				)}
 
-				{step === 2 && !createdAppt && customer.id && state.sourceType === sourceTypes.appointment && (
+				{step === 3 && !createdAppt && customer.id && state.sourceType === sourceTypes.appointment && (
 					<AppointmentForm
+						duration={estimates.duration}
 						services={appointment.services}
 						location={location}
 						employee={employee}
@@ -311,6 +306,7 @@ const RootContainer = ({ profileId, location }) => {
 				)}
 				{createdAppt && (
 					<Finished
+						isAppointment={state.sourceType === sourceTypes.appointment}
 						appointment={createdAppt}
 						locationData={location}
 						selectedServiceIds={appointment.services}

@@ -1,21 +1,53 @@
 import React from 'react'
-import styled, { css } from 'styled-components'
-import { FiArrowLeft, FiCheck } from 'react-icons/fi'
+import styled, { css, keyframes } from 'styled-components'
+import { FiArrowLeft, FiCheckCircle } from 'react-icons/fi'
 import { darken } from 'polished'
 
+const headerSlideDown = keyframes`
+	from {
+		transform: translateY(-120px);
+	}
+	to {
+		transform: translateY(0px);
+	}
+`
+
+const bounce = keyframes`
+		0% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-5px);
+		}
+		100% {
+			transform: translateY(0);
+		}
+`
+
+const confirmedStyles = ({ confirmed, theme }) =>
+	confirmed &&
+	css`
+		transition: all 0.5s ease;
+		height: 70px;
+		background-image: linear-gradient(${theme.colors.success}, ${darken(0.1, theme.colors.success)});
+	`
+
 const Container = styled('div')`
+	${({ step }) =>
+		step === 1 &&
+		css`
+			animation: ${headerSlideDown} 0.4s ease forwards;
+		`}
+
 	width: 100%;
 	position: absolute;
 	top: 0;
 	left: 0;
-	height: 150px;
+	height: 90px;
 	padding: 10px 5px;
 	font-size: 90%;
 	color: white;
-
-	.details {
-		padding-left: 10px;
-	}
+	display: flex;
 
 	${({ theme }) => css`
 		background-image: linear-gradient(${theme.colors.brand}, ${darken(0.05, theme.colors.brand)});
@@ -29,6 +61,21 @@ const Container = styled('div')`
 		line-height: 1;
 		padding-bottom: 10px;
 	}
+
+	.details {
+		flex: 1;
+	}
+
+	.confirmed {
+		padding-left: 10px;
+
+		.icon {
+			animation: ${bounce} 2s linear infinite;
+			margin-bottom: -7px;
+		}
+	}
+
+	${confirmedStyles};
 `
 
 function renderStepTitle({ isAppointment, step, loggedIn }) {
@@ -36,26 +83,25 @@ function renderStepTitle({ isAppointment, step, loggedIn }) {
 		case 1:
 			return 'Select Services'
 
-		case 2:
+		case 3:
 			if (isAppointment) return 'Select Date & Time'
 
 			return !loggedIn ? 'Login' : 'Review and Confirm'
-		case 3:
+		case 4:
 			return (
-				<span>
-					Confirmed <FiCheck color="rgba(124, 191, 74, 1.0)" />
-				</span>
+				<div className="confirmed">
+					<span style={{ paddingRight: 10 }}>Confirmed</span>
+					<FiCheckCircle className="icon" />
+				</div>
 			)
 		default:
 			return null
 	}
 }
 
-const Header = ({ isAppointment, stepModifier, step, loggedIn, title, showBack = true, onBack }) => {
-	const displayStep = step + stepModifier
-
+const Header = ({ isAppointment, step, loggedIn, title, showBack = true, onBack }) => {
 	return (
-		<Container>
+		<Container confirmed={step === 4} animate={step === 1}>
 			{showBack && (
 				<div className="back" onClick={onBack}>
 					<FiArrowLeft />
@@ -64,7 +110,7 @@ const Header = ({ isAppointment, stepModifier, step, loggedIn, title, showBack =
 
 			{(step !== 2 || (step === 2 && loggedIn)) && (
 				<div className="details">
-					{step && displayStep <= 3 && <span>Step {displayStep} of 3</span>}
+					{step && step <= 3 && <span>Step {step} of 3</span>}
 					<h1>{title || renderStepTitle({ step, loggedIn, isAppointment })}</h1>
 				</div>
 			)}

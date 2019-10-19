@@ -5,13 +5,11 @@ import format from 'date-fns/format'
 const Container = styled('div')`
 	width: 100%;
 	flex: 1;
-	overflow: auto;
 `
 const selectedStyles = ({ selected }) =>
 	selected &&
 	`
 	background: rgba(104, 81, 152, 0.1);
-	border-radius: 50px;
 `
 
 const disabledStyles = ({ disabled }) =>

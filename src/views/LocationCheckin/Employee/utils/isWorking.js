@@ -6,7 +6,8 @@ import format from 'date-fns/format'
 import isSameDay from 'date-fns/is_same_day'
 import isAfter from 'date-fns/is_after'
 import addMinutes from 'date-fns/add_minutes'
-import { distanceInWordsToNow, setSeconds, startOfDay } from 'date-fns'
+import setSeconds from 'date-fns/set_seconds'
+import startOfDay from 'date-fns/start_of_day'
 
 export const dateFromMinutes = (minutes, date = new Date()) => addMinutes(startOfDay(date), minutes)
 
@@ -38,35 +39,30 @@ const getScheduleRangeByDate = (scheduleRanges, date) => {
 	})
 }
 
-const isWorking = (employee, date) => {
+export const isWorking = (employee, date) => {
 	const range = getScheduleRangeByDate(employee.schedule_ranges, date)
 
 	if (!range) return { working: false }
 
+	const now = new Date()
+
 	const scheduled = range.schedule_shifts.some(shift => {
 		return isWithinRange(
-			new Date(),
-			parse(dateFromTimeString(shift.start_time, new Date())),
-			parse(dateFromTimeString(shift.end_time, new Date()))
+			now,
+			parse(dateFromTimeString(shift.start_time, now)),
+			parse(dateFromTimeString(shift.end_time, now))
 		)
 	})
 
-	if (!scheduled) return { working: false }
+	if (!scheduled) {
+		const nextShift = range.schedule_shifts.find(shift => {
+			return isAfter(parse(dateFromTimeString(shift.start_time, now)), new Date())
+		})
 
-	// TODO: This assumes the first scheduleshift is always the earliest shift.
-	// Check if we're within that first 30 minutes of a shift and return false. give the walkin customers time to schedule.
-	if (isAfter(addMinutes(dateFromTimeString(range.schedule_shifts?.[0]?.start_time, new Date()), 30), new Date())) {
-		return {
-			working: true,
-			canSchedule: false,
-			reason: `Accepting online checkins in ${distanceInWordsToNow(
-				addMinutes(dateFromTimeString(range.schedule_shifts?.[0]?.start_time, new Date()), 30)
-			)}`
-		}
+		return { working: false, nextShift }
 	}
 
-	// employee is schedulable if the current wait time is inbetween their start/end times
-	const currentShift = range.schedule_shifts.find(shift => {
+	const currentShiftIndex = range.schedule_shifts.findIndex(shift => {
 		return isWithinRange(
 			date,
 			parse(dateFromTimeString(shift.start_time, date)),
@@ -74,12 +70,11 @@ const isWorking = (employee, date) => {
 		)
 	})
 
+	// currentShift isn't the "current shift", its the shift that contains the "next available" check-in time.
 	return {
 		working: true,
-		currentShift,
-		canSchedule: !!currentShift,
-		reasonFatal: true,
-		reason: !currentShift ? 'Fully booked today' : undefined
+		currentShift: range.schedule_shifts[currentShiftIndex],
+		nextShift: range.schedule_shifts[currentShiftIndex + 1]
 	}
 }
 

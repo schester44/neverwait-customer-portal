@@ -1,6 +1,10 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
-import { startOfDay, addMinutes, format } from 'date-fns'
+
+import format from 'date-fns/format'
+import startOfDay from 'date-fns/start_of_day'
+import addMinutes from 'date-fns/add_minutes'
+
 import { FiCalendar } from 'react-icons/fi'
 
 const todayStyles = ({ isToday, theme }) =>

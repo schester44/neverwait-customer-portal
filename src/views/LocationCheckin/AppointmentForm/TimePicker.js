@@ -4,7 +4,14 @@ import format from 'date-fns/format'
 
 const Container = styled('div')`
 	width: 100%;
-	flex: 1;
+
+	.placeholder {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 50vh;
+	}
 `
 const selectedStyles = ({ selected }) =>
 	selected &&
@@ -31,6 +38,7 @@ const Slot = styled('div')`
 	align-items: center;
 	justify-content: center;
 	user-select: none;
+
 	${selectedStyles};
 	${disabledStyles};
 `
@@ -38,22 +46,28 @@ const Slot = styled('div')`
 const TimePicker = ({ selectedTime, slots, onSelect }) => {
 	return (
 		<Container>
-			{slots.map((slot, idx) => {
-				return (
-					<Slot
-						disabled={!slot.isAvailable}
-						selected={slot.start_time === selectedTime}
-						onClick={() => {
-							if (slot.isAvailable) {
-								onSelect(slot)
-							}
-						}}
-						key={idx}
-					>
-						{format(slot.start_time, 'h:mma')}
-					</Slot>
-				)
-			})}
+			{slots.length > 0 ? (
+				slots.map((slot, idx) => {
+					return (
+						<Slot
+							disabled={!slot.isAvailable}
+							selected={slot.start_time === selectedTime}
+							onClick={() => {
+								if (slot.isAvailable) {
+									onSelect(slot)
+								}
+							}}
+							key={idx}
+						>
+							{format(slot.start_time, 'h:mma')}
+						</Slot>
+					)
+				})
+			) : (
+				<div className="placeholder">
+					<h3>No available time slots.</h3>
+				</div>
+			)}
 		</Container>
 	)
 }

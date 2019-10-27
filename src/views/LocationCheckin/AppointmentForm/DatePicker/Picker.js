@@ -1,7 +1,8 @@
 import React from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'
-import { isSameDay } from 'date-fns'
+
+import isSameDay from 'date-fns/is_same_day'
 
 import DateCell from './Cell'
 
@@ -98,16 +99,20 @@ const DatePicker = ({ isMobile, dates, schedule, maxVisibleDates, selectedDate, 
 		const handler = () => {
 			const box = cellsRef.current.getBoundingClientRect()
 
-			if (cellContainer.scrollLeft + box.width > cellContainer.scrollWidth - 100) {
-				rightBtn.current.style.opacity = 0
-			} else {
-				rightBtn.current.style.opacity = 0.5
+			if (rightBtn.current) {
+				if (cellContainer.scrollLeft + box.width > cellContainer.scrollWidth - 100) {
+					rightBtn.current.style.opacity = 0
+				} else {
+					rightBtn.current.style.opacity = 0.5
+				}
 			}
 
-			if (cellContainer.scrollLeft <= 50) {
-				leftBtn.current.style.opacity = 0
-			} else {
-				leftBtn.current.style.opacity = 0.5
+			if (leftBtn.current) {
+				if (cellContainer.scrollLeft <= 50) {
+					leftBtn.current.style.opacity = 0
+				} else {
+					leftBtn.current.style.opacity = 0.5
+				}
 			}
 		}
 		if (cellContainer) {

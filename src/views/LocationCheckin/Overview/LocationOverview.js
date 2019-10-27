@@ -4,7 +4,6 @@ import { darken } from 'polished'
 import { FiArrowLeft, FiCalendar, FiUser } from 'react-icons/fi'
 import format from 'date-fns/format'
 
-import NoWaitModal from './NoWaitModal'
 import EmployeeList from '../EmployeeList'
 import WorkingHour from './WorkingHour'
 import ClosingSoon from './ClosingSoon'
@@ -62,7 +61,7 @@ const Header = styled('div')`
 
 const slideIn = keyframes`
 	from {
-		transform: translateY(-100vh);
+		transform: translateY(100vh);
 	}
 	to {
 		transform: translateY(0vh);
@@ -76,18 +75,6 @@ const Contents = styled('div')`
 	animation: ${slideIn} 0.5s ease forwards;
 	padding-top: 20px;
 	padding-bottom: 80px;
-`
-
-const Alert = styled('div')`
-	padding: 8px;
-	color: white;
-	background: rgba(32, 32, 32, 1);
-	font-size: 10px;
-	border-radius: 4px;
-	font-weight: 700;
-	text-align: center;
-	margin: 0 10px;
-	margin: 10px;
 `
 
 const Card = styled('div')`
@@ -112,16 +99,10 @@ const Card = styled('div')`
 
 const LocationOverview = ({ history, employees: defaultEmployees, location }) => {
 	const todaysName = format(new Date(), 'dddd').toLowerCase()
-	const { employees, loading, hasWorkingEmployees } = useEnhancedEmployees({ employees: defaultEmployees })
-
-	const [state, setState] = React.useState({ isNoWaitModalVisible: false })
+	const { employees, loading } = useEnhancedEmployees({ employees: defaultEmployees })
 
 	return (
 		<div style={{ width: '100%', height: '100%', paddingTop: 90 }}>
-			{/* {state.isNoWaitModalVisible && (
-				<NoWaitModal location={location} onClose={() => setState(prev => ({ ...prev, isNoWaitModalVisible: false }))} />
-			)} */}
-
 			<Header>
 				<div
 					className="back"
@@ -142,23 +123,14 @@ const LocationOverview = ({ history, employees: defaultEmployees, location }) =>
 			<Contents>
 				<ClosingSoon today={location.working_hours[todaysName]} />
 
-				{hasWorkingEmployees ? (
-					<Card>
-						<p className="title">
-							<FiUser style={{ marginRight: 4 }} />
-							AVAILABLE STAFF
-						</p>
+				<Card>
+					<p className="title">
+						<FiUser style={{ marginRight: 4 }} />
+						AVAILABLE STAFF
+					</p>
 
-						{!loading && (
-							<EmployeeList
-								setNoWaitModal={isNoWaitModalVisible => setState(prev => ({ ...prev, isNoWaitModalVisible }))}
-								employees={employees}
-							/>
-						)}
-					</Card>
-				) : (
-					<Alert>There are no available staff members at this time. Please check back later.</Alert>
-				)}
+					{!loading && <EmployeeList employees={employees} />}
+				</Card>
 
 				<Card>
 					<p className="title">

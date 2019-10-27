@@ -109,7 +109,7 @@ const Container = styled('div')`
 	${overviewStyles};
 `
 
-const UserHomeScreen = ({ profile, locations }) => {
+const UserHomeScreen = ({ profile }) => {
 	const location = useLocation()
 
 	const isShowingOverview = location.pathname.indexOf('/appointments') === -1

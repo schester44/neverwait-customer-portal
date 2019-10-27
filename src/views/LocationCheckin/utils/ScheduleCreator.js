@@ -1,17 +1,15 @@
-import {
-	addDays,
-	startOfDay,
-	setHours,
-	setMinutes,
-	setSeconds,
-	parse,
-	isWithinRange,
-	isAfter,
-	format,
-	isSameDay,
-	isBefore,
-	addMinutes
-} from 'date-fns'
+import addDays from 'date-fns/add_days'
+import startOfDay from 'date-fns/start_of_day'
+import setMinutes from 'date-fns/set_minutes'
+import setSeconds from 'date-fns/set_seconds'
+import parse from 'date-fns/parse'
+import setHours from 'date-fns/set_hours'
+import isWithinRange from 'date-fns/is_within_range'
+import isAfter from 'date-fns/is_after'
+import format from 'date-fns/format'
+import isSameDay from 'date-fns/is_same_day'
+import isBefore from 'date-fns/is_before'
+import addMinutes from 'date-fns/add_minutes'
 
 export function dateFromTimeString(time, date) {
 	const [hours, minutes] = time.split(':')
@@ -22,14 +20,14 @@ export function dateFromTimeString(time, date) {
 export default class SchedulerCreator {
 	getShiftSlots(shifts, interval = 30, day = new Date()) {
 		const slots = []
-
+		const now = new Date()
 		for (let i = 0; i < shifts.length; i++) {
 			const shift = shifts[i]
 			let start = dateFromTimeString(shift.start_time, day)
 
 			const end = dateFromTimeString(shift.end_time, day)
 
-			while (isBefore(start, end)) {
+			while (isBefore(start, end) && isAfter(start, now) && shift.acceptingAppointments) {
 				// create a slot
 				const end_time = addMinutes(start, interval - 1)
 

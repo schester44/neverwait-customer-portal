@@ -20,6 +20,7 @@
 		"formik": "^1.5.8",
 		"graphql": "^14.4.2",
 		"graphql-tag": "^2.10.1",
+		"immer": "^4.0.2",
 		"jwt-decode": "^2.2.0",
 		"memoize-one": "^4.0.0",
 		"polished": "^3.4.1",

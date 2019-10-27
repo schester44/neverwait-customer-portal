@@ -1,5 +1,8 @@
 import React from 'react'
-import { format, addMinutes, isAfter } from 'date-fns'
+import format from 'date-fns/format'
+import addMinutes from 'date-fns/add_minutes'
+import isAfter from 'date-fns/is_after'
+
 import { dateFromMinutes } from '../Employee/utils/isWorking'
 
 const ClosingSoon = ({ today }) => {

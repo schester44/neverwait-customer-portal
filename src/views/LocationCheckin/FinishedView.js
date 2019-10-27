@@ -1,7 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { format, subMinutes } from 'date-fns'
+import format from 'date-fns/format'
+import subMinutes from 'date-fns/sub_minutes'
 import Button from '../../components/Button'
 import FormFooter from '../../components/FormFooter'
 

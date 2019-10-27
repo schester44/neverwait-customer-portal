@@ -1,7 +1,8 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
-import { format } from 'date-fns'
 import ScheduleCreator from '../../utils/ScheduleCreator'
+
+import format from 'date-fns/format'
 
 const selectedStyles = ({ isSelected, theme }) =>
 	isSelected &&
@@ -53,16 +54,19 @@ const Container = styled('div')`
 const scheduler = new ScheduleCreator()
 
 const DateCell = ({ date, scheduleRanges, isSelected, onClick }) => {
-	const daySchedule = React.useMemo(() => scheduler.get(scheduleRanges, date), [scheduleRanges, date])
-	const disabled = !daySchedule
+	const canSchedule = React.useMemo(() => {
+		const schedule = scheduler.get(scheduleRanges, date)
+
+		return schedule && schedule.schedule_shifts.some(shift => !!shift.acceptingAppointments)
+	}, [scheduleRanges, date])
 
 	const handleClick = e => {
-		if (disabled) return
+		if (!canSchedule) return
 		onClick(e)
 	}
 
 	return (
-		<Container disabled={disabled} isSelected={isSelected} onClick={handleClick}>
+		<Container disabled={!canSchedule} isSelected={isSelected} onClick={handleClick}>
 			<div className="small-sub-text">{format(date, 'ddd')}</div>
 			<div className="day">{format(date, 'DD')}</div>
 			<div className="small-sub-text">{format(date, 'MMM')}</div>

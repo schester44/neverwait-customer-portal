@@ -117,6 +117,9 @@ export const locationDataQuery = gql`
 					schedule_shifts {
 						start_time
 						end_time
+						acceptingAppointments
+						acceptingCheckins
+						acceptingWalkins
 					}
 				}
 

@@ -3,7 +3,9 @@ import omit from 'lodash/omit'
 import ReactGA from 'react-ga'
 import styled, { css, keyframes } from 'styled-components'
 import { useHistory, useParams, Redirect } from 'react-router-dom'
-import { addMinutes } from 'date-fns'
+import addMinutes from 'date-fns/add_minutes'
+import isAfter from 'date-fns/is_after'
+import { produce } from 'immer'
 import { useMutation } from '@apollo/react-hooks'
 import determineStartTime from './utils/determineStartTime'
 import getLastAppointment from './utils/getLastAppointment'
@@ -16,6 +18,9 @@ import { profileQuery } from '../../graphql/queries'
 
 import SourceTypeSelection from './SourceTypeSelection'
 import AppointmentForm from './AppointmentForm'
+
+import NoWaitModal from './Overview/NoWaitModal'
+
 const AuthView = React.lazy(() => import('../CustomerAuthView'))
 const Finished = React.lazy(() => import('./FinishedView'))
 
@@ -65,6 +70,7 @@ const RootContainer = ({ profileId, location }) => {
 
 	// submitting is needed to prevent race conditions from graphql in the Review view
 	const [submitting, setSubmitting] = React.useState(false)
+	const [isNoWaitModalVisible, setNoWaitModalVisibility] = React.useState(false)
 
 	const [createdAppt, setCreatedAppointment] = React.useState(undefined)
 
@@ -98,20 +104,18 @@ const RootContainer = ({ profileId, location }) => {
 	const setStep = step => setState(prev => ({ ...prev, step }))
 
 	const [createAppointment, { loading }] = useMutation(sequentialUpsertMutation, {
-		update: (cache, { data: { checkinOnline } }) => {
-			const data = cache.readQuery({
-				query: profileQuery
+		update: (proxy, { data: { checkinOnline } }) => {
+			const cache = proxy.readQuery({
+				query: profileQuery,
+				variables: { skip: false }
 			})
 
-			let profile = data.profile
-			profile.appointments.upcoming = [checkinOnline, ...profile.appointments.upcoming]
-
-			cache.writeQuery({
+			proxy.writeQuery({
 				query: profileQuery,
-				data: {
-					...data,
-					profile
-				}
+				variables: { skip: false },
+				data: produce(cache, draftState => {
+					draftState.profile.appointments.upcoming.unshift(checkinOnline)
+				})
 			})
 		}
 	})
@@ -223,6 +227,10 @@ const RootContainer = ({ profileId, location }) => {
 
 	if (!employee) return <Redirect to="/" />
 
+	if (isNoWaitModalVisible) {
+		return <NoWaitModal location={location} onClose={() => setNoWaitModalVisibility(false)} />
+	}
+
 	return (
 		<Wrapper confirmed={step === 4}>
 			{(step !== 2 || state.sourceType) && (
@@ -266,12 +274,18 @@ const RootContainer = ({ profileId, location }) => {
 						employee={employee}
 						estimates={estimates}
 						onBack={() => setState(prev => ({ ...prev, step: prev.step - 1 }))}
-						onSelectCheckin={() => setState(prev => ({ ...prev, step: 3, sourceType: sourceTypes.checkin }))}
+						onSelectCheckin={() => {
+							if (isAfter(addMinutes(new Date(), 20), estimates.startTime)) {
+								setNoWaitModalVisibility(true)
+							} else {
+								setState(prev => ({ ...prev, step: 3, sourceType: sourceTypes.checkin }))
+							}
+						}}
 						onSelectAppointment={() => setState(prev => ({ ...prev, step: 3, sourceType: sourceTypes.appointment }))}
 					/>
 				)}
 
-				{step === 3 && !createdAppt && customer.id && state.sourceType == sourceTypes.checkin && (
+				{step === 3 && !createdAppt && customer.id && state.sourceType === sourceTypes.checkin && (
 					<Review
 						submitting={submitting}
 						loading={loading}

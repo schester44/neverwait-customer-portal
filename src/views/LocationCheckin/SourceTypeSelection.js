@@ -1,12 +1,16 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useQuery } from '@apollo/react-hooks'
 import Button from '../../components/Button'
 import { lighten } from 'polished'
-import { FiArrowLeft } from 'react-icons/fi'
-import { format, isAfter } from 'date-fns'
+import { FiArrowLeft, FiClock, FiCalendar } from 'react-icons/fi'
+import format from 'date-fns/format'
+import isAfter from 'date-fns/is_after'
+
+import { profileQuery } from '../../graphql/queries'
 
 import { dateFromTimeString } from './Employee/utils/isWorking'
-import pling from '../../components/Pling'
+import { isWorking } from './Employee/utils/isWorking'
 
 const Container = styled('div')`
 	text-align: center;
@@ -66,29 +70,14 @@ const Container = styled('div')`
 `
 
 const SourceTypeSelection = ({ employee, estimates, onSelectCheckin, onSelectAppointment, onBack }) => {
-	const [visible, setVisible] = React.useState({
-		noWait: false
-	})
+	const { data } = useQuery(profileQuery, { variables: { skip: false } })
 
-	const handleCheckinClick = () => {
-		// check service durations against employee end time
-		const shiftEndTime = dateFromTimeString(employee.status.currentShift.end_time, new Date())
+	const status = isWorking(employee, new Date())
 
-		// TODO: This shouldn't be visible because the UI would show which source actions are available
-		if (isAfter(estimates.endTime, shiftEndTime)) {
-			pling({
-				message: `Selected service duration exceeds ${employee.firstName}'s work hours. You could book an appointment instead.`
-			})
+	const wouldExceedShift =
+		status.working && isAfter(estimates.endTime, dateFromTimeString(status.currentShift.end_time, new Date()))
 
-			return false
-		}
-
-		if (employee.waitTime >= 15) {
-			onSelectCheckin()
-		} else {
-			setVisible(prev => ({ ...prev, noWait: true }))
-		}
-	}
+	const hasExceededMaxUpcomingAppointments = data.profile.appointments.upcoming.length >= 3
 
 	return (
 		<Container>
@@ -100,21 +89,61 @@ const SourceTypeSelection = ({ employee, estimates, onSelectCheckin, onSelectApp
 			<p className="small-sub-text">Need it soon or need it when you need it?</p>
 
 			<div className="actions">
-				<p style={{ marginBottom: 14 }} className="small-sub-text">
-					First available time today is {format(estimates.startTime, 'h:mmA')}.
-				</p>
+				<div className="walk-ins">
+					{status.working ? (
+						wouldExceedShift ? (
+							<p style={{ marginBottom: 7, color: 'tomato' }} className="small-sub-text">
+								Fully booked for today.
+							</p>
+						) : status.currentShift.acceptingCheckins ? (
+							<p style={{ marginBottom: 7 }} className="small-sub-text">
+								First available time today is {format(estimates.startTime, 'h:mmA')}.
+							</p>
+						) : (
+							<p style={{ marginBottom: 7, color: 'tomato' }} className="small-sub-text">
+								{status.nextShift?.acceptingCheckins
+									? `Online Checkins start at ${format(
+											dateFromTimeString(status.nextShift.start_time, new Date()),
+											'h:mma'
+									  )}`
+									: ``}
+							</p>
+						)
+					) : status.nextShift?.acceptingCheckins ? (
+						<span style={{ marginBottom: 7, color: 'tomato' }} className="small-sub-text">
+							Online Check-ins start at {format(dateFromTimeString(status.nextShift.start_time, new Date()), 'h:mma')}
+						</span>
+					) : (
+						<span style={{ marginBottom: 7, color: 'tomato' }} className="small-sub-text">
+							Currently not working.
+						</span>
+					)}
 
-				{/* Show, but disable this button if we can't book the employee (due to schedule reasons) */}
-				<Button onClick={handleCheckinClick} style={{ width: '100%' }}>
-					First available time today
-				</Button>
+					<Button
+						disabled={!status.working || !status.currentShift?.acceptingCheckins || wouldExceedShift}
+						onClick={onSelectCheckin}
+						style={{ display: 'flex', alignItems: 'center', width: '100%' }}
+					>
+						<FiClock style={{ marginRight: 7, opacity: 0.7 }} /> First available time today
+					</Button>
+				</div>
 
 				<div className="separator">
 					<div>or</div>
 				</div>
 
-				<Button onClick={onSelectAppointment} style={{ background: 'rgba(49,49,49,1)', width: '100%' }}>
-					Create an appointment
+				{hasExceededMaxUpcomingAppointments && (
+					<p style={{ marginBottom: 7, color: 'tomato' }} className="small-sub-text">
+						Upcoming appointments limit reached.
+					</p>
+				)}
+
+				<Button
+					// disabled={hasExceededMaxUpcomingAppointments}
+					onClick={onSelectAppointment}
+					style={{ background: 'rgba(49,49,49,1)', display: 'flex', alignItems: 'center', width: '100%' }}
+				>
+					<FiCalendar style={{ marginRight: 7, opacity: 0.7 }} /> Create an appointment
 				</Button>
 			</div>
 		</Container>

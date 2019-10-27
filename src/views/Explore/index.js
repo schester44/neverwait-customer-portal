@@ -50,7 +50,7 @@ const Explore = ({ locations, profile }) => {
 		return locations.filter(location => !!locationIds[location.id])
 	}, [locations, profile])
 
-	const shouldRedirectToLastAppointment = filteredLocations.length === 1 && filteredLocations.length < locations.length
+	const shouldRedirectToLastAppointment = filteredLocations.length === 1 && filteredLocations.length <= locations.length
 
 	if (shouldRedirectToLastAppointment) {
 		return <Redirect to={generatePath(LOCATION_WAITLIST, { uuid: filteredLocations[0].uuid })} />

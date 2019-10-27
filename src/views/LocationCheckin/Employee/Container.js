@@ -32,17 +32,18 @@ export default styled('div')`
 	}
 
 	.status {
-		background: rgba(54, 66, 150, 0.05);
-		border: 1px solid rgba(54, 66, 150, 0.05);
-		border-top: 1px solid rgba(54, 66, 150, 0.075);
-		border-bottom-left-radius: 8px;
-		border-bottom-right-radius: 8px;
-		width: calc(100% + 2px);
-		border-top-right-radius: 80%;
-		margin-left: -1px;
-		margin-bottom: -1px;
+		background: rgba(249, 249, 249, 0.8);
+		padding: 10px 10px 6px 10px;
 
-		padding: 10px;
+		.wait-time {
+			display: flex;
+			justify-content: space-between;
+			flex-wrap: wrap;
+
+			.accepts {
+				padding-bottom: 3px;
+			}
+		}
 	}
 
 	.right {
@@ -60,15 +61,13 @@ export default styled('div')`
 		border: 0;
 		border-radius: 3px;
 		padding: 12px;
-		font-size: 16px;
 		color: rgba(38, 43, 49, 1);
 		line-height: 1;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
-		position: relative;
-		top: 5px;
+		font-weight: 700;
 	}
 
 	@media (min-width: 768px) {

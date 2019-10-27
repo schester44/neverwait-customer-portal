@@ -2,19 +2,24 @@ import React from 'react'
 import styled, { keyframes } from 'styled-components'
 import { useWindowSize } from '@withvoid/melting-pot'
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
-import { addDays, format, subDays, isBefore, startOfDay, isAfter } from 'date-fns'
 
+import addDays from 'date-fns/add_days'
+import format from 'date-fns/format'
+import startOfDay from 'date-fns/start_of_day'
+import endOfDay from 'date-fns/end_of_day'
+
+import { produce } from 'immer'
 import DatePicker from './DatePicker/Picker'
 import SchedulerCreator from '../utils/ScheduleCreator'
 import TimePicker from './TimePicker'
 import FormFooter from '../../../components/FormFooter'
 import Button from '../../../components/Button'
-import LoadingIcon from '../../../components/LoadingIcon'
 
 import { createProfileAppointmentMutation } from '../../../graphql/mutations'
 import { employeeScheduleQuery } from './queries'
 import getAvailableShiftSlots from '../utils/getAvailableShiftSlots'
 import { FiArrowUp } from 'react-icons/fi'
+import { profileQuery } from '../../../graphql/queries'
 
 const scheduler = new SchedulerCreator()
 
@@ -97,11 +102,30 @@ const AppointmentForm = ({ duration, services, location, employee, onAppointment
 		[duration]
 	)
 
-	const [fetchSchedule, { called, loading: fetchLoading }] = useLazyQuery(employeeScheduleQuery, {
+	const [fetchSchedule, { called, data, loading: fetchLoading }] = useLazyQuery(employeeScheduleQuery, {
 		onCompleted: data => {
 			setShiftSlots(data.employeeSchedule, new Date())
 		}
 	})
+
+	// Re-calculate the shift slots on AppointmentChange subscription changes
+	// TODO: Does this work? having trouble testing locally because the connection keeps closing
+	React.useEffect(() => {
+		if (!data || !data.employeeSchedule || !state.selectedDate) return
+
+		setState(prev => {
+			// Create slots based on the time this person works.
+			const shiftSlots = getAvailableShiftSlots(prev.schedule, state.selectedDate, duration)
+
+			return {
+				...prev,
+				selectedDate: state.selectedDate,
+				shiftSlots,
+				isWorkingOnSelectedDay: shiftSlots.length > 0,
+				selectedTime: undefined
+			}
+		})
+	}, [data, duration, state.selectedDate])
 
 	React.useEffect(() => {
 		fetchSchedule({
@@ -109,12 +133,12 @@ const AppointmentForm = ({ duration, services, location, employee, onAppointment
 				locationId: location.id,
 				employeeId: employee.id,
 				input: {
-					start_date: new Date(),
-					end_date: addDays(new Date(), 30)
+					start_date: startOfDay(new Date()),
+					end_date: endOfDay(addDays(new Date(), 30))
 				}
 			}
 		})
-	}, [])
+	}, [fetchSchedule, location.id, employee.id])
 
 	const handleConfirm = async () => {
 		const { data } = await createProfileAppointment({
@@ -125,6 +149,19 @@ const AppointmentForm = ({ duration, services, location, employee, onAppointment
 					services,
 					startTime: state.selectedTime
 				}
+			},
+			update: (proxy, { data }) => {
+				if (!data?.createProfileAppointment) return
+
+				const cache = proxy.readQuery({ query: profileQuery, variables: { skip: false } })
+
+				proxy.writeQuery({
+					query: profileQuery,
+					variables: { skip: false },
+					data: produce(cache, draftState => {
+						draftState.profile.appointments.upcoming.push(data.createProfileAppointment)
+					})
+				})
 			}
 		})
 
@@ -135,15 +172,9 @@ const AppointmentForm = ({ duration, services, location, employee, onAppointment
 
 	const handleDateSelect = selectedDate => {
 		setState(prev => {
-			// Create slots based on the time this person works.
-			const shiftSlots = getAvailableShiftSlots(prev.schedule, selectedDate, duration)
-
 			return {
 				...prev,
-				selectedDate,
-				shiftSlots,
-				isWorkingOnSelectedDay: shiftSlots.length > 0,
-				selectedTime: undefined
+				selectedDate
 			}
 		})
 	}
@@ -170,7 +201,7 @@ const AppointmentForm = ({ duration, services, location, employee, onAppointment
 				</div>
 			)}
 
-			{called && !fetchLoading && state.shiftSlots.length > 0 && state.selectedDate && (
+			{called && !fetchLoading && state.selectedDate && (
 				<div className="time-picker-container">
 					<TimePicker
 						slots={state.shiftSlots}

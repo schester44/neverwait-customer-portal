@@ -122,7 +122,7 @@ const SourceTypeSelection = ({ employee, estimates, onSelectCheckin, onSelectApp
 					<Button
 						disabled={!status.working || !status.currentShift?.acceptingCheckins || wouldExceedShift}
 						onClick={onSelectCheckin}
-						style={{ display: 'flex', alignItems: 'center', width: '100%' }}
+						style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}
 					>
 						<FiClock style={{ marginRight: 7, opacity: 0.7 }} /> First available time today
 					</Button>
@@ -141,7 +141,13 @@ const SourceTypeSelection = ({ employee, estimates, onSelectCheckin, onSelectApp
 				<Button
 					// disabled={hasExceededMaxUpcomingAppointments}
 					onClick={onSelectAppointment}
-					style={{ background: 'rgba(49,49,49,1)', display: 'flex', alignItems: 'center', width: '100%' }}
+					style={{
+						background: 'rgba(49,49,49,1)',
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						width: '100%'
+					}}
 				>
 					<FiCalendar style={{ marginRight: 7, opacity: 0.7 }} /> Create an appointment
 				</Button>

@@ -13,14 +13,6 @@ const Container = styled('div')`
 	h1 {
 		color: ${({ theme }) => theme.colors.bodyColor};
 	}
-
-	.sub {
-		font-size: 10px;
-		text-transform: uppercase;
-		font-weight: 700;
-		opacity: 0.8;
-		line-height: 1.5;
-	}
 `
 
 const Location = ({ location }) => {
@@ -35,7 +27,7 @@ const Location = ({ location }) => {
 		>
 			<Container>
 				<h1>{location.name}</h1>
-				<p class="sub">{location.address}</p>
+				<p className="small-sub-text">{location.address}</p>
 			</Container>
 		</Link>
 	)

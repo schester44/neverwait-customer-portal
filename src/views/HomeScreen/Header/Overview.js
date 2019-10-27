@@ -2,8 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import isToday from 'date-fns/is_today'
 import format from 'date-fns/format'
+import isAfter from 'date-fns/is_after'
 import { FiArrowLeft } from 'react-icons/fi'
-import { isAfter } from 'date-fns'
 
 const Container = styled('div')`
 	position: relative;

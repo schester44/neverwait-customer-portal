@@ -1,5 +1,8 @@
 import React from 'react'
-import { isBefore, differenceInMinutes, addMinutes, isAfter } from 'date-fns'
+import isBefore from 'date-fns/is_before'
+import differenceInMinutes from 'date-fns/difference_in_minutes'
+import addMinutes from 'date-fns/add_minutes'
+
 import isWorking from '../views/LocationCheckin/Employee/utils/isWorking'
 
 export const waitTimeInMinutes = (appointments = [], blockedTimes = []) => {
@@ -7,7 +10,7 @@ export const waitTimeInMinutes = (appointments = [], blockedTimes = []) => {
 	const now = new Date()
 
 	const sortedAppointments = [...appointments, ...blockedTimes]
-		.filter(({ status, endTime }) => status !== 'completed' && status !== 'deleted' && isAfter(endTime, now))
+		.filter(({ status, endTime }) => status !== 'completed' && status !== 'deleted' && isBefore(now, endTime))
 		.sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
 
 	for (let i = 0; i < sortedAppointments.length; i++) {
@@ -47,8 +50,6 @@ export const useEnhancedEmployees = ({ employees = [] }) => {
 	})
 
 	React.useEffect(() => {
-		console.log('hook running')
-
 		const update = () => {
 			setState(() => {
 				let hasWorkingEmployees = false

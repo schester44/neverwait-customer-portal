@@ -11,20 +11,12 @@ const FormFooter = styled('div')`
 	justify-content: space-between;
 	align-items: center;
 
-	padding: 15px 25px 25px 25px;
+	padding: 15px 10px 20px 10px;
 	margin: 0 auto;
 	z-index: 999;
 
 	background: ${({ theme }) => theme.colors.headerBg};
 	color: ${({ theme }) => theme.colors.headerColor};
-
-	.price,
-	span {
-		text-transform: uppercase;
-		font-size: 14px;
-		opacity: 0.7;
-		font-weight: 700;
-	}
 
 	.price {
 		font-weight: 700;

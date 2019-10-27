@@ -64,6 +64,14 @@ export const createStyles = ({ theme, custom = '' }) => {
 		    color: inherit;
 	    }
 
+        .small-sub-text {
+			font-size: 10px;
+			text-transform: uppercase;
+			font-weight: 700;
+			opacity: 0.8;
+			line-height: 1.5;
+		}
+
         ${custom}
     `
 }

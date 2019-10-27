@@ -1,24 +1,17 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { format, subMinutes } from 'date-fns'
+import format from 'date-fns/format'
+import subMinutes from 'date-fns/sub_minutes'
 import Button from '../../components/Button'
 import FormFooter from '../../components/FormFooter'
 
 const Wrapper = styled('div')`
-	padding: 24px 10px;
+	padding: 10px;
 	width: 100%;
 
 	.time {
 		color: ${({ theme }) => theme.colors.success};
-	}
-
-	.sub {
-		font-size: 10px;
-		text-transform: uppercase;
-		font-weight: 700;
-		opacity: 0.8;
-		line-height: 1.5;
 	}
 
 	.block {
@@ -37,12 +30,32 @@ const Wrapper = styled('div')`
 		}
 	}
 `
-const Finished = ({ price, estimates, appointment, locationData, selectedServices, selectedServiceIds }) => {
+const Finished = ({ isAppointment, appointment, locationData, selectedServices, selectedServiceIds }) => {
 	return (
 		<Wrapper>
+			<div className="small-sub-text" style={{ textAlign: 'center', marginBottom: 14 }}>
+				{isAppointment && (
+					<p>
+						Your appointment for {format(appointment.startTime, 'dddd, MMM Do')}
+						<br />
+						has been confirmed.
+					</p>
+				)}
+			</div>
+
+			<div className="block">
+				<h4 style={{ marginTop: 14, opacity: 0.9 }}>
+					{isAppointment ? format(appointment.startTime, 'dddd, MMMM Do') : 'Today'} at
+				</h4>
+
+				<h1 className="time" style={{ fontFamily: 'inherit', fontSize: 60, lineHeight: 1, margin: 0 }}>
+					{format(appointment.startTime, 'h:mmA')}
+				</h1>
+			</div>
+
 			<div className="block location">
 				<h3>{locationData.name}</h3>
-				<p className="sub">{locationData.address}</p>
+				<p className="small-sub-text">{locationData.address}</p>
 			</div>
 
 			<div className="block service">
@@ -54,29 +67,16 @@ const Finished = ({ price, estimates, appointment, locationData, selectedService
 							</p>
 						)
 					})}
-					<p className="sub">{estimates.duration} minutes</p>
+					<p className="small-sub-text">{appointment.duration} minutes</p>
 				</div>
-				<h3>${price}</h3>
-			</div>
-			<div className="block">
-				<p style={{ opacity: 0.7, textTransform: 'uppercase', fontSize: 12, fontWeight: 700 }}>You're all set for:</p>
-				<h1 className="time" style={{ fontSize: 60 }}>
-					{format(appointment.startTime, 'h:mma')}
-				</h1>
+				<h3>${appointment.price}</h3>
 			</div>
 
-			<div className="block">
-				<p className="sub">
-					Please arrive 15 minutes early ({format(subMinutes(appointment.startTime, 15), 'h:mma')}).
-				</p>
-				<p className="sub">
-					To cancel, please call the shop at
-					<span> {appointment.location.contactNumber}.</span>
-				</p>
-			</div>
+			<p style={{ textAlign: 'center' }} className="small-sub-text">
+				Please arrive 15 minutes early ({format(subMinutes(appointment.startTime, 15), 'h:mma')}).
+			</p>
 
-			<FormFooter>
-				<span />
+			<FormFooter style={{ background: 'transparent' }}>
 				<Link to="/" style={{ width: '100%', display: 'block' }}>
 					<Button style={{ width: '100%' }} className="finished-btn">
 						Finish

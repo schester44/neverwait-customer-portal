@@ -10,12 +10,13 @@ import isWithinRange from 'date-fns/is_within_range'
 import startOfDay from 'date-fns/start_of_day'
 import endOfDay from 'date-fns/end_of_day'
 import isAfter from 'date-fns/is_after'
+import addDays from 'date-fns/add_days'
 import { dateFromMinutes } from './Employee/utils/isWorking'
-import NavFooter from '../HomeScreen/NavFooter'
+import { employeeScheduleQuery } from './AppointmentForm/queries'
+import { produce } from 'immer'
 
 const Overview = React.lazy(() => import('./Overview/LocationOverview'))
 const Form = React.lazy(() => import('./FormContainer'))
-const ClosedPlaceholder = React.lazy(() => import('./ClosedPlaceholder'))
 
 const LocationCheckin = ({ profileId }) => {
 	const { uuid } = useParams()
@@ -69,9 +70,9 @@ const LocationCheckin = ({ profileId }) => {
 				variables: { locationId: location ? location.id : null }
 			})
 			.subscribe(({ data }) => {
-				const queryData = client.readQuery({ query: locationDataQuery, ...queryOptions })
-
 				if (!data || !data.AppointmentsChange) return
+
+				const locationData = client.readQuery({ query: locationDataQuery, ...queryOptions })
 
 				const { appointment, employeeId, isNewRecord } = data.AppointmentsChange
 
@@ -80,7 +81,7 @@ const LocationCheckin = ({ profileId }) => {
 				// let apollo handle updates.
 				if (!isNewRecord && !isDeleted) return
 
-				const employees = queryData.locationByUUID.employees.map(employee => {
+				const employees = locationData.locationByUUID.employees.map(employee => {
 					if (+employeeId !== +employee.id) return employee
 
 					return {
@@ -94,27 +95,59 @@ const LocationCheckin = ({ profileId }) => {
 				client.writeQuery({
 					query: locationDataQuery,
 					...queryOptions,
-					data: {
-						...queryData,
-						locationByUUID: {
-							...queryData.locationByUUID,
-							employees
-						}
-					}
+					data: produce(locationData, draftState => {
+						draftState.locationByUUID.employees = employees
+					})
 				})
+
+				try {
+					const employeeSchedule = client.readQuery({
+						query: employeeScheduleQuery,
+						variables: {
+							locationId: location.id,
+							employeeId,
+							input: {
+								start_date: startOfDay(new Date()),
+								end_date: endOfDay(addDays(new Date(), 30))
+							}
+						}
+					})
+
+					client.writeQuery({
+						query: employeeScheduleQuery,
+						variables: {
+							locationId: location.id,
+							employeeId,
+							input: {
+								start_date: startOfDay(new Date()),
+								end_date: endOfDay(addDays(new Date(), 30))
+							}
+						},
+						data: produce(employeeSchedule, draftState => {
+							if (isDeleted) {
+								draftState.employeeSchedule.appointments.slice(
+									draftState.employeeSchedule.appointments.findIndex(appt => appt.id === appointment.id),
+									1
+								)
+							} else {
+								draftState.employeeSchedule.appointments.push(appointment)
+							}
+						})
+					})
+				} catch (error) {
+					console.error('locationcehckin error', error)
+				}
 			})
 
-		return () => subscription.unsubscribe()
+		return () => {
+			subscription.unsubscribe()
+		}
 	}, [location, client, queryOptions])
 
 	if (loading) return <Loading />
 
 	// TODO: This redirects when there is a network error.
 	if (!loading && !location) return <Redirect to="/" />
-
-	if (isClosed) {
-		return <ClosedPlaceholder showBackButton={!!profileId} location={location} reason={isClosed.description} />
-	}
 
 	return (
 		<>
@@ -123,17 +156,12 @@ const LocationCheckin = ({ profileId }) => {
 					exact
 					path={match.path}
 					render={props => {
-						const employees = location.employees.filter(employee => {
-							if (employee.services.length === 0) return false
-
-							return true
-						})
 						return (
 							<Overview
 								isClosed={isClosed}
 								history={props.history}
 								profileId={profileId}
-								employees={employees}
+								employees={location.employees}
 								location={location}
 							/>
 						)
@@ -144,7 +172,6 @@ const LocationCheckin = ({ profileId }) => {
 				</Route>
 				/>
 			</Switch>
-			{/* <NavFooter hideCheckin={true} animate={false} /> */}
 		</>
 	)
 }

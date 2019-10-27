@@ -39,8 +39,8 @@ const NoWaitModal = ({ location, onClose }) => {
 						maxWidth: '90%'
 					}}
 				>
-					Act fast though because the wait time can change by the time you get to {location.name}. There's no guarantee
-					that there won't be a line by the time you get there.
+					Act fast! There's no line at the moment but we can't guarantee that there won't be one by the time you get to{' '}
+					{location.name}.
 				</p>
 			</div>
 

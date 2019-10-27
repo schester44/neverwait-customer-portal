@@ -1,4 +1,4 @@
-import { differenceInMinutes } from 'date-fns'
+import differenceInMinutes  from 'date-fns/difference_in_minutes'
 
 export default function isRecentAppointment(appointment) {
 	if (!appointment) return false

@@ -116,24 +116,12 @@ const Container = styled('div')`
 		h3 {
 			line-height: 1.5;
 		}
-
-		.sub {
-			font-size: 10px;
-			text-transform: uppercase;
-			font-weight: 700;
-			opacity: 0.8;
-			line-height: 1.5;
-		}
 	}
 
 	.flex {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-	}
-
-	.call-btn {
-		padding: 10px 20px;
 	}
 
 	.date {
@@ -144,8 +132,13 @@ const Container = styled('div')`
 		font-weight: 700;
 	}
 
-	.call-btn {
+	.actions {
+		padding: 10px 20px;
 		margin-top: 20px;
+	}
+
+	.call-btn {
+		margin-bottom: 16px;
 	}
 
 	.service-block {
@@ -217,8 +210,8 @@ const AppointmentOverview = ({ profile }) => {
 
 					<div className="location">
 						<h3>{appointment.location.name}</h3>
-						<p className="sub">{appointment.location.address}</p>
-						<p className="sub">{appointment.location.contactNumber}</p>
+						<p className="small-sub-text">{appointment.location.address}</p>
+						<p className="small-sub-text">{appointment.location.contactNumber}</p>
 					</div>
 				</div>
 
@@ -248,15 +241,22 @@ const AppointmentOverview = ({ profile }) => {
 
 						<p className="price">${appointment.price}</p>
 					</div>
-					<MobileView>
-						<div className="call-btn">
-							<a href={`tel:${appointment.location.contactNumber}`}>
-								<Button intent="secondary" style={{ width: '100%', fontSize: 14, textTransform: 'uppercase' }}>
-									Call {appointment.location.name}
-								</Button>
-							</a>
-						</div>
-					</MobileView>
+
+					<div className="actions">
+						<MobileView>
+							<div className="call-btn">
+								<a href={`tel:${appointment.location.contactNumber}`}>
+									<Button style={{ width: '100%', fontSize: 14, textTransform: 'uppercase' }}>
+										Call {appointment.location.name}
+									</Button>
+								</a>
+							</div>
+						</MobileView>
+
+						<Button intent="secondary" style={{ width: '100%', fontSize: 14, textTransform: 'uppercase' }}>
+							Cancel Appointment
+						</Button>
+					</div>
 				</div>
 			</Container>
 		</Swipe>

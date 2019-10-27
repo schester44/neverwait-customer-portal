@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 
 import Button from '../../components/Button'
 import FormFooter from '../../components/FormFooter'
@@ -9,14 +9,6 @@ import pling from '../../components/Pling'
 const Wrapper = styled('div')`
 	padding: 10px 10px 80px 10px;
 	width: 100%;
-
-	.sub {
-		font-size: 10px;
-		text-transform: uppercase;
-		font-weight: 700;
-		opacity: 0.8;
-		line-height: 1.5;
-	}
 
 	.block {
 		padding-bottom: 24px;
@@ -57,8 +49,8 @@ const Review = ({
 		<Wrapper>
 			<div className="block location">
 				<h3>{locationData.name}</h3>
-				<p className="sub">{locationData.address}</p>
-				<p className="sub">{locationData.contactNumber}</p>
+				<p className="small-sub-text">{locationData.address}</p>
+				<p className="small-sub-text">{locationData.contactNumber}</p>
 			</div>
 
 			<div className="block service">
@@ -70,7 +62,7 @@ const Review = ({
 							</h3>
 						)
 					})}
-					<p className="sub">{estimates.duration} minutes</p>
+					<p className="small-sub-text">{estimates.duration} minutes</p>
 				</div>
 				<h3>${price}</h3>
 			</div>
@@ -83,7 +75,7 @@ const Review = ({
 				<h1 style={{ fontSize: 60, lineHeight: 1 }}>{format(estimates.startTime, 'h:mma')}</h1>
 			</div>
 
-			<p className="sub">
+			<p className="small-sub-text">
 				The above time has not been secured and is only an estimate. Click confirm to lock in your scheduled time.
 			</p>
 

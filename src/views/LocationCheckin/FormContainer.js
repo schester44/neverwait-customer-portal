@@ -1,9 +1,11 @@
 import React from 'react'
 import omit from 'lodash/omit'
 import ReactGA from 'react-ga'
-import styled, { keyframes } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { useHistory, useParams, Redirect } from 'react-router-dom'
-import { addMinutes, isAfter } from 'date-fns'
+import addMinutes from 'date-fns/add_minutes'
+import isAfter from 'date-fns/is_after'
+import { produce } from 'immer'
 import { useMutation } from '@apollo/react-hooks'
 import determineStartTime from './utils/determineStartTime'
 import getLastAppointment from './utils/getLastAppointment'
@@ -13,8 +15,11 @@ import { sequentialUpsertMutation } from '../../graphql/mutations'
 import ServiceSelector from '../../components/ServiceSelector'
 import Header from './Header'
 import { profileQuery } from '../../graphql/queries'
-import { dateFromTimeString } from './Employee/utils/isWorking'
-import pling from '../../components/Pling'
+
+import SourceTypeSelection from './SourceTypeSelection'
+import AppointmentForm from './AppointmentForm'
+
+import NoWaitModal from './Overview/NoWaitModal'
 
 const AuthView = React.lazy(() => import('../CustomerAuthView'))
 const Finished = React.lazy(() => import('./FinishedView'))
@@ -27,6 +32,12 @@ const expandAnimation = keyframes`
 	}
 `
 
+const confirmedStyles = ({ confirmed }) =>
+	confirmed &&
+	css`
+		padding-top: 75px;
+	`
+
 const Wrapper = styled('div')`
 	width: 100%;
 	height: 100vh;
@@ -34,18 +45,23 @@ const Wrapper = styled('div')`
 	flex-direction: column;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0px 10px;
-	padding-top: 160px;
+	padding-top: 90px;
 	transform: translateY(-50px);
-	animation: ${expandAnimation} .2s ease forwards;
+	animation: ${expandAnimation} 0.2s ease forwards;
 
 	.button {
 		width: 100%;
 	}
+	${confirmedStyles};
 `
 
 const getAppointmentDuration = (appointment, services) => {
 	return appointment.services.reduce((acc, id) => acc + services[id].sources?.[0]?.duration, 0)
+}
+
+const sourceTypes = {
+	appointment: 1,
+	checkin: 2
 }
 
 const RootContainer = ({ profileId, location }) => {
@@ -54,6 +70,7 @@ const RootContainer = ({ profileId, location }) => {
 
 	// submitting is needed to prevent race conditions from graphql in the Review view
 	const [submitting, setSubmitting] = React.useState(false)
+	const [isNoWaitModalVisible, setNoWaitModalVisibility] = React.useState(false)
 
 	const [createdAppt, setCreatedAppointment] = React.useState(undefined)
 
@@ -73,10 +90,10 @@ const RootContainer = ({ profileId, location }) => {
 		services: []
 	})
 
-	const [step, setStep] = React.useState(1)
-
-	const [state, setState] = React.useState({
+	const [{ step, ...state }, setState] = React.useState({
+		step: 1,
 		selectedServices: {},
+		sourceType: undefined,
 		price: 0,
 		services: employee.services.reduce((acc, service) => {
 			acc[service.id] = service
@@ -84,21 +101,21 @@ const RootContainer = ({ profileId, location }) => {
 		}, {})
 	})
 
+	const setStep = step => setState(prev => ({ ...prev, step }))
+
 	const [createAppointment, { loading }] = useMutation(sequentialUpsertMutation, {
-		update: (cache, { data: { checkinOnline } }) => {
-			const data = cache.readQuery({
-				query: profileQuery
+		update: (proxy, { data: { checkinOnline } }) => {
+			const cache = proxy.readQuery({
+				query: profileQuery,
+				variables: { skip: false }
 			})
 
-			let profile = data.profile
-			profile.appointments.upcoming = [checkinOnline, ...profile.appointments.upcoming]
-
-			cache.writeQuery({
+			proxy.writeQuery({
 				query: profileQuery,
-				data: {
-					...data,
-					profile
-				}
+				variables: { skip: false },
+				data: produce(cache, draftState => {
+					draftState.profile.appointments.upcoming.unshift(checkinOnline)
+				})
 			})
 		}
 	})
@@ -195,38 +212,51 @@ const RootContainer = ({ profileId, location }) => {
 		localStorage.setItem('last-appt', JSON.stringify(data.checkinOnline))
 	}
 
+	const handleAppointmentCreated = appointment => {
+		setStep(4)
+		setCreatedAppointment(appointment)
+
+		ReactGA.event({
+			category: 'OnlineAppointment',
+			action: 'Created',
+			value: Number(appointment.id)
+		})
+
+		localStorage.setItem('last-appt', JSON.stringify(appointment))
+	}
+
 	if (!employee) return <Redirect to="/" />
 
+	if (isNoWaitModalVisible) {
+		return <NoWaitModal location={location} onClose={() => setNoWaitModalVisibility(false)} />
+	}
+
 	return (
-		<Wrapper>
-			<Header
-				onBack={() => {
-					if (step === 1) {
-						return history.goBack()
-					}
+		<Wrapper confirmed={step === 4}>
+			{(step !== 2 || state.sourceType) && (
+				<Header
+					isAppointment={state.sourceType === sourceTypes.appointment}
+					stepModifier={state.sourceType === sourceTypes.checkin ? 1 : 0}
+					showBack={step !== 4}
+					onBack={() => {
+						if (step === 1 || step === 4) {
+							return history.goBack()
+						}
 
-					if (step === 3) {
-						return history.push('/')
-					}
+						if (step === 3) {
+							setState(prev => ({ ...prev, sourceType: undefined }))
+						}
 
-					setStep(step - 1)
-				}}
-				loggedIn={!!customer.id}
-				step={step}
-			/>
+						setStep(step - 1)
+					}}
+					loggedIn={!!customer.id}
+					step={step}
+				/>
+			)}
 			{step === 1 && (
 				<ServiceSelector
 					services={employee.services}
 					onNext={() => {
-						if (history.location.state?.status) {
-							// check service durations against employee end time
-							const shiftEndTime = dateFromTimeString(history.location.state?.status?.currentShift.end_time, new Date())
-
-							if (isAfter(estimates.endTime, shiftEndTime)) {
-								pling({ message: `Selected service duration exceeds ${employee.firstName}'s work hours.` })
-								return false
-							}
-						}
 						setStep(2)
 					}}
 					selectedServiceIds={appointment.services}
@@ -239,7 +269,23 @@ const RootContainer = ({ profileId, location }) => {
 			)}
 
 			<React.Suspense fallback={null}>
-				{step === 2 && !createdAppt && customer.id && (
+				{step === 2 && !createdAppt && customer.id && !state.sourceType && (
+					<SourceTypeSelection
+						employee={employee}
+						estimates={estimates}
+						onBack={() => setState(prev => ({ ...prev, step: prev.step - 1 }))}
+						onSelectCheckin={() => {
+							if (isAfter(addMinutes(new Date(), 20), estimates.startTime)) {
+								setNoWaitModalVisibility(true)
+							} else {
+								setState(prev => ({ ...prev, step: 3, sourceType: sourceTypes.checkin }))
+							}
+						}}
+						onSelectAppointment={() => setState(prev => ({ ...prev, step: 3, sourceType: sourceTypes.appointment }))}
+					/>
+				)}
+
+				{step === 3 && !createdAppt && customer.id && state.sourceType === sourceTypes.checkin && (
 					<Review
 						submitting={submitting}
 						loading={loading}
@@ -251,7 +297,19 @@ const RootContainer = ({ profileId, location }) => {
 						handleConfirm={handleCreate}
 					/>
 				)}
+
+				{step === 3 && !createdAppt && customer.id && state.sourceType === sourceTypes.appointment && (
+					<AppointmentForm
+						duration={estimates.duration}
+						services={appointment.services}
+						location={location}
+						employee={employee}
+						onAppointmentCreated={handleAppointmentCreated}
+					/>
+				)}
+
 				{step === 2 && !createdAppt && !customer.id && (
+					// Should be headed to the review page but they need to login first.
 					<AuthView
 						loading={loading}
 						onLogin={customer => {
@@ -262,8 +320,7 @@ const RootContainer = ({ profileId, location }) => {
 				)}
 				{createdAppt && (
 					<Finished
-						price={state.price}
-						estimates={estimates}
+						isAppointment={state.sourceType === sourceTypes.appointment}
 						appointment={createdAppt}
 						locationData={location}
 						selectedServiceIds={appointment.services}

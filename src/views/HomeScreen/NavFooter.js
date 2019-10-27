@@ -119,7 +119,7 @@ const Container = styled('div')`
 		flex-direction: column;
 		justify-content: center;
 		width: 100%;
-		padding: 5px 0 20px 0;
+		padding: 5px 0 10px 0;
 
 		.text {
 			padding-top: 4px;

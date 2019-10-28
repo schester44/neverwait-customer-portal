@@ -15,7 +15,10 @@ const renderStatus = status => (
 )
 
 const getAvailableSources = (shift, options = {}) => {
+	if (!shift) return null
+	
 	let sources = []
+
 
 	if (shift.acceptingAppointments) {
 		if (!options.exclude?.includes('appointments')) {

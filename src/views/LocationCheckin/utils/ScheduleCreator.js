@@ -21,20 +21,25 @@ export default class SchedulerCreator {
 	getShiftSlots(shifts, interval = 30, day = new Date()) {
 		const slots = []
 		const now = new Date()
+
 		for (let i = 0; i < shifts.length; i++) {
 			const shift = shifts[i]
 			let start = dateFromTimeString(shift.start_time, day)
 
 			const end = dateFromTimeString(shift.end_time, day)
 
-			while (isBefore(start, end) && isAfter(start, now) && shift.acceptingAppointments) {
+			while (isBefore(start, end) && shift.acceptingAppointments) {
 				// create a slot
+
 				const end_time = addMinutes(start, interval - 1)
 
-				slots.push({
-					start_time: start,
-					end_time
-				})
+				// only add the slot if
+				if (isAfter(start, now)) {
+					slots.push({
+						start_time: start,
+						end_time
+					})
+				}
 
 				start = addMinutes(end_time, 1)
 			}

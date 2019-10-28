@@ -4,6 +4,11 @@ import format from 'date-fns/format'
 
 const Container = styled('div')`
 	width: 100%;
+	/* Make an auto-hiding scroller for the 3 people using a IE */
+	-ms-overflow-style: -ms-autohiding-scrollbar;
+	/* For WebKit implementations, provide inertia scrolling */
+	-webkit-overflow-scrolling: touch;
+	/* We don't want internal inline elements to wrap */
 
 	.placeholder {
 		display: flex;

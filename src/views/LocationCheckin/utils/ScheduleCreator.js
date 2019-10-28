@@ -94,7 +94,7 @@ export default class SchedulerCreator {
 
 			if (!end && isAfter(needle, start)) return true
 
-			return true
+			return false
 		})
 	}
 

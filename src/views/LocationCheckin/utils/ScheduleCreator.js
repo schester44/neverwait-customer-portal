@@ -36,6 +36,9 @@ export default class SchedulerCreator {
 				// only add the slot if
 				if (isAfter(start, now)) {
 					slots.push({
+						shiftStart: dateFromTimeString(shift.start_time, day),
+						shiftEnd: dateFromTimeString(shift.end_time, day),
+						nextShift: shifts[i + 1],
 						start_time: start,
 						end_time
 					})

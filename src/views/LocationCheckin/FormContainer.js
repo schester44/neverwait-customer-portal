@@ -123,7 +123,7 @@ const RootContainer = ({ profileId, location }) => {
 	const setSelectedService = service => {
 		const isAdding = !state.selectedServices[service.id]
 
-		const servicePrice = service.sources && service.sources[0] ? service.sources[0].price : 0
+		const servicePrice = parseFloat(service.sources && service.sources[0] ? service.sources[0].price : 0)
 
 		setState(prev => ({
 			...prev,
@@ -147,7 +147,7 @@ const RootContainer = ({ profileId, location }) => {
 			if (!service.sources || service.sources.length === 0) return acc
 
 			// assume the first service is the correct service
-			return acc + service.sources[0].duration
+			return acc + parseInt(service.sources[0].duration)
 		}, 0)
 
 		const lastAppointment = getLastAppointment(employee.appointments, duration)

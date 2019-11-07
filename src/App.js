@@ -6,6 +6,7 @@ import ReactGA from 'react-ga'
 
 import Loading from './components/Loading'
 import AddToHomeScreen from './components/AddToHomeScreen'
+import MaintenanceMode from './views/MaintenanceMode'
 
 import { profileQuery } from './graphql/queries'
 import getCookie from './utils/getCookie'
@@ -59,6 +60,14 @@ const App = () => {
 	}, [profile])
 
 	if (loading) return <Loading />
+
+	if (process.env.REACT_APP_MAINTENANCE_MODE) {
+		return (
+			<React.Suspense fallback={<Loading />}>
+				<MaintenanceMode />
+			</React.Suspense>
+		)
+	}
 
 	return (
 		<React.Suspense fallback={<Loading />}>

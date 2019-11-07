@@ -56,7 +56,7 @@ export const profileQuery = gql`
 
 // FIXME: Shouldn't need extra variables for startTime,endTiem,startDate,endDate.. should only need 2.. problem with inconsistent types
 export const locationDataQuery = gql`
-	query Location($uuid: String!, $startTime: String!, $endTime: String!, $startDate: Date!, $endDate: Date!) {
+	query Location($uuid: String!, $startTime: DateTime!, $endTime: DateTime!) {
 		locationByUUID(input: { uuid: $uuid }) {
 			id
 			name
@@ -110,7 +110,7 @@ export const locationDataQuery = gql`
 			employees(input: { where: { bookingEnabled: true } }) {
 				id
 				firstName
-				schedule_ranges(input: { where: { start_date: $startDate, end_date: $endDate } }) {
+				schedule_ranges(input: { where: { start_date: $startTime, end_date: $endTime } }) {
 					start_date
 					end_date
 					day_of_week

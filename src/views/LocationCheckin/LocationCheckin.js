@@ -28,8 +28,6 @@ const LocationCheckin = ({ profileId }) => {
 	const queryOptions = React.useMemo(() => {
 		return {
 			variables: {
-				startDate: format(startTime, 'YYYY-MM-DD'),
-				endDate: format(endTime, 'YYYY-MM-DD'),
 				startTime,
 				endTime,
 				uuid

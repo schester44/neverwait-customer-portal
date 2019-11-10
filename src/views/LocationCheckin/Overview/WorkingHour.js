@@ -1,9 +1,7 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
 
-import format from 'date-fns/format'
-import startOfDay from 'date-fns/start_of_day'
-import addMinutes from 'date-fns/add_minutes'
+import { format, startOfDay, addMinutes } from 'date-fns'
 
 import { FiCalendar } from 'react-icons/fi'
 

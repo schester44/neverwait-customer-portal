@@ -1,11 +1,9 @@
 import React from 'react'
-
 import { NavLink } from 'react-router-dom'
 import styled, { keyframes, css } from 'styled-components'
 
-import { FiUser, FiSettings, FiScissors } from 'react-icons/fi'
-import { LOCATION_SEARCH, USER_PREFERENCES } from '../../routes'
-import { transparentize } from 'polished'
+import { FiUser, FiScissors, FiCalendar } from 'react-icons/fi'
+import { USER_PREFERENCES } from '../../routes'
 
 const themeStyles = ({ theme }) => css`
 	.contents {
@@ -32,49 +30,12 @@ const animateStyles = ({ animate }) =>
 		opacity: 0;
 	`
 
-const highlightStyles = ({ highlight, theme }) =>
-	highlight &&
-	css`
-		border-radius: 50px;
-		flex-direction: column;
-		line-height: 1;
-		width: 65px;
-		height: 65px;
-		justify-content: center;
-		margin: -60px auto 0 auto;
-		background: ${theme.colors.brand};
-		color: white;
-		border: 5px solid rgba(255, 255, 255, 1);
-		box-shadow: 0px 0px 0px 8px ${transparentize(0.9, theme.colors.brand)}, 1px 1px 3px rgba(32, 32, 32, 0.05);
-
-		.text {
-			font-size: 8px;
-			margin-top: 4px;
-			font-weight: 700;
-			opacity: 0.8;
-		}
-	`
-
-const Button = styled('button')`
-	cursor: pointer;
-	font-size: 24px;
-	height: 100%;
-	display: flex;
-	align-items: center;
-	background: transparent;
-	color: #fff;
-	border: 0;
-
-	${highlightStyles};
-`
-
 const Container = styled('div')`
 	position: fixed;
 
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	padding: 5px 0;
 
 	.contents {
 		display: flex;
@@ -83,6 +44,8 @@ const Container = styled('div')`
 		width: 100%;
 		max-width: 1200px;
 		margin: 0 auto;
+		padding-top: 5px;
+		padding-bottom: 14px;
 	}
 
 	.border-left {
@@ -98,10 +61,7 @@ const Container = styled('div')`
 
 		&.active {
 			.action {
-				.text {
-					color: ${({ theme }) => theme.colors.brand};
-					opacity: 1;
-				}
+				color: ${({ theme }) => theme.colors.brand};
 			}
 		}
 	}
@@ -133,47 +93,24 @@ const Container = styled('div')`
 	${themeStyles};
 `
 
-const NavFooter = ({ animate = false, highlightCheckin = false, hideCheckin = false }) => {
+const NavFooter = ({ animate = false }) => {
 	return (
 		<Container className="app-nav-footer" animate={animate}>
 			<div className="contents">
+				<NavLink exact to="/">
+					<div className="action">
+						<FiScissors />
+					</div>
+				</NavLink>
 				<NavLink to="/profile/appointments">
 					<div className="action">
-						<FiUser />
-						<span className="text">Appointments</span>
+						<FiCalendar />
 					</div>
 				</NavLink>
 
-				{!hideCheckin && (
-					<NavLink className="border-left border-right" to={LOCATION_SEARCH}>
-						{highlightCheckin ? (
-							<Button highlight={true}>
-								<FiScissors />
-								<div className="text">
-									CHECK
-									<br />
-									IN
-								</div>
-							</Button>
-						) : (
-							<div className="action">
-								<FiScissors />
-								<span className="text">Check-in</span>
-							</div>
-						)}
-					</NavLink>
-				)}
-
-				{hideCheckin && (
-					<div className="placeholder border-left border-right">
-						<div className="action"></div>
-					</div>
-				)}
-
 				<NavLink to={USER_PREFERENCES}>
 					<div className="action">
-						<FiSettings />
-						<span className="text">Settings</span>
+						<FiUser />
 					</div>
 				</NavLink>
 			</div>

@@ -14,7 +14,7 @@ export default styled('div')`
 	border-radius: 8px;
 
 	width: 100%;
-	box-shadow: 0px 0px 8px rgba(32, 32, 32, 0.05);
+	box-shadow: 0px 1px 3px rgba(32, 32, 32, 0.05);
 	border: 1px solid transparent;
 	cursor: pointer;
 	opacity: 1;

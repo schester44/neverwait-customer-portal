@@ -1,3 +1,3 @@
 const { override, addBabelPlugins } = require('customize-cra')
 
-module.exports = override(addBabelPlugins('@babel/plugin-proposal-optional-chaining'))
+module.exports = override(addBabelPlugins('@babel/plugin-proposal-optional-chaining', 'date-fns'))

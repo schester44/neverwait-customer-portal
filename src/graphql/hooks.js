@@ -1,46 +1,9 @@
 import React from 'react'
-import isBefore from 'date-fns/is_before'
-import differenceInMinutes from 'date-fns/difference_in_minutes'
-import addMinutes from 'date-fns/add_minutes'
 
-import isWorking from '../views/LocationCheckin/Employee/utils/isWorking'
-
-export const waitTimeInMinutes = (appointments = [], blockedTimes = []) => {
-	let index = undefined
-	const now = new Date()
-
-	const sortedAppointments = [...appointments, ...blockedTimes]
-		.filter(({ status, endTime }) => status !== 'completed' && status !== 'deleted' && isBefore(now, endTime))
-		.sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
-
-	for (let i = 0; i < sortedAppointments.length; i++) {
-		const current = sortedAppointments[i]
-
-		// if the first event is more than 20 minutes away then break because theres room for an appointment.
-		if (i === 0 && isBefore(addMinutes(now, 20), current.startTime)) {
-			break
-		}
-
-		const difference = differenceInMinutes(
-			current.startTime,
-			sortedAppointments[i - 1] ? sortedAppointments[i - 1].endTime : now
-		)
-
-		// if the difference between the current appointment is more than 20 minutes from the last appointment, then set the last appointment as the last appointment. else set the current appointment as the last appointment.
-		if (difference > 20) {
-			index = i - 1
-			break
-		} else {
-			index = i
-		}
-	}
-
-	if (!isNaN(index)) {
-		return differenceInMinutes(sortedAppointments[index].endTime, now)
-	}
-
-	return 0
-}
+import getFirstAvailableTime from '../helpers/getFirstAvailableTime'
+import waitTimeInMinutes from '../helpers/waitTimeInMinutes'
+import isScheduledToWork from '../helpers/isScheduledToWork'
+import { scheduleRangeFromDate } from '../helpers/scheduleRangesByDate'
 
 export const useEnhancedEmployees = ({ employees = [] }) => {
 	const [state, setState] = React.useState({
@@ -55,18 +18,26 @@ export const useEnhancedEmployees = ({ employees = [] }) => {
 				let hasWorkingEmployees = false
 
 				const enhancedEmployees = employees.map(employee => {
-					const waitTime = waitTimeInMinutes(employee.appointments, employee.blockedTimes)
-					const status = isWorking(employee, addMinutes(new Date(), waitTime || 0))
+					const schedule = scheduleRangeFromDate({ scheduleRanges: employee.schedule_ranges, date: new Date() })
 
-					if (status.working) {
-						hasWorkingEmployees = true
-					}
+					const firstAvailableTime = getFirstAvailableTime({
+						appointments: employee.appointments,
+						// TODO: 20 mins should be configurable
+						duration: 20,
+						schedule
+					})
 
-					return {
-						...employee,
-						waitTime,
-						status
-					}
+					if (!firstAvailableTime) return { ...employee, isWorking: false }
+
+					const isWorking = isScheduledToWork(employee, firstAvailableTime)
+
+					if (!isWorking) return { ...employee, isWorking }
+
+					const waitTime = waitTimeInMinutes(firstAvailableTime)
+
+					hasWorkingEmployees = true
+
+					return { ...employee, isWorking: true, waitTime }
 				})
 
 				return {
@@ -85,34 +56,6 @@ export const useEnhancedEmployees = ({ employees = [] }) => {
 			window.clearInterval(timer)
 		}
 	}, [employees])
-
-	return state
-}
-
-export const useWaitTime = employee => {
-	const [state, setState] = React.useState({
-		waitTime: undefined,
-		status: {}
-	})
-
-	React.useEffect(() => {
-		const update = () => {
-			setState(() => {
-				const waitTime = waitTimeInMinutes(employee.appointments, employee.blockedTimes)
-				const status = isWorking(employee, addMinutes(new Date(), waitTime || 0))
-
-				return { waitTime, status }
-			})
-		}
-
-		const timer = window.setInterval(update, 60000)
-
-		update()
-
-		return () => {
-			window.clearInterval(timer)
-		}
-	}, [employee])
 
 	return state
 }

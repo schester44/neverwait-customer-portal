@@ -1,92 +1,151 @@
 import React from 'react'
-import styled from 'styled-components'
-import { generatePath, Link, useParams, useHistory, useLocation } from 'react-router-dom'
-import Swipe from 'react-easy-swipe'
+import { generatePath, Switch, Route, Redirect, useLocation } from 'react-router-dom'
+import styled, { css } from 'styled-components'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
+import Appointments from './UserAppointmentList'
+import NavFooter from './NavFooter'
+import { Header, NavBar } from './Header'
 
 import { USER_APPOINTMENTS, APPOINTMENT_OVERVIEW } from '../../routes'
-import Appointment from './Appointment'
+
+const AppointmentOverview = React.lazy(() => import('./AppointmentOverview'))
+
+const DEFAULT_HEIGHT = 95
+
+const themeStyles = ({ theme }) => `
+	background: ${theme.colors.bodyBg};
+	color: ${theme.colors.bodyColor};
+`
+
+const overviewStyles = ({ isShowingOverview }) =>
+	isShowingOverview &&
+	css`
+		.view {
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+
+		.fade-enter {
+			transform: translateY(0);
+		}
+
+		.fade-enter.fade-enter-active {
+			transform: translateY(0px);
+			transition: none;
+		}
+
+		.fade-exit {
+			opacity: 0;
+		}
+
+		.fade-exit.fade-exit-active {
+			opacity: 0;
+		}
+	`
 
 const Container = styled('div')`
-	padding: 20px 10px;
-	height: 100%;
+	width: 100%;
+	min-height: 100%;
 	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	align-content: flex-start;
+	flex-direction: column;
 
-	a {
-		display: block;
+	.title {
+		transform: translateY(0px);
+		transition: all 0.4s ease;
+	}
+
+	div.transition-group {
+		position: relative;
 		width: 100%;
+		height: calc(100vh - 95px);
+	}
 
-		@media (min-width: 640px) and (max-width: 768px) {
-			width: calc(50% - 10px);
-			margin: 10px 5px;
-		}
+	.fade-enter {
+		transform: translateX(${({ isShowingPast }) => (isShowingPast ? '100vw' : '-100vw')});
+	}
 
-		@media (min-width: 768px) {
-			width: calc(33% - 10px);
-			margin: 10px 5px;
+	.fade-enter.fade-enter-active {
+		transform: translateX(0px);
+		transition: all 0.3s ease;
+	}
+
+	.fade-exit {
+		opacity: 1;
+		transform: translateX(0);
+	}
+
+	.fade-exit.fade-exit-active {
+		transition: all 0.3s ease;
+		opacity: 0;
+		transform: translateX(${({ isShowingPast }) => (isShowingPast ? '-100vw' : '100vw')});
+	}
+
+	.app-header {
+		transition: all 0.3s ease;
+		height: ${DEFAULT_HEIGHT}px;
+
+		.overview {
+			opacity: 0;
 		}
 	}
+
+	.view {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		flex: 1;
+		padding-bottom: 73px;
+
+		.swipe-container {
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+		}
+	}
+
+	${themeStyles};
+	${overviewStyles};
 `
 
-const Placeholder = styled('div')`
-	width: 100%;
-	height: 90%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	line-height: 1.5;
-`
-
-const placeholder = type => (
-	<Placeholder>
-		<h3>You have no {type} appointments.</h3>
-		{type === 'upcoming' ? <h4>Lets get you cleaned up!</h4> : <h4>Nothing to see here.</h4>}
-	</Placeholder>
-)
-
-const UserAppointments = ({ profileAppointments }) => {
-	const { type } = useParams()
-	const history = useHistory()
+const UserHomeScreen = ({ profile }) => {
 	const location = useLocation()
 
-	const appointments = profileAppointments[type]
-
-	const onSwipeRight = () => {
-		if (type !== 'upcoming') {
-			history.push(generatePath(USER_APPOINTMENTS, { type: 'upcoming' }))
-		}
-	}
-
-	const onSwipeLeft = () => {
-		if (type !== 'past') {
-			history.push(generatePath(USER_APPOINTMENTS, { type: 'past' }))
-		}
-	}
+	const isShowingOverview = location.pathname.indexOf('/appointments') === -1
+	const isShowingPast = location.pathname.indexOf('/past') !== -1
 
 	return (
-		<Swipe className="swipe-container" onSwipeLeft={onSwipeLeft} onSwipeRight={onSwipeRight}>
-			<Container padBottom={appointments.length > 3}>
-				{appointments.length === 0
-					? placeholder(type)
-					: appointments.map((appointment, index) => {
-							return (
-								<Link
-									to={{
-										pathname: generatePath(APPOINTMENT_OVERVIEW, { id: appointment.id }),
-										state: { type, from: location.pathname }
-									}}
-									key={index}
-								>
-									<Appointment isPrimary={type === 'upcoming' && index === 0} key={index} appointment={appointment} />
-								</Link>
-							)
-					  })}
-			</Container>
-		</Swipe>
+		<Container isShowingPast={isShowingPast} isShowingOverview={isShowingOverview}>
+			{!isShowingOverview && (
+				<Header title="NEVERWAIT">
+					<NavBar />
+				</Header>
+			)}
+
+			<TransitionGroup className="transition-group">
+				<CSSTransition key={location.pathname} timeout={{ enter: 300, exit: 200 }} classNames="fade">
+					<React.Suspense fallback={null}>
+						<div className="view">
+							<Switch location={location}>
+								<Route path={USER_APPOINTMENTS}>
+									<Appointments profileAppointments={profile.appointments || {}} />
+								</Route>
+
+								<Route path={APPOINTMENT_OVERVIEW}>
+									<AppointmentOverview profile={profile} />
+								</Route>
+
+								<Redirect to={generatePath(USER_APPOINTMENTS, { type: 'upcoming' })} />
+							</Switch>
+						</div>
+					</React.Suspense>
+				</CSSTransition>
+			</TransitionGroup>
+
+			<NavFooter highlightCheckin={true} animate={location?.state?.returningFromOverview} />
+		</Container>
 	)
 }
 
-export default UserAppointments
+export default UserHomeScreen

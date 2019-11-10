@@ -55,7 +55,7 @@ export const createStyles = ({ theme, custom = '' }) => {
             -webkit-tap-highlight-color: transparent;
         }
 
-        h1,h2,h3,h4,h5,h6 {
+        h1.app-title {
             font-family: jaf-domus;
         }
 
@@ -68,10 +68,10 @@ export const createStyles = ({ theme, custom = '' }) => {
 			font-size: 10px;
 			text-transform: uppercase;
 			font-weight: 700;
-			opacity: 0.8;
 			line-height: 1.5;
+            color: ${theme.colors.n450};
 		}
 
-        ${custom}
+        ${custom};
     `
 }

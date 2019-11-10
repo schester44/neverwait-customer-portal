@@ -1,19 +1,14 @@
 import React from 'react'
+import { produce } from 'immer'
+import { startOfDay, endOfDay } from 'date-fns'
+import addDays from 'date-fns/add_days'
 
 import { Switch, Route, Redirect, useParams, useRouteMatch } from 'react-router-dom'
 import { useQuery, useApolloClient } from '@apollo/react-hooks'
-import { locationDataQuery } from '../../graphql/queries'
+
+import { locationDataQuery, employeeScheduleQuery } from '../../graphql/queries'
 import { appointmentsSubscription } from '../../graphql/subscriptions'
 import Loading from '../../components/Loading'
-import format from 'date-fns/format'
-import isWithinRange from 'date-fns/is_within_range'
-import startOfDay from 'date-fns/start_of_day'
-import endOfDay from 'date-fns/end_of_day'
-import isAfter from 'date-fns/is_after'
-import addDays from 'date-fns/add_days'
-import { dateFromMinutes } from './Employee/utils/isWorking'
-import { employeeScheduleQuery } from './AppointmentForm/queries'
-import { produce } from 'immer'
 
 const Overview = React.lazy(() => import('./Overview/LocationOverview'))
 const Form = React.lazy(() => import('./FormContainer'))
@@ -35,28 +30,9 @@ const LocationCheckin = ({ profileId }) => {
 		}
 	}, [startTime, endTime, uuid])
 
-	// TODO: We really don't care about the Location's appointments until the Review page
-	// TODO: the only thing we care about is employee wait time and any employee/location changes (need to subscribe to ScheduleChange events)
 	const { data = {}, loading } = useQuery(locationDataQuery, queryOptions)
 	const client = useApolloClient()
 	const location = data.locationByUUID
-
-	const isClosed = React.useMemo(() => {
-		if (!location) return false
-
-		const today = new Date()
-		const todaysName = format(today, 'dddd').toLowerCase()
-
-		const closedDate = location.closed_dates.find(range => {
-			return isWithinRange(today, startOfDay(range.start_date), endOfDay(range.end_date))
-		})
-
-		if (closedDate) return closedDate
-
-		if (!location.working_hours[todaysName] || !location.working_hours[todaysName].open) return true
-
-		return isAfter(new Date(), dateFromMinutes(location.working_hours[todaysName].endTime))
-	}, [location])
 
 	// Effect is needed because this component initializes without a locationId to subscribe to and there is no skip property to prevent from subscribing with an empty location
 	React.useEffect(() => {
@@ -148,29 +124,15 @@ const LocationCheckin = ({ profileId }) => {
 	if (!loading && !location) return <Redirect to="/" />
 
 	return (
-		<>
-			<Switch>
-				<Route
-					exact
-					path={match.path}
-					render={props => {
-						return (
-							<Overview
-								isClosed={isClosed}
-								history={props.history}
-								profileId={profileId}
-								employees={location.employees}
-								location={location}
-							/>
-						)
-					}}
-				/>
-				<Route path={`${match.path}/sign-in/:employeeId`}>
-					<Form location={location} profileId={profileId} />
-				</Route>
-				/>
-			</Switch>
-		</>
+		<Switch>
+			<Route exact path={match.path}>
+				<Overview profileId={profileId} employees={location.employees} location={location} />
+			</Route>
+			<Route path={`${match.path}/sign-in/:employeeId`}>
+				<Form location={location} profileId={profileId} />
+			</Route>
+			/>
+		</Switch>
 	)
 }
 

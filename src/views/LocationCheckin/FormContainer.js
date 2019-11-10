@@ -3,12 +3,13 @@ import omit from 'lodash/omit'
 import ReactGA from 'react-ga'
 import styled, { css, keyframes } from 'styled-components'
 import { useHistory, useParams, Redirect } from 'react-router-dom'
-import addMinutes from 'date-fns/add_minutes'
-import isAfter from 'date-fns/is_after'
+import { addMinutes, isAfter } from 'date-fns'
 import { produce } from 'immer'
 import { useMutation } from '@apollo/react-hooks'
-import determineStartTime from './utils/determineStartTime'
-import getLastAppointment from './utils/getLastAppointment'
+
+import determineStartTime from '../../helpers/determineStartTime'
+import getFirstAvailableTime from '../../helpers/getFirstAvailableTime'
+
 import Review from './Review'
 
 import { sequentialUpsertMutation } from '../../graphql/mutations'
@@ -20,6 +21,7 @@ import SourceTypeSelection from './SourceTypeSelection'
 import AppointmentForm from './AppointmentForm'
 
 import NoWaitModal from './Overview/NoWaitModal'
+import { scheduleRangeFromDate } from '../../helpers/scheduleRangesByDate'
 
 const AuthView = React.lazy(() => import('../CustomerAuthView'))
 const Finished = React.lazy(() => import('./FinishedView'))
@@ -55,8 +57,8 @@ const Wrapper = styled('div')`
 	${confirmedStyles};
 `
 
-const getAppointmentDuration = (appointment, services) => {
-	return appointment.services.reduce((acc, id) => acc + services[id].sources?.[0]?.duration, 0)
+const getAppointmentDuration = (serviceIds, services) => {
+	return serviceIds.reduce((acc, id) => acc + parseInt(services[id].sources?.[0]?.duration || 0, 10), 0)
 }
 
 const sourceTypes = {
@@ -85,6 +87,7 @@ const RootContainer = ({ profileId, location }) => {
 	const [customer, setCustomer] = React.useState({ id: profileId })
 
 	const [appointment, setAppointment] = React.useState({
+		duration: 0,
 		locationId: location.id,
 		userId: employee.id,
 		services: []
@@ -140,54 +143,33 @@ const RootContainer = ({ profileId, location }) => {
 			? appointment.services.concat([service.id])
 			: appointment.services.filter(id => id !== service.id)
 
-		const duration = services.reduce((acc, id) => {
-			const service = state.services[id]
+		const duration = getAppointmentDuration(services, state.services)
 
-			// This shouldnt happen
-			if (!service.sources || service.sources.length === 0) return acc
+		setAppointment(prev => ({ ...prev, services, duration }))
+	}
 
-			// assume the first service is the correct service
-			return acc + parseInt(service.sources[0].duration)
-		}, 0)
+	// Update the estimated wait time when new appointments are made before this one is able to book.
+	// Update the estimated time any time the duration changes (such as when selecting a service)
+	React.useEffect(() => {
+		const schedule = scheduleRangeFromDate({
+			scheduleRanges: employee.schedule_ranges,
+			date: new Date()
+		})
 
-		const lastAppointment = getLastAppointment(employee.appointments, duration)
-		const startTime = determineStartTime(lastAppointment)
+		const firstAvailableTime = getFirstAvailableTime({
+			appointments: employee.appointments,
+			duration: appointment.duration,
+			schedule
+		})
+
+		const startTime = determineStartTime({ firstAvailableTime })
 
 		setEstimates(prev => ({
 			...prev,
 			startTime,
-			duration,
-			endTime: addMinutes(startTime, duration || 0)
+			endTime: addMinutes(startTime, appointment.duration || 0)
 		}))
-
-		setAppointment(prev => ({ ...prev, services }))
-	}
-
-	// Update the estimated wait time when new appointments are made before this one is able to book.
-	React.useEffect(() => {
-		setEstimates(prev => {
-			if (!prev.startTime) return prev
-
-			const lastAppointment = getLastAppointment(employee.appointments, prev.duration)
-			const startTime = determineStartTime(lastAppointment)
-
-			return {
-				...prev,
-				startTime,
-				endTime: addMinutes(startTime, prev.duration)
-			}
-		})
-	}, [employee.appointments])
-
-	const getEstimates = async () => {
-		const duration = getAppointmentDuration(appointment, state.services)
-		const lastAppointment = getLastAppointment(employee.appointments, duration)
-		const startTime = determineStartTime(lastAppointment)
-
-		const endTime = addMinutes(startTime, duration)
-
-		setEstimates({ lastAppointment, startTime, endTime })
-	}
+	}, [employee.appointments, employee.schedule_ranges, appointment.duration])
 
 	const handleCreate = async () => {
 		if (loading) return
@@ -310,13 +292,7 @@ const RootContainer = ({ profileId, location }) => {
 
 				{step === 2 && !createdAppt && !customer.id && (
 					// Should be headed to the review page but they need to login first.
-					<AuthView
-						loading={loading}
-						onLogin={customer => {
-							getEstimates()
-							setCustomer(customer)
-						}}
-					/>
+					<AuthView loading={loading} onLogin={customer => setCustomer(customer)} />
 				)}
 				{createdAppt && (
 					<Finished

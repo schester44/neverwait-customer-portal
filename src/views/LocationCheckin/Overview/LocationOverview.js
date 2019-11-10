@@ -1,4 +1,5 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 import styled, { css, keyframes } from 'styled-components'
 import { darken } from 'polished'
 import { FiArrowLeft, FiCalendar, FiUser } from 'react-icons/fi'
@@ -97,7 +98,8 @@ const Card = styled('div')`
 	}
 `
 
-const LocationOverview = ({ history, employees: defaultEmployees, location }) => {
+const LocationOverview = ({ employees: defaultEmployees, location }) => {
+	const history = useHistory()
 	const todaysName = format(new Date(), 'dddd').toLowerCase()
 	const { employees, loading } = useEnhancedEmployees({ employees: defaultEmployees })
 

@@ -4,13 +4,12 @@ import { useQuery } from '@apollo/react-hooks'
 import Button from '../../components/Button'
 import { lighten } from 'polished'
 import { FiArrowLeft, FiClock, FiCalendar } from 'react-icons/fi'
-import format from 'date-fns/format'
-import isAfter from 'date-fns/is_after'
-
+import { isAfter, addMinutes} from 'date-fns'
 import { profileQuery } from '../../graphql/queries'
 
-import { dateFromTimeString } from './Employee/utils/isWorking'
-import { isWorking } from './Employee/utils/isWorking'
+import { dateFromTimeString } from '../../helpers/date-from'
+import { shiftFromTime } from '../../helpers/shifts'
+import { scheduleRangeFromDate } from '../../helpers/scheduleRangesByDate'
 
 const Container = styled('div')`
 	text-align: center;
@@ -72,10 +71,20 @@ const Container = styled('div')`
 const SourceTypeSelection = ({ employee, estimates, onSelectCheckin, onSelectAppointment, onBack }) => {
 	const { data } = useQuery(profileQuery, { variables: { skip: false } })
 
-	const status = isWorking(employee, new Date())
+	const schedule = scheduleRangeFromDate({ scheduleRanges: employee.schedule_ranges, date: new Date() })
+
+	const isWorking = isWorking({
+		schedule,
+		time: addMinutes(new Date(), estimates.duration || 0)
+	})
+
+	const currentShift = shiftFromTime({
+		schedule,
+		time: addMinutes(new Date(), estimates.duration || 0)
+	})
 
 	const wouldExceedShift =
-		status.working && isAfter(estimates.endTime, dateFromTimeString(status.currentShift.end_time, new Date()))
+		!isWorking || !currentShift || isAfter(estimates.endTime, dateFromTimeString(currentShift.end_time))
 
 	const hasExceededMaxUpcomingAppointments = data.profile.appointments.upcoming.length >= 3
 
@@ -90,37 +99,8 @@ const SourceTypeSelection = ({ employee, estimates, onSelectCheckin, onSelectApp
 
 			<div className="actions">
 				<div className="walk-ins">
-					{status.working ? (
-						wouldExceedShift ? (
-							<p style={{ marginBottom: 7, color: 'tomato' }} className="small-sub-text">
-								Fully booked for today.
-							</p>
-						) : status.currentShift.acceptingCheckins ? (
-							<p style={{ marginBottom: 7 }} className="small-sub-text">
-								First available time today is {format(estimates.startTime, 'h:mmA')}.
-							</p>
-						) : (
-							<p style={{ marginBottom: 7, color: 'tomato' }} className="small-sub-text">
-								{status.nextShift?.acceptingCheckins
-									? `Online Checkins start at ${format(
-											dateFromTimeString(status.nextShift.start_time, new Date()),
-											'h:mma'
-									  )}`
-									: ``}
-							</p>
-						)
-					) : status.nextShift?.acceptingCheckins ? (
-						<span style={{ marginBottom: 7, color: 'tomato' }} className="small-sub-text">
-							Online Check-ins start at {format(dateFromTimeString(status.nextShift.start_time, new Date()), 'h:mma')}
-						</span>
-					) : (
-						<span style={{ marginBottom: 7, color: 'tomato' }} className="small-sub-text">
-							Currently not working.
-						</span>
-					)}
-
 					<Button
-						disabled={!status.working || !status.currentShift?.acceptingCheckins || wouldExceedShift}
+						disabled={!isWorking || !currentShift?.acceptingCheckins || wouldExceedShift}
 						onClick={onSelectCheckin}
 						style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}
 					>

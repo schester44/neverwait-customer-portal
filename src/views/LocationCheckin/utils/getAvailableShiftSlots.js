@@ -1,8 +1,5 @@
-import isWithinRange from 'date-fns/is_within_range'
-import addMinutes from 'date-fns/add_minutes'
-
+import { isAfter, isWithinRange, addMinutes } from 'date-fns'
 import SchedulerCreator from './ScheduleCreator'
-import isAfter from 'date-fns/is_after'
 
 const scheduler = new SchedulerCreator()
 

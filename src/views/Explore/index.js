@@ -1,11 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
-import { generatePath, Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 
 import NavFooter from '../HomeScreen/NavFooter'
 import { Header } from '../HomeScreen/Header'
 
-import { LOCATION_WAITLIST } from '../../routes'
 import Location from './components/Location'
 
 const Container = styled('div')`
@@ -53,7 +52,7 @@ const Explore = ({ locations, profile }) => {
 	const shouldRedirectToLastAppointment = filteredLocations.length === 1 && filteredLocations.length <= locations.length
 
 	if (shouldRedirectToLastAppointment) {
-		return <Redirect to={generatePath(LOCATION_WAITLIST, { uuid: filteredLocations[0].uuid })} />
+		return <Redirect to="/" />
 	}
 
 	return (

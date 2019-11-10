@@ -1,14 +1,16 @@
 import React from 'react'
-import { FiArrowLeft } from 'react-icons/fi'
 import { Redirect, useParams, useHistory } from 'react-router-dom'
 import styled, { css, keyframes } from 'styled-components'
-import format from 'date-fns/format'
-import Swipe from 'react-easy-swipe'
-import Button from '../../components/Button'
-import { MobileView } from 'react-device-detect'
-import { USER_DASHBOARD } from '../../routes'
-import isRecentAppointment from '../../utils/isRecentAppointment'
 import { darken } from 'polished'
+import { format } from 'date-fns'
+
+import { MobileView } from 'react-device-detect'
+import Swipe from 'react-easy-swipe'
+import { FiArrowLeft } from 'react-icons/fi'
+
+import Button from '../../components/Button'
+import { USER_DASHBOARD } from '../../routes'
+import isRecentAppointment from '../../helpers/isRecentAppointment'
 
 const slideIn = keyframes`
 	from {

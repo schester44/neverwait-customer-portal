@@ -1,8 +1,8 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
-import ScheduleCreator from '../../utils/ScheduleCreator'
+import ScheduleCreator from '../../LocationCheckin/utils/ScheduleCreator'
 
-import format from 'date-fns/format'
+import { format } from 'date-fns'
 
 const selectedStyles = ({ isSelected, theme }) =>
 	isSelected &&
@@ -25,31 +25,35 @@ const disabledStyles = ({ disabled }) =>
 		cursor: default;
 	`
 
-const Container = styled('div')`
-	height: 80px;
-	width: 80px;
+const Container = styled('div')(
+	props => css`
+	height: 100%;
+	width: 60px;
+	min-width: 60px;
 	padding: 10px;
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: space-between;
 	flex-direction: column;
 	border-right: 1px solid rgba(240, 240, 240, 1);
 	user-select: none;
 	cursor: pointer;
 
 	.day {
-		width: 28px;
-		height: 28px;
+		width: 32px;
+		height: 32px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		border-radius: 100%;
 		font-weight: 700;
+        background: rgba(247, 249, 248, 1.0);
 	}
 
 	${selectedStyles};
 	${disabledStyles};
 `
+)
 
 const scheduler = new ScheduleCreator()
 
@@ -69,7 +73,6 @@ const DateCell = ({ date, scheduleRanges, isSelected, onClick }) => {
 		<Container disabled={!canSchedule} isSelected={isSelected} onClick={handleClick}>
 			<div className="small-sub-text">{format(date, 'ddd')}</div>
 			<div className="day">{format(date, 'DD')}</div>
-			<div className="small-sub-text">{format(date, 'MMM')}</div>
 		</Container>
 	)
 }

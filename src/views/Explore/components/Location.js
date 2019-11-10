@@ -1,7 +1,7 @@
 import React from 'react'
 import { generatePath, Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import { LOCATION_WAITLIST } from '../../../routes'
+import { LOCATION_CHECKIN } from '../../../routes'
 
 const Container = styled('div')`
 	border-radius: 8px;
@@ -18,10 +18,12 @@ const Container = styled('div')`
 const Location = ({ location }) => {
 	const routerLocation = useLocation()
 
+	console.log(routerLocation)
+
 	return (
 		<Link
 			to={{
-				pathname: generatePath(LOCATION_WAITLIST, { uuid: location.uuid }),
+				pathname: generatePath(LOCATION_CHECKIN, { uuid: location.uuid }),
 				state: { from: routerLocation.pathname }
 			}}
 		>

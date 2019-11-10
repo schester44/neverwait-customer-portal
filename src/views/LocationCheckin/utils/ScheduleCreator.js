@@ -1,21 +1,6 @@
-import addDays from 'date-fns/add_days'
-import startOfDay from 'date-fns/start_of_day'
-import setMinutes from 'date-fns/set_minutes'
-import setSeconds from 'date-fns/set_seconds'
-import parse from 'date-fns/parse'
-import setHours from 'date-fns/set_hours'
-import isWithinRange from 'date-fns/is_within_range'
-import isAfter from 'date-fns/is_after'
-import format from 'date-fns/format'
-import isSameDay from 'date-fns/is_same_day'
-import isBefore from 'date-fns/is_before'
-import addMinutes from 'date-fns/add_minutes'
+import { addDays, startOfDay, parse, isWithinRange, isAfter, format, isSameDay, isBefore, addMinutes } from 'date-fns'
 
-export function dateFromTimeString(time, date) {
-	const [hours, minutes] = time.split(':')
-
-	return setSeconds(setHours(setMinutes(date || new Date(), parseInt(minutes, 10)), parseInt(hours, 10)), 0)
-}
+import { dateFromTimeString } from '../../../helpers/date-from'
 
 export default class SchedulerCreator {
 	getShiftSlots(shifts, interval = 30, day = new Date()) {

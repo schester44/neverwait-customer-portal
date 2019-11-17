@@ -8,15 +8,21 @@ const Container = styled('div')(
 		height: 60px;
 		background: white;
 		border-radius: 8px;
-		border: 2px solid rgba(232, 235, 236, 1);
+		box-shadow: 1px 1px 2px rgba(32, 32, 32, 0.1), 0px 1px 5px rgba(32, 32, 32, 0.05);
+		-webkit-appearance: none;
 
-		box-shadow: 0px 3px 5px rgba(232, 235, 236, 0.3);
 		display: flex;
 		padding: 5px;
 		-webkit-overflow-scrolling: touch;
 		overflow-x: auto;
 
+		@media (min-width: 768px) {
+			flex-wrap: wrap;
+			height: auto;
+		}
+
 		.time-slot {
+			width: 70px;
 			font-weight: 600;
 			display: flex;
 			align-items: center;
@@ -47,9 +53,19 @@ const Container = styled('div')(
 const TimeSelector = ({ isDisabled, slots, value, onSelect }) => {
 	return (
 		<Container isDisabled={isDisabled}>
-			{slots.map((slot, idx) => {
-				if (!slot.isAvailable) return null
+			{slots.length === 0 && (
+				<div
+					style={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'center' }}
+				>
+					<p className="small-sub-text" style={{ textAlign: 'center' }}>
+						No time slots available on selected day.
+						<br />
+						Try selecting another day.
+					</p>
+				</div>
+			)}
 
+			{slots.map((slot, idx) => {
 				const isSelected = slot.start_time === value
 
 				return (

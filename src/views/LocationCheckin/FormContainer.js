@@ -18,7 +18,6 @@ import Header from './Header'
 import { profileQuery } from '../../graphql/queries'
 
 import SourceTypeSelection from './SourceTypeSelection'
-import AppointmentForm from './AppointmentForm'
 
 import NoWaitModal from './Overview/NoWaitModal'
 import { scheduleRangeFromDate } from '../../helpers/scheduleRangesByDate'
@@ -280,7 +279,7 @@ const RootContainer = ({ profileId, location }) => {
 					/>
 				)}
 
-				{step === 3 && !createdAppt && customer.id && state.sourceType === sourceTypes.appointment && (
+				{/* {step === 3 && !createdAppt && customer.id && state.sourceType === sourceTypes.appointment && (
 					<AppointmentForm
 						duration={estimates.duration}
 						services={appointment.services}
@@ -288,7 +287,7 @@ const RootContainer = ({ profileId, location }) => {
 						employee={employee}
 						onAppointmentCreated={handleAppointmentCreated}
 					/>
-				)}
+				)} */}
 
 				{step === 2 && !createdAppt && !customer.id && (
 					// Should be headed to the review page but they need to login first.

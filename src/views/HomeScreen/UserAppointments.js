@@ -8,7 +8,7 @@ import { Header, NavBar } from './Header'
 
 import { USER_APPOINTMENTS, APPOINTMENT_OVERVIEW } from '../../routes'
 
-const AppointmentOverview = React.lazy(() => import('./AppointmentOverview'))
+const AppointmentOverview = React.lazy(() => import('../AppointmentOverview'))
 
 const DEFAULT_HEIGHT = 95
 
@@ -124,7 +124,11 @@ const UserHomeScreen = ({ profile }) => {
 			)}
 
 			<TransitionGroup className="transition-group">
-				<CSSTransition key={location.pathname} timeout={{ enter: 300, exit: 200 }} classNames="fade">
+				<CSSTransition
+					key={location.pathname}
+					timeout={{ enter: 300, exit: 200 }}
+					classNames="fade"
+				>
 					<React.Suspense fallback={null}>
 						<div className="view">
 							<Switch location={location}>

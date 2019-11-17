@@ -7,7 +7,6 @@ import omit from 'lodash/omit'
 import { FiArrowLeft } from 'react-icons/fi'
 
 import CreateAccountForm from './CreateAccountForm'
-
 import { loginProfileMutation, registerProfileMutation } from '../../graphql/mutations'
 
 import { USER_DASHBOARD } from '../../routes'
@@ -107,7 +106,12 @@ const CreateAccount = () => {
 		})
 
 		if (data?.loginProfile) {
-			history.push(USER_DASHBOARD)
+			if (history.location.state?.action && history.location.state?.pathname) {
+				history.push(history.location.state.pathname)
+			} else {
+				history.push(USER_DASHBOARD)
+			}
+
 			window.location.reload()
 		}
 	}

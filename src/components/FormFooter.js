@@ -1,4 +1,13 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
+
+const enter = keyframes`
+	from {
+		transform: translateY(60px);
+	}
+	to {
+		transform: translateY(0px);
+	}
+`
 
 const FormFooter = styled('div')`
 	position: fixed;
@@ -11,12 +20,14 @@ const FormFooter = styled('div')`
 	justify-content: space-between;
 	align-items: center;
 
-	padding: 15px 10px 20px 10px;
+	padding: 17px 10px 40px 10px;
 	margin: 0 auto;
-	z-index: 999;
+	z-index: 99;
 
-	background: ${({ theme }) => theme.colors.headerBg};
-	color: ${({ theme }) => theme.colors.headerColor};
+	animation: ${enter} .4s ease forwards;
+ 
+	color: ${({ theme }) => theme.colors.bodyBg};
+	background: ${({ theme }) => theme.colors.brand};
 
 	.price {
 		font-weight: 700;

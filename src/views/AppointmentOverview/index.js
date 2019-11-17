@@ -1,21 +1,23 @@
 import React from 'react'
 import { Redirect, useParams, useHistory } from 'react-router-dom'
 import styled, { css, keyframes } from 'styled-components'
-import { darken } from 'polished'
 import { format } from 'date-fns'
-
+import { useMutation } from '@apollo/react-hooks'
 import { MobileView } from 'react-device-detect'
 import Swipe from 'react-easy-swipe'
-import { FiArrowLeft } from 'react-icons/fi'
-
-import Button from '../../components/Button'
 import { USER_DASHBOARD } from '../../routes'
 import isRecentAppointment from '../../helpers/isRecentAppointment'
+import { cancelAppointmentMutation } from '../../graphql/mutations'
+
+import pling from '../../components/Pling'
+import NavHeader from '../../components/NavHeader'
+import FormFooter from '../../components/FormFooter'
+import Button from '../../components/Button'
 
 const slideIn = keyframes`
 	from {
-		opacity: 0;
-		transform: translateY(-50vh);
+		opacity: 0.5;
+		transform: translateY(-20px);
 	}
 	to {
 		opacity: 1;
@@ -23,32 +25,10 @@ const slideIn = keyframes`
 	}
 `
 
-const headerSlideDown = keyframes`
-	from {
-		transform: translateY(-120px);
-	}
-	to {
-		transform: translateY(0px);
-	}
-`
-
 const themeStyles = ({ theme }) => css`
 	background: ${theme.colors.headerBg};
 	box-shadow: 0px 4px 3px ${theme.colors.shadow};
 	font-size: ${theme.typography.text.medium.fontSize};
-
-	.header {
-		min-height: 100px;
-		background-image: linear-gradient(${theme.colors.brand}, ${darken(0.05, theme.colors.brand)});
-		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 20px));
-		animation: ${headerSlideDown} 0.4s ease forwards;
-	}
-
-	.location {
-		position: relative;
-		color: white;
-		padding: 10px;
-	}
 
 	.service-block {
 		border-bottom: 1px solid ${theme.colors.n500};
@@ -83,41 +63,8 @@ const Container = styled('div')`
 	position: relative;
 	max-width: 1200px;
 
-	.header {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		z-index: 999;
-
-		.back {
-			position: absolute;
-			top: 16px;
-			left: 10px;
-			font-size: 36px;
-			line-height: 1;
-			z-index: 999;
-			color: white;
-			cursor: pointer;
-		}
-
-		.location {
-			padding-left: 52px;
-			padding-top: 16px;
-		}
-	}
-
 	.price {
 		padding-top: 8px;
-	}
-
-	.location {
-		margin-bottom: 16px;
-		padding-bottom: 16px;
-
-		h3 {
-			line-height: 1.5;
-		}
 	}
 
 	.flex {
@@ -152,22 +99,13 @@ const Container = styled('div')`
 	}
 
 	.details {
-		padding-top: 100px;
 		transform: translateY(-100vh);
 		animation: ${slideIn} 0.7s ease forwards;
 	}
 
 	@media (min-width: 768px) {
 		margin: 0 auto;
-
-		.header {
-			min-height: 120px !important;
-		}
-
-		.details {
-			padding-top: 140px;
-		}
-	}
+s	}
 
 	${themeStyles}
 `
@@ -175,6 +113,12 @@ const Container = styled('div')`
 const AppointmentOverview = ({ profile }) => {
 	const history = useHistory()
 	const { id: appointmentId } = useParams()
+
+	const [state, setState] = React.useState({
+		showCancelModal: false
+	})
+
+	const [cancelAppointment, { loading: cancelLoading }] = useMutation(cancelAppointmentMutation)
 
 	const appointment = React.useMemo(() => {
 		if (appointmentId === 'recent') {
@@ -197,37 +141,44 @@ const AppointmentOverview = ({ profile }) => {
 		history.push(history.location.state?.from || '/')
 	}
 
+	const handleCancel = async () => {
+		await cancelAppointment({
+			variables: {
+				appointmentId
+			}
+		})
+
+		pling({ message: 'Appointment canceled.', intent: 'info' })
+
+		setState(prev => ({ ...prev, showCancelModal: false }))
+	}
+
 	return (
 		<Swipe className="swipe-container" onSwipeRight={onSwipeRight}>
 			<Container>
-				<div className="header">
-					<div
-						className="back"
-						onClick={() => {
-							history.push(history.location.state?.from || '/')
-						}}
-					>
-						<FiArrowLeft />
-					</div>
+				<NavHeader
+					onBack={() => {
+						history.push(history.location.state?.from || '/')
+					}}
+				/>
 
-					<div className="location">
-						<h3>{appointment.location.name}</h3>
+				<div className="details">
+					<div style={{ padding: '0 20px' }}>
+						<h1>{appointment.location.name}</h1>
 						<p className="small-sub-text">{appointment.location.address}</p>
 						<p className="small-sub-text">{appointment.location.contactNumber}</p>
 					</div>
-				</div>
 
-				<div className="details">
 					<div className="date">{format(appointment.startTime, 'dddd, MMM Do, YYYY')}</div>
 
 					<div className="times">
 						<div style={{ marginBottom: 16 }}>
-							<p>Start Time</p>
+							<p style={{ marginBottom: 4 }}>Start Time</p>
 							<h1>{format(appointment.startTime, 'h:mma')}</h1>
 						</div>
 
 						<div>
-							<p>End Time</p>
+							<p style={{ marginBottom: 4 }}>End Time</p>
 							<h1>{format(appointment.endTime, 'h:mma')}</h1>
 						</div>
 					</div>
@@ -255,11 +206,47 @@ const AppointmentOverview = ({ profile }) => {
 							</div>
 						</MobileView>
 
-						<Button intent="secondary" style={{ width: '100%', fontSize: 14, textTransform: 'uppercase' }}>
-							Cancel Appointment
-						</Button>
+						{/* {differenceInMinutes(new Date(), appointment.startTime) > 3 && ( */}
+						{/* // TODO: Move this value to a setting */}
+						{appointment.status === 'confirmed' && (
+							<Button
+								intent="secondary"
+								style={{ width: '100%', fontSize: 14, textTransform: 'uppercase' }}
+								onClick={() => setState(prev => ({ ...prev, showCancelModal: true }))}
+							>
+								Cancel Appointment
+							</Button>
+						)}
+						{/* )} */}
 					</div>
 				</div>
+
+				{state.showCancelModal && (
+					<FormFooter>
+						<div style={{ width: '100%' }}>
+							<p
+								className="small-sub-text"
+								style={{ color: 'white', textAlign: 'center', marginBottom: 16 }}
+							>
+								Are you sure you want to cancel this appointment?
+							</p>
+
+							<Button
+								inverted
+								style={{ width: '100%' }}
+								onClick={handleCancel}
+								disabled={cancelLoading}
+							>
+								Yes, Cancel
+							</Button>
+							<div style={{ marginTop: 24, cursor: 'pointer', textAlign: 'center' }}>
+								<span onClick={() => setState(prev => ({ ...prev, showCancelModal: false }))}>
+									Nevermind
+								</span>
+							</div>
+						</div>
+					</FormFooter>
+				)}
 			</Container>
 		</Swipe>
 	)

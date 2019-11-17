@@ -6,8 +6,16 @@ import { FiArrowLeft } from 'react-icons/fi'
 
 const Container = styled('div')(
 	props => css`
+		display: flex;
+		justify-content: space-between;
+
+		.actions {
+			padding: 14px;
+			color: ${props.theme.colors.n450};
+		}
+
 		.back-btn {
-            max-width: 50px;
+			max-width: 50px;
 			font-size: 32px;
 			padding: 14px;
 			line-height: 1;
@@ -16,7 +24,7 @@ const Container = styled('div')(
 	`
 )
 
-const NavHeader = ({ content, onBack, showBack = true }) => {
+const NavHeader = ({ actions, onBack, showBack = true }) => {
 	const history = useHistory()
 
 	const handleBackBtn = () => {
@@ -29,13 +37,23 @@ const NavHeader = ({ content, onBack, showBack = true }) => {
 
 	return (
 		<Container>
-			{showBack && (
+			{showBack ? (
 				<div className="back-btn" onClick={handleBackBtn}>
 					<FiArrowLeft />
 				</div>
+			) : (
+				//  for flexbox
+				<div />
 			)}
-
-			{content && content}
+			{actions && (
+				<div className="actions">
+					{actions.map((action, idx) => (
+						<div className="action" key={idx}>
+							{action}
+						</div>
+					))}
+				</div>
+			)}
 		</Container>
 	)
 }

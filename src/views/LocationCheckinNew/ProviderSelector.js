@@ -1,8 +1,12 @@
 import React from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import useDisclosure from '../../components/useDisclosure'
-import { FiChevronDown, FiUser, FiCheck } from 'react-icons/fi'
+import { FiChevronDown, FiUser } from 'react-icons/fi'
 import useOutsideClick from '@rooks/use-outside-click'
+import ProviderItem from './ProviderItem'
+import Button from '../../components/Button'
+import { generatePath, Link } from 'react-router-dom'
+import { LOCATION_APPOINTMENT } from '../../routes'
 
 const open = keyframes`
     from {
@@ -89,49 +93,6 @@ const Container = styled('div')(
 			overflow-x: hidden;
 			overflow-y: auto;
 			max-height: 600px;
-
-			&-item {
-				padding: 10px;
-				display: flex;
-				align-items: center;
-				cursor: pointer;
-				padding: 20px;
-				font-size: 20px;
-				font-weight: 700;
-
-				.check {
-					color: ${props.theme.colors.success};
-				}
-
-				.info {
-					display: flex;
-					align-items: center;
-				}
-
-				&-selected {
-					background: rgba(249, 251, 252, 1);
-				}
-
-				.avatar {
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					width: 32px;
-					height: 32px;
-					border-radius: 50%;
-					background: ${props.theme.colors.n450};
-					color: white;
-					margin-right: 12px;
-				}
-
-				&:hover {
-					background: rgba(249, 251, 252, 1);
-				}
-
-				&:not(:last-of-type) {
-					border-bottom: 1px solid rgba(252, 252, 252, 1);
-				}
-			}
 		}
 
 		.selector {
@@ -142,7 +103,7 @@ const Container = styled('div')(
 			border-radius: 8px;
 			box-shadow: 1px 1px 2px rgba(32, 32, 32, 0.1), 0px 1px 5px rgba(32, 32, 32, 0.05);
 			-webkit-appearance: none;
-			
+
 			display: flex;
 			align-items: center;
 			padding: 10px 15px;
@@ -152,7 +113,7 @@ const Container = styled('div')(
 	`
 )
 
-const ProviderSelector = ({ value, onSelect, providers }) => {
+const ProviderSelector = ({ uuid, value, onSelect, providers }) => {
 	const { isOpen, onClose, onToggle } = useDisclosure()
 	const dropdownRef = React.useRef()
 
@@ -163,6 +124,8 @@ const ProviderSelector = ({ value, onSelect, providers }) => {
 	}
 
 	useOutsideClick(dropdownRef, outsidePClick)
+
+	const isAnyEmployeesAvailable = providers.some(p => !!p.isSchedulable)
 
 	return (
 		<Container>
@@ -178,7 +141,9 @@ const ProviderSelector = ({ value, onSelect, providers }) => {
 					</div>
 				)}
 				<div className="caret">
-					<FiChevronDown className={`caret-icon ${isOpen ? 'caret-icon-opened' : 'caret-icon-closed'}`} />
+					<FiChevronDown
+						className={`caret-icon ${isOpen ? 'caret-icon-opened' : 'caret-icon-closed'}`}
+					/>
 				</div>
 			</div>
 
@@ -186,28 +151,40 @@ const ProviderSelector = ({ value, onSelect, providers }) => {
 				<div ref={dropdownRef} className="dropdown">
 					{providers.map(provider => {
 						const isSelected = value && value.id === provider.id
+						const isWorking = !!provider.currentShift
+						const isAcceptingCheckins = provider?.currentShift?.acceptingCheckins
+						const isDisabled =
+							(!provider.isSchedulable || !isWorking || !isAcceptingCheckins) &&
+							!provider.sourcesNextShifts.acceptingCheckins
 
 						return (
-							<div
+							<ProviderItem
 								key={provider.id}
-								style={{ justifyContent: isSelected ? 'space-between' : 'flex-start' }}
-								className={`dropdown-item ${isSelected ? 'dropdown-item-selected' : ''}`}
-								onClick={() => {
+								isWorking={isWorking}
+								isAcceptingCheckins={isAcceptingCheckins}
+								isSelected={isSelected}
+								provider={provider}
+								isDisabled={isDisabled}
+								onSelect={() => {
+									if (!provider.isSchedulable || !isWorking || !isAcceptingCheckins) return
+
 									onSelect(provider)
 									onClose()
 								}}
-							>
-								<div className="info">
-									<div className="avatar">
-										<FiUser />
-									</div>
-									{provider.firstName} {provider.lastName && provider.lastName}
-								</div>
-
-								{isSelected && <FiCheck className="check" />}
-							</div>
+							/>
 						)
 					})}
+
+					{!isAnyEmployeesAvailable && (
+						<div style={{ padding: 10 }}>
+							<p style={{ textAlign: 'center', marginTop: 14 }}>Select a provider from above, or</p>
+							<Link to={generatePath(LOCATION_APPOINTMENT, { uuid })}>
+								<Button ghost style={{ marginTop: 14, width: '100%' }}>
+									Book An Appointment
+								</Button>
+							</Link>
+						</div>
+					)}
 				</div>
 			)}
 		</Container>

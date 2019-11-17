@@ -2,7 +2,7 @@ import React from 'react'
 
 import { addMinutes, format, isAfter } from 'date-fns'
 
-import { dateFromMinutes } from '../../../helpers/date-from'
+import { dateFromMinutes } from '../../helpers/date-from'
 
 const ClosingSoon = ({ today }) => {
 	if (!today || !today.open) return null

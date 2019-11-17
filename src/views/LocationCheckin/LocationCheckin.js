@@ -20,17 +20,15 @@ const LocationCheckin = ({ profileId }) => {
 	const startTime = startOfDay(new Date())
 	const endTime = endOfDay(new Date())
 
-	const queryOptions = React.useMemo(() => {
-		return {
-			variables: {
-				startTime,
-				endTime,
-				uuid
-			}
+	const { data = {}, loading } = useQuery(locationDataQuery, {
+		variables: {
+			startTime,
+			endTime,
+			uuid,
+			sourceType: 'onlinecheckin'
 		}
-	}, [startTime, endTime, uuid])
+	})
 
-	const { data = {}, loading } = useQuery(locationDataQuery, queryOptions)
 	const client = useApolloClient()
 	const location = data.locationByUUID
 
@@ -100,7 +98,9 @@ const LocationCheckin = ({ profileId }) => {
 						data: produce(employeeSchedule, draftState => {
 							if (isDeleted) {
 								draftState.employeeSchedule.appointments.slice(
-									draftState.employeeSchedule.appointments.findIndex(appt => appt.id === appointment.id),
+									draftState.employeeSchedule.appointments.findIndex(
+										appt => appt.id === appointment.id
+									),
 									1
 								)
 							} else {

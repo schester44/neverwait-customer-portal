@@ -1,6 +1,7 @@
 export const LOCATION_SEARCH = '/explore'
 export const LOCATION_APPOINTMENT = '/l/:uuid/appointment'
 export const LOCATION_CHECKIN = '/l/:uuid/checkin'
+export const LOCATION_OVERVIEW = '/l/:uuid'
 
 export const USER_DASHBOARD = '/profile'
 

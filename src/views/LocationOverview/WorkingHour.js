@@ -8,7 +8,7 @@ import { FiCalendar } from 'react-icons/fi'
 const todayStyles = ({ isToday, theme }) =>
 	isToday &&
 	css`
-		color: ${theme.colors.brandSecondary};
+		color: ${theme.colors.brand};
 	`
 
 const Container = styled('div')`

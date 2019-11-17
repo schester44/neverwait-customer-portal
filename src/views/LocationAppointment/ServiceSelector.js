@@ -38,7 +38,7 @@ const Container = styled('div')(
 
 		.caret {
 			position: absolute;
-			top: 28px;
+			top: 23px;
 			right: 20px;
 			opacity: 0.5;
 
@@ -96,13 +96,19 @@ const Container = styled('div')(
 			position: fixed;
 			bottom: 10px;
 			left: 10px;
-			animation: ${open} 0.3s ease forwards;
+			animation: ${open} 0.1s ease forwards;
 			border-radius: 8px;
 			background: white;
 			box-shadow: 0 2px 5px rgba(32, 32, 32, 0.1);
 			width: calc(100% - 20px);
 			z-index: 999;
 			overflow-x: hidden;
+
+			@media (min-width: 1200px) {
+				max-width: 1200px;
+				margin: 0 auto;
+				left: calc(50% - 600px);
+			}
 
 			.dropdown-done-btn {
 				position: absolute;
@@ -116,7 +122,8 @@ const Container = styled('div')(
 			.dropdown-scroll-container {
 				overflow-x: hidden;
 				-webkit-overflow-scrolling: touch;
-				max-height: 450px;
+				height: 650px;
+				max-height: 80vh;
 				overflow-y: auto;
 				padding-bottom: 70px;
 			}
@@ -160,8 +167,6 @@ const Container = styled('div')(
 				}
 
 				&-selected {
-					background: rgba(249, 251, 252, 1);
-
 					.checkbox {
 						border-color: ${props.theme.colors.success};
 						position: relative;
@@ -192,12 +197,12 @@ const Container = styled('div')(
 		.selector {
 			cursor: pointer;
 			width: 100%;
-			height: 75px;
+			height: 65px;
 			background: white;
 			border-radius: 8px;
-			border: 2px solid rgba(232, 235, 236, 1);
-
-			box-shadow: 0px 3px 5px rgba(232, 235, 236, 0.3);
+			box-shadow: 1px 1px 2px rgba(32, 32, 32, 0.1), 0px 1px 5px rgba(32, 32, 32, 0.05);
+			-webkit-appearance: none;
+			
 			display: flex;
 			align-items: center;
 			padding: 10px 15px;
@@ -221,7 +226,7 @@ const ProviderSelector = ({
 	selectedServicesPrice,
 	selectedServicesTime,
 	servicesById,
-	isDisabled
+	isDisabled,
 }) => {
 	const { isOpen, onClose, onToggle } = useDisclosure()
 	const dropdownRef = React.useRef()
@@ -255,8 +260,12 @@ const ProviderSelector = ({
 							<div className="service-duration">
 								{selectedServicesTime.hours === 0
 									? `${selectedServicesTime.minutes} minutes`
-									: `${selectedServicesTime.hours} hour${selectedServicesTime.hours === 1 ? '' : 's'} ${
-											selectedServicesTime.minutes !== 0 ? `${selectedServicesTime.minutes} minutes` : ''
+									: `${selectedServicesTime.hours} hour${
+											selectedServicesTime.hours === 1 ? '' : 's'
+									  } ${
+											selectedServicesTime.minutes !== 0
+												? `${selectedServicesTime.minutes} minutes`
+												: ''
 									  }`}
 							</div>
 						</div>
@@ -265,7 +274,9 @@ const ProviderSelector = ({
 					</div>
 				)}
 				<div className="caret">
-					<FiChevronDown className={`caret-icon ${isOpen ? 'caret-icon-opened' : 'caret-icon-closed'}`} />
+					<FiChevronDown
+						className={`caret-icon ${isOpen ? 'caret-icon-opened' : 'caret-icon-closed'}`}
+					/>
 				</div>
 			</div>
 
@@ -299,7 +310,9 @@ const ProviderSelector = ({
 											<div className="service-duration">
 												{hours === 0
 													? `${minutes} minutes`
-													: `${hours} hour${hours === 1 ? '' : 's'} ${minutes !== 0 ? `${minutes} minutes` : ''}`}
+													: `${hours} hour${hours === 1 ? '' : 's'} ${
+															minutes !== 0 ? `${minutes} minutes` : ''
+													  }`}
 											</div>
 										</div>
 									</div>

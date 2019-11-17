@@ -1,5 +1,7 @@
 import gql from 'graphql-tag'
 
+import { appointment } from './fragments'
+
 export const authWithToken = gql`
 	mutation authWithToken($key: String!) {
 		authWithToken(key: $key) {
@@ -53,6 +55,7 @@ export const createProfileAppointmentMutation = gql`
 			endTime
 			duration
 			price
+			status
 			location {
 				id
 				name
@@ -82,6 +85,7 @@ export const sequentialUpsertMutation = gql`
 			endTime
 			duration
 			price
+			status
 			location {
 				id
 				name
@@ -116,4 +120,13 @@ export const updateProfileMutation = gql`
 			phoneNumber
 		}
 	}
+`
+
+export const cancelAppointmentMutation = gql`
+	mutation cancelAppointment($appointmentId: ID!) {
+		profileCancelAppointment(appointmentId: $appointmentId) {
+			...appointment
+		}
+	}
+	${appointment}
 `

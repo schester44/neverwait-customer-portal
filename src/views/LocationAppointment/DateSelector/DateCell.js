@@ -16,65 +16,98 @@ const selectedStyles = ({ isSelected, theme }) =>
 		}
 	`
 
-const disabledStyles = ({ disabled }) =>
-	disabled &&
+const disabledStyles = ({ isDisabled }) =>
+	isDisabled &&
 	css`
 		opacity: 0.3;
 		pointer-events: none;
 		color: #6a6a6a !important;
-		cursor: default;
+		cursor: not-allowed;
+
+		width: 30px;
+		min-width: 30px;
+
+		.small-sub-class {
+			font-size: 10px;
+		}
+
+		.day {
+			width: 20px;
+			height: 20px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 100%;
+			font-weight: 700;
+			font-size: 10px;
+		}
+	`
+
+const desktopStyles = ({ isDesktop }) =>
+	isDesktop &&
+	css`
+		width: 60px;
 	`
 
 const Container = styled('div')(
 	props => css`
-	height: 100%;
-	width: 60px;
-	min-width: 60px;
-	padding: 10px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	flex-direction: column;
-	border-right: 1px solid rgba(240, 240, 240, 1);
-	user-select: none;
-	cursor: pointer;
-
-	.day {
-		width: 32px;
-		height: 32px;
+		height: 100%;
+		width: 60px;
+		min-width: 60px;
+		padding: 10px;
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		border-radius: 100%;
-		font-weight: 700;
-        background: rgba(247, 249, 248, 1.0);
-	}
+		justify-content: space-between;
+		flex-direction: column;
+		user-select: none;
+		cursor: pointer;
 
-	${selectedStyles};
-	${disabledStyles};
-`
+		.day {
+			width: 32px;
+			height: 32px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 100%;
+			font-weight: 700;
+			background: rgba(247, 249, 248, 1);
+		}
+
+		${selectedStyles};
+		${disabledStyles};
+		${desktopStyles};
+	`
 )
 
 const scheduler = new ScheduleCreator()
 
-const DateCell = ({ date, scheduleRanges, isSelected, onClick }) => {
-	const canSchedule = React.useMemo(() => {
-		const schedule = scheduler.get(scheduleRanges, date)
+const DateCell = React.forwardRef(
+	({ date, isDesktop, scheduleRanges, isSelected, onClick }, ref) => {
+		const canSchedule = React.useMemo(() => {
+			const schedule = scheduler.get(scheduleRanges, date)
 
-		return schedule && schedule.schedule_shifts.some(shift => !!shift.acceptingAppointments)
-	}, [scheduleRanges, date])
+			return schedule && schedule.schedule_shifts.some(shift => !!shift.acceptingAppointments)
+		}, [scheduleRanges, date])
 
-	const handleClick = e => {
-		if (!canSchedule) return
-		onClick(e)
+		const handleClick = e => {
+			if (!canSchedule) return
+			onClick(e)
+		}
+
+		return (
+			<Container
+				data-date={date}
+				ref={ref}
+				isDisabled={!canSchedule}
+				isDesktop={isDesktop}
+				isSelected={isSelected}
+				onClick={handleClick}
+			>
+				<div className="small-sub-text">{format(date, 'ddd')}</div>
+				<div className="day">{format(date, 'DD')}</div>
+			</Container>
+		)
 	}
-
-	return (
-		<Container disabled={!canSchedule} isSelected={isSelected} onClick={handleClick}>
-			<div className="small-sub-text">{format(date, 'ddd')}</div>
-			<div className="day">{format(date, 'DD')}</div>
-		</Container>
-	)
-}
+)
 
 export default DateCell

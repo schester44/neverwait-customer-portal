@@ -60,7 +60,7 @@ const Explore = ({ locations, profile }) => {
 			<Header title="Explore" />
 
 			<div className="sell-it">
-				<h2>Select a location to check-in</h2>
+				<h2>Select a location</h2>
 				<h4>The perfect barber or stylist is just ahead.</h4>
 			</div>
 

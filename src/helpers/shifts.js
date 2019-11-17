@@ -6,7 +6,11 @@ export const firstShiftAfterTime = ({ schedule, time = new Date() }) => {
 }
 
 export const shiftFromTime = ({ schedule, time = new Date() }) => {
-	schedule.schedule_shifts.find(shift => {
-		return isWithinRange(time, dateFromTimeString(shift.start_time, time), dateFromTimeString(shift.end_time, time))
+	return schedule.schedule_shifts.find(shift => {
+		return isWithinRange(
+			time,
+			dateFromTimeString(shift.start_time, time),
+			dateFromTimeString(shift.end_time, time)
+		)
 	})
 }

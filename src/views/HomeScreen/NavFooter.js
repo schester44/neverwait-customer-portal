@@ -45,7 +45,7 @@ const Container = styled('div')`
 		max-width: 1200px;
 		margin: 0 auto;
 		padding-top: 5px;
-		padding-bottom: 14px;
+		padding-bottom: 8px;
 	}
 
 	.border-left {
@@ -56,12 +56,22 @@ const Container = styled('div')`
 		border-right: 1px solid ${({ theme }) => theme.colors.bodyBg};
 	}
 
+	.action-btn {
+		width: 38px;
+		height: 38px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 8px;
+	}
+
 	a {
 		flex: 1;
 
 		&.active {
-			.action {
-				color: ${({ theme }) => theme.colors.brand};
+			.action-btn {
+				background: rgba(248, 249, 250, 1);
+				font-size: 20px;
 			}
 		}
 	}
@@ -99,18 +109,24 @@ const NavFooter = ({ animate = false }) => {
 			<div className="contents">
 				<NavLink exact to="/">
 					<div className="action">
-						<FiScissors />
+						<div className="action-btn">
+							<FiScissors />
+						</div>
 					</div>
 				</NavLink>
 				<NavLink to="/profile/appointments">
 					<div className="action">
-						<FiCalendar />
+						<div className="action-btn">
+							<FiCalendar />
+						</div>
 					</div>
 				</NavLink>
 
 				<NavLink to={USER_PREFERENCES}>
 					<div className="action">
-						<FiUser />
+						<div className="action-btn">
+							<FiUser />
+						</div>
 					</div>
 				</NavLink>
 			</div>

@@ -1,6 +1,5 @@
 import React from 'react'
 import styled, { css, keyframes } from 'styled-components'
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 import SchedulerCreator from '../../LocationCheckin/utils/ScheduleCreator'
 import { isSameDay, format } from 'date-fns'
 
@@ -39,7 +38,12 @@ const desktopStyles = ({ isDesktop }) =>
 	css`
 		flex: 1;
 		margin: 0 auto;
-		height: 480px;
+		height: 250px;
+
+		.dates {
+			height: 250px;
+			align-items: flex-start;
+		}
 
 		.cells {
 			flex-wrap: wrap;
@@ -48,26 +52,12 @@ const desktopStyles = ({ isDesktop }) =>
 		}
 	`
 
-const grow = keyframes`
-		0% {
-			transform: scale(1);
-		}
-		50% {
-			transform: scale(1.2);
-		}
-		100% {
-			transform: scale(1);
-		}
-`
-
 const Wrapper = styled('div')(
 	props => css`
-		cursor: pointer;
-
 		background: white;
 		border-radius: 8px;
-		border: 2px solid rgba(232, 235, 236, 1);
-		box-shadow: 0px 3px 5px rgba(232, 235, 236, 0.3);
+		box-shadow: 1px 1px 2px rgba(32, 32, 32, 0.1), 0px 1px 5px rgba(32, 32, 32, 0.05);
+		-webkit-appearance: none;
 
 		.title {
 			position: relative;
@@ -138,32 +128,6 @@ const Wrapper = styled('div')(
 	`
 )
 
-const Button = styled('div')`
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 30px;
-	height: 100%;
-
-	transition: opacity 0.5s ease;
-	width: 50px;
-	pointer-events: none;
-	opacity: 0.5;
-	animation: ${grow} 5s ease infinite;
-
-	&.left-btn {
-		position: absolute;
-		left: -15px;
-		opacity: 0;
-	}
-
-	&.right-btn {
-		position: absolute;
-		right: -15px;
-	}
-`
-
 const isMobileCheck = () => {
 	const ua = navigator.userAgent
 	const isAndroid = () => Boolean(ua.match(/Android/i))
@@ -180,92 +144,29 @@ const scheduler = new SchedulerCreator()
 const dates = scheduler.datesFrom(new Date(), 30)
 
 const DatePicker = ({ isDisabled, scheduleRanges, value, onSelect }) => {
-	const leftBtn = React.useRef()
-	const rightBtn = React.useRef()
 	const cellsRef = React.useRef()
-
-	React.useEffect(() => {
-		const cellContainer = cellsRef.current
-
-		const handler = () => {
-			const box = cellsRef.current.getBoundingClientRect()
-
-			if (rightBtn.current) {
-				if (cellContainer.scrollLeft + box.width > cellContainer.scrollWidth - 100) {
-					rightBtn.current.style.opacity = 0
-				} else {
-					rightBtn.current.style.opacity = 0.5
-				}
-			}
-
-			if (leftBtn.current) {
-				if (cellContainer.scrollLeft <= 50) {
-					leftBtn.current.style.opacity = 0
-				} else {
-					leftBtn.current.style.opacity = 0.5
-				}
-			}
-		}
-		if (cellContainer) {
-			cellContainer.addEventListener('scroll', handler)
-		}
-
-		return () => {
-			if (cellContainer) {
-				cellContainer.removeEventListener('scroll', handler)
-			}
-		}
-	}, [])
 
 	return (
 		<Wrapper isDisabled={isDisabled} isDesktop={!isMobile}>
 			<div className="title">
-				<div className="title-date">
-					{/* TODO: This date should change, based on the selectedDate and/or the scroll position... or just show the selectedDate value */}
-					{!isDisabled && format(new Date(), 'MMMM YYYY')}
-				</div>
+				<div className="title-date">{!value ? 'Select a date' : format(value, 'MMMM Do')}</div>
 			</div>
 			<div className="dates">
-				{!isMobile && (
-					<Button
-						ref={leftBtn}
-						className="left-btn"
-						onClick={() => {
-							cellsRef.current.scrollLeft = 0
-						}}
-					>
-						<FiChevronLeft />
-					</Button>
-				)}
-
 				<div className="cells" ref={cellsRef}>
-					{dates.map((selectableDate, idx) => {
+					{dates.map((date, idx) => {
 						return (
 							<DateCell
 								key={idx}
 								scheduleRanges={scheduleRanges}
 								width={50}
-								isSelected={isSameDay(selectableDate, value)}
-								date={selectableDate}
-								onClick={() => onSelect(selectableDate)}
+								isDesktop={!isMobile}
+								isSelected={isSameDay(date, value)}
+								date={date}
+								onClick={() => onSelect(date)}
 							/>
 						)
 					})}
 				</div>
-
-				{!isMobile && (
-					<Button
-						ref={rightBtn}
-						className="right-btn"
-						onClick={() => {
-							const box = cellsRef.current.getBoundingClientRect()
-
-							cellsRef.current.scrollLeft = box.width + cellsRef.current.scrollLeft
-						}}
-					>
-						<FiChevronRight />
-					</Button>
-				)}
 			</div>
 		</Wrapper>
 	)

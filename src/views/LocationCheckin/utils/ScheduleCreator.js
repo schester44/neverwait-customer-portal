@@ -1,4 +1,14 @@
-import { addDays, startOfDay, parse, isWithinRange, isAfter, format, isSameDay, isBefore, addMinutes } from 'date-fns'
+import {
+	addDays,
+	startOfDay,
+	parse,
+	isWithinRange,
+	isAfter,
+	format,
+	isSameDay,
+	isBefore,
+	addMinutes
+} from 'date-fns'
 
 import { dateFromTimeString } from '../../../helpers/date-from'
 
@@ -60,10 +70,12 @@ export default class SchedulerCreator {
 				const end = range.end_date
 
 				if (range.day_of_week === format(date, 'dddd').toLowerCase()) {
-					withinRange = isWithinRange(date, start, end) || isSameDay(start, date) || isSameDay(end, date)
+					withinRange =
+						isWithinRange(date, start, end) || isSameDay(start, date) || isSameDay(end, date)
 				}
 			} else {
 				if (range.day_of_week === format(date, 'dddd').toLowerCase()) {
+					console.log('here')
 					withinRange = isSameDay(date, start) || isAfter(date, start)
 				}
 			}

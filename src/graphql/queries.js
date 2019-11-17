@@ -1,28 +1,5 @@
 import gql from 'graphql-tag'
-
-const fragments = {
-	appointment: gql`
-		fragment appointment on Appointment {
-			id
-			startTime
-			endTime
-			duration
-			price
-			employee {
-				firstName
-			}
-			location {
-				id
-				name
-				address
-				contactNumber
-			}
-			services {
-				name
-			}
-		}
-	`
-}
+import { appointment, workingHours } from './fragments'
 
 export const profileQuery = gql`
 	{
@@ -51,52 +28,38 @@ export const profileQuery = gql`
 		}
 	}
 
-	${fragments.appointment}
+	${appointment}
 `
 
-// FIXME: Shouldn't need extra variables for startTime,endTiem,startDate,endDate.. should only need 2.. problem with inconsistent types
-export const locationDataQuery = gql`
-	query Location($uuid: String!, $startTime: DateTime!, $endTime: DateTime!) {
+export const basicLocationInfoQuery = gql`
+	query LocationInfo($uuid: String!) {
 		locationByUUID(input: { uuid: $uuid }) {
 			id
 			name
 			address
+			contactNumber
 			working_hours {
-				sunday {
-					open
-					startTime
-					endTime
-				}
-				monday {
-					open
-					startTime
-					endTime
-				}
-				tuesday {
-					open
-					startTime
-					endTime
-				}
-				wednesday {
-					open
-					startTime
-					endTime
-				}
-				thursday {
-					open
-					startTime
-					endTime
-				}
-				friday {
-					open
-					startTime
-					endTime
-				}
-				saturday {
-					open
-					startTime
-					endTime
-				}
+				...workingHours
+			}
+		}
+	}
+	${workingHours}
+`
+
+export const locationDataQuery = gql`
+	query Location(
+		$uuid: String!
+		$startTime: DateTime!
+		$endTime: DateTime!
+		$sourceType: SourceType!
+	) {
+		locationByUUID(input: { uuid: $uuid }) {
+			id
+			name
+			address
+			contactNumber
+			working_hours {
+				...workingHours
 			}
 
 			closed_dates {
@@ -126,7 +89,7 @@ export const locationDataQuery = gql`
 				services {
 					id
 					name
-					sources {
+					sources(input: { where: { type: $sourceType } }) {
 						price
 						type
 						duration
@@ -134,7 +97,13 @@ export const locationDataQuery = gql`
 					}
 				}
 				appointments(
-					input: { where: { status: { eq: confirmed }, startTime: { gte: $startTime }, endTime: { lte: $endTime } } }
+					input: {
+						where: {
+							status: { not: "completed" }
+							startTime: { gte: $startTime }
+							endTime: { lte: $endTime }
+						}
+					}
 				) {
 					id
 					status
@@ -145,6 +114,8 @@ export const locationDataQuery = gql`
 			}
 		}
 	}
+
+	${workingHours}
 `
 
 export const employeeScheduleQuery = gql`

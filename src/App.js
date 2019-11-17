@@ -13,12 +13,13 @@ import getCookie from './utils/getCookie'
 import {
 	LOCATION_CHECKIN,
 	LOCATION_APPOINTMENT,
+	LOCATION_OVERVIEW,
+	LOCATION_SEARCH,
 	AUTH_REGISTER,
 	AUTH_LOGIN,
 	AUTH_FORGOT_PASSWORD,
 	APPOINTMENT_OVERVIEW,
-	USER_PREFERENCES,
-	LOCATION_SEARCH
+	USER_PREFERENCES
 } from './routes'
 
 const LoginPage = React.lazy(() => import('./views/Auth/LoginPage'))
@@ -30,7 +31,8 @@ const UserSettings = React.lazy(() => import('./views/Settings'))
 const HomeScreen = React.lazy(() => import('./views/HomeScreen/HomeScreen'))
 const Explore = React.lazy(() => import('./views/Explore'))
 
-const LocationCheckin = React.lazy(() => import('./views/LocationCheckin'))
+const LocationOverview = React.lazy(() => import('./views/LocationOverview'))
+const LocationCheckin = React.lazy(() => import('./views/LocationCheckinNew'))
 const LocationAppointment = React.lazy(() => import('./views/LocationAppointment'))
 
 const Container = styled('div')`
@@ -102,13 +104,25 @@ const App = () => {
 							<HomeScreen profile={profile} />
 						</Route>
 
+						<Route path={LOCATION_OVERVIEW}>
+							<LocationOverview />
+						</Route>
+
 						<Redirect to="/" />
 					</Switch>
 				) : (
-						<Switch>
-						{/* <Route path={LOCATION_WAITLIST}>
-							<LocationCheckin />
-						</Route> */}
+					<Switch>
+						<Route path={LOCATION_CHECKIN}>
+							<LoginPage action={LOCATION_CHECKIN} isAttemptingAction={true} />
+						</Route>
+
+						<Route path={LOCATION_APPOINTMENT}>
+							<LoginPage action={LOCATION_APPOINTMENT} isAttemptingAction={true} />
+						</Route>
+
+						<Route path={LOCATION_OVERVIEW}>
+							<LocationOverview />
+						</Route>
 
 						<Route path={AUTH_REGISTER}>
 							<RegisterPage />

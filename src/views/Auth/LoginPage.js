@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 import styled from 'styled-components'
 import LoginForm from './LoginForm'
@@ -66,8 +66,8 @@ const Container = styled('div')`
 	${themeStyles};
 `
 
-const LoginPage = () => {
-
+const LoginPage = ({ action, isAttemptingAction }) => {
+	const history = useHistory()
 	const [login, { loading }] = useMutation(loginProfileMutation)
 
 	const [fields, set] = React.useState({
@@ -100,14 +100,27 @@ const LoginPage = () => {
 		<Container>
 			<h1 className="title">LOG IN</h1>
 
-			<LoginForm loading={loading} values={fields} setFieldValue={setFieldValue} handleSubmit={handleSubmit} />
+			<LoginForm
+				loading={loading}
+				values={fields}
+				setFieldValue={setFieldValue}
+				handleSubmit={handleSubmit}
+			/>
 
 			<div className="separator">
 				<div>or</div>
 			</div>
 
-			<Link to={AUTH_REGISTER}>
-				<Button className="create-account-btn" size="small" ghost>
+			{isAttemptingAction && (
+				<div>
+					<p className="small-sub-text" style={{ textAlign: 'center', marginBottom: 14 }}>
+						Create an account. Its fast, easy, and free!
+					</p>
+				</div>
+			)}
+
+			<Link to={{ pathname: AUTH_REGISTER, state: { action, pathname: history.location.pathname } }}>
+				<Button className="create-account-btn" ghost>
 					Create An Account
 				</Button>
 			</Link>

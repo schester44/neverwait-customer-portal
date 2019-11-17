@@ -14,14 +14,33 @@ const Container = styled('div')`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
+	align-items: center;
 	height: 100vh;
 
 	.app-title {
 		text-align: center;
+		position: relative;
+
+		.beta {
+			top: 35px;
+			right: -2px;
+			position: absolute;
+			padding: 2px 8px;
+			border-radius: 25px;
+			font-size: 12px;
+			background: rgba(229, 232, 240, 1);
+			color: rgba(63, 62, 84, 1.0);
+		}
 	}
 
 	.splash-image {
 		max-width: 100%;
+	}
+
+	@media (min-width: 768px) {
+		.splash-image {
+			max-width: 500px;
+		}
 	}
 `
 
@@ -29,7 +48,8 @@ const HomeScreen = ({ profile }) => {
 	const history = useHistory()
 
 	const filteredLocations = React.useMemo(() => {
-		if (profile.appointments.upcoming.length === 0 && profile.appointments.past.length === 0) return profile.locations
+		if (profile.appointments.upcoming.length === 0 && profile.appointments.past.length === 0)
+			return profile.locations
 
 		let locationIds = {}
 
@@ -65,9 +85,12 @@ const HomeScreen = ({ profile }) => {
 
 	return (
 		<Container>
-			<h1 className="app-title">NEVERWAIT</h1>
+			<h1 className="app-title">
+				NEVERWAIT
+				<span className="beta">BETA</span>
+			</h1>
 
-			<img src={splashImage} className="splash-image" />
+			<img src={splashImage} alt="NEVERWAIT" className="splash-image" />
 
 			<div className="actions">
 				<Button onClick={handleCheckin} style={{ width: '100%', marginBottom: 28 }}>
@@ -75,7 +98,7 @@ const HomeScreen = ({ profile }) => {
 				</Button>
 
 				<Button onClick={handleCreateAppointment} style={{ width: '100%' }}>
-					CREATE APPOINTMENT
+					BOOK APPOINTMENT
 				</Button>
 			</div>
 

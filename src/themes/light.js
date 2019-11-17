@@ -10,7 +10,7 @@ const neutrals = {
 }
 
 const primary = {
-	p500: 'rgba(55, 66, 161, 1.0)'
+	p500: 'rgba(103, 120, 208, 1.0)'
 }
 
 const greens = {
@@ -35,7 +35,7 @@ const misc = {
 	brandSecondary: 'rgba(236, 90, 87, 1.0)',
 	brand: primary.p500,
 	shadow: neutrals.n500,
-	bodyBg: 'rgba(247, 249, 253, 1.0)',
+	bodyBg: 'rgba(247, 249, 250, 1.0)',
 	bodyColor: neutrals.n100,
 	success: greens.g500,
 	headerBg: white,

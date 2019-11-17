@@ -2,26 +2,51 @@ import { isAfter, isBefore, differenceInMinutes, addMinutes } from 'date-fns'
 
 import isWorkingAtTime from './isWorking'
 
-const getFirstAvailableTime = ({ appointments, duration, schedule, sourceType = 'acceptingCheckins' }) => {
+const getFirstAvailableTime = ({
+	appointments,
+	duration,
+	schedule,
+	sourceType = 'acceptingCheckins'
+}) => {
 	const now = new Date()
 	// sort by startTime so appointments are in the order of which they occur
 	const sortedAppointments = appointments
-		.filter(({ status, endTime }) => status !== 'completed' && status !== 'deleted' && isAfter(endTime, now))
+		.filter(
+			({ status, endTime }) =>
+				status !== 'completed' && status !== 'deleted' && isAfter(endTime, now)
+		)
 		.sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
 
 	const isWorkingRightNow = isWorkingAtTime({
-		shifts: schedule.schedule_shifts,
+		schedule,
 		time: now,
 		sourceType
 	})
+
+	if (sortedAppointments.length === 0 && isWorkingRightNow) {
+		return new Date()
+	}
 
 	for (let i = 0; i < sortedAppointments.length; i++) {
 		const current = sortedAppointments[i]
 		const previous = sortedAppointments[i - 1]
 
 		// If its the first appointment and there is at least 20 minutes between now and the first appointments start time then theres enough time for an appointment so lets break early.
-		if (i === 0 && isBefore(addMinutes(now, duration), current.startTime) && isWorkingRightNow) {
-			return new Date()
+		if (i === 0) {
+			if (isBefore(addMinutes(now, duration), current.startTime) && isWorkingRightNow) {
+				return new Date()
+			}
+
+			if (
+				sortedAppointments.length === 1 &&
+				isWorkingAtTime({
+					schedule,
+					time: addMinutes(appointments[0].endTime || new Date(), duration + 2),
+					sourceType
+				})
+			) {
+				return sortedAppointments[0].endTime
+			}
 		}
 
 		const difference = differenceInMinutes(
@@ -33,15 +58,15 @@ const getFirstAvailableTime = ({ appointments, duration, schedule, sourceType = 
 		// If theres more than 20 minutes of dead time between the two appointments then our last appointment is the previous appointment
 		// if (difference > duration) {
 		if (
-			difference > duration &&
+			(difference > duration || i === sortedAppointments.length - 1) &&
 			// make sure they're working and that the appointment doesn't exceed their shift
 			isWorkingAtTime({
-				shifts: schedule.schedule_shifts,
-				time: addMinutes(previous.endTime, duration + 2),
+				schedule,
+				time: addMinutes(previous?.endTime || new Date(), duration + 2),
 				sourceType
 			})
 		) {
-			return previous.endTime
+			return previous?.endTime || new Date()
 		}
 	}
 }

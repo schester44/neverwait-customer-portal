@@ -20,21 +20,34 @@ const ghostStyles = ({ ghost, theme }) =>
 		color: ${theme.elements.button.background};
 	`
 
-const successIntentStyles = ({ theme, intent }) => intent === 'success' && `
+const successIntentStyles = ({ theme, intent }) =>
+	intent === 'success' &&
+	`
 	background:	${theme.colors.success};
 	border: 1px solid ${theme.colors.success};
 `
 
-const secondaryIntentStyles = ({ theme, intent }) => intent === 'secondary' && `
+const secondaryIntentStyles = ({ theme, intent }) =>
+	intent === 'secondary' &&
+	`
 	background:	${theme.colors.brandSecondary};
 	border: 1px solid ${theme.colors.brandSecondary};
 `
+
+const invertedStyles = ({ inverted }) =>
+	inverted &&
+	css`
+		color: ${({ theme }) => theme.elements.button.background};
+		background: ${({ theme }) => theme.elements.button.text};
+		border: 1px solid ${({ theme }) => theme.elements.button.background};
+		box-shadow: 0px 8px 6px -6px rgba(32, 32, 32, 0.2);
+	`
 
 const StyledBtn = styled('button')`
 	border: 0;
 	background: ${({ theme }) => theme.elements.button.background};
 	color: ${({ theme }) => theme.elements.button.text};
-	border-radius:8px;
+	border-radius: 8px;
 	text-align: center;
 	cursor: pointer;
 	border: none;
@@ -54,6 +67,7 @@ const StyledBtn = styled('button')`
 	${ghostStyles};
 	${successIntentStyles};
 	${secondaryIntentStyles};
+	${invertedStyles};
 `
 
 const Button = props => {

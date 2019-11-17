@@ -9,17 +9,24 @@ import Button from '../../components/Button'
 import { LOCATION_CHECKIN, LOCATION_SEARCH, LOCATION_APPOINTMENT } from '../../routes'
 
 const Container = styled('div')`
-	padding: 20px;
+	padding: 10px;
 	padding-bottom: 100px;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-around;
+	justify-content: space-between;
 	align-items: center;
 	height: 100vh;
+
+	.top {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 
 	.app-title {
 		text-align: center;
 		position: relative;
+		padding-bottom: 50px;
 
 		.beta {
 			top: 35px;
@@ -29,7 +36,7 @@ const Container = styled('div')`
 			border-radius: 25px;
 			font-size: 12px;
 			background: rgba(229, 232, 240, 1);
-			color: rgba(63, 62, 84, 1.0);
+			color: rgba(63, 62, 84, 1);
 		}
 	}
 
@@ -85,12 +92,14 @@ const HomeScreen = ({ profile }) => {
 
 	return (
 		<Container>
-			<h1 className="app-title">
-				NEVERWAIT
-				<span className="beta">BETA</span>
-			</h1>
+			<div className="top">
+				<h1 className="app-title">
+					NEVERWAIT
+					<span className="beta">BETA</span>
+				</h1>
 
-			<img src={splashImage} alt="NEVERWAIT" className="splash-image" />
+				<img src={splashImage} alt="NEVERWAIT" className="splash-image" />
+			</div>
 
 			<div className="actions">
 				<Button onClick={handleCheckin} style={{ width: '100%', marginBottom: 28 }}>

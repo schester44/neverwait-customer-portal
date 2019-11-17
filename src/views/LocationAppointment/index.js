@@ -302,7 +302,7 @@ const LocationAppointment = () => {
 				input: {
 					locationId: location.id,
 					userId: state.selectedProvider.id,
-					services: state.selectedServices,
+					services: state.selectedServices.map(id => parseInt(id)),
 					startTime: state.selectedTime
 				}
 			},

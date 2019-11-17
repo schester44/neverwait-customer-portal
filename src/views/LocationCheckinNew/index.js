@@ -154,7 +154,7 @@ const LocationCheckin = () => {
 				input: {
 					locationId: location.id,
 					userId: state.selectedProvider.id,
-					services: state.selectedServices
+					services: state.selectedServices.map(id => parseInt(id))
 				}
 			}
 		})

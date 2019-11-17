@@ -15,7 +15,7 @@ const Container = styled('div')`
 	flex-direction: column;
 	justify-content: space-between;
 	align-items: center;
-	height: 100vh;
+	height: 90vh;
 
 	.top {
 		display: flex;

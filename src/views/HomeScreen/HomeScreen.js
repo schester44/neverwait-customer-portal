@@ -34,7 +34,7 @@ const Container = styled('div')`
 	}
 
 	.splash-image {
-		max-width: 100%;
+		max-width: 70%;
 	}
 
 	@media (min-width: 768px) {

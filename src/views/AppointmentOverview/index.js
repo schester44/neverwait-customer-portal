@@ -1,7 +1,7 @@
 import React from 'react'
 import { Redirect, useParams, useHistory } from 'react-router-dom'
 import styled, { css, keyframes } from 'styled-components'
-import { format, differenceInMinutes } from 'date-fns'
+import { format, differenceInHours } from 'date-fns'
 import { useMutation } from '@apollo/react-hooks'
 import { MobileView } from 'react-device-detect'
 import Swipe from 'react-easy-swipe'
@@ -207,7 +207,7 @@ const AppointmentOverview = ({ profile }) => {
 						</MobileView>
 
 						{appointment.status === 'confirmed' &&
-							differenceInMinutes(new Date(), appointment.startTime) > 3 && (
+							differenceInHours(appointment.startTime, new Date()) > 3 && (
 								<Button
 									intent="secondary"
 									style={{ width: '100%', fontSize: 14, textTransform: 'uppercase' }}

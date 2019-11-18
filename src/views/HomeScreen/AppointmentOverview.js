@@ -252,10 +252,6 @@ const AppointmentOverview = ({ profile }) => {
 								</a>
 							</div>
 						</MobileView>
-
-						<Button intent="secondary" style={{ width: '100%', fontSize: 14, textTransform: 'uppercase' }}>
-							Cancel Appointment
-						</Button>
 					</div>
 				</div>
 			</Container>

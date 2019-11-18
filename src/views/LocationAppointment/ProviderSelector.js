@@ -88,6 +88,7 @@ const Container = styled('div')(
 			z-index: 999;
 			overflow-x: hidden;
 			overflow-y: auto;
+			-webkit-overflow-scrolling: touch;
 			max-height: 600px;
 
 			&-item {
@@ -142,7 +143,7 @@ const Container = styled('div')(
 			border-radius: 8px;
 			box-shadow: 1px 1px 2px rgba(32, 32, 32, 0.1), 0px 1px 5px rgba(32, 32, 32, 0.05);
 			-webkit-appearance: none;
-			
+
 			display: flex;
 			align-items: center;
 			padding: 10px 15px;
@@ -178,7 +179,9 @@ const ProviderSelector = ({ value, onSelect, providers }) => {
 					</div>
 				)}
 				<div className="caret">
-					<FiChevronDown className={`caret-icon ${isOpen ? 'caret-icon-opened' : 'caret-icon-closed'}`} />
+					<FiChevronDown
+						className={`caret-icon ${isOpen ? 'caret-icon-opened' : 'caret-icon-closed'}`}
+					/>
 				</div>
 			</div>
 

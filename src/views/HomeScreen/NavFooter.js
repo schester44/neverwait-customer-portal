@@ -57,8 +57,8 @@ const Container = styled('div')`
 	}
 
 	.action-btn {
-		width: 38px;
-		height: 38px;
+		width: 50px;
+		height: 50px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -70,8 +70,8 @@ const Container = styled('div')`
 
 		&.active {
 			.action-btn {
-				background: rgba(248, 249, 250, 1);
-				font-size: 20px;
+				background: rgba(106, 122, 202, 0.2);
+				color: ${({ theme }) => theme.colors.brand};
 			}
 		}
 	}
@@ -107,17 +107,18 @@ const NavFooter = ({ animate = false }) => {
 	return (
 		<Container className="app-nav-footer" animate={animate}>
 			<div className="contents">
-				<NavLink exact to="/">
-					<div className="action">
-						<div className="action-btn">
-							<FiScissors />
-						</div>
-					</div>
-				</NavLink>
 				<NavLink to="/profile/appointments">
 					<div className="action">
 						<div className="action-btn">
 							<FiCalendar />
+						</div>
+					</div>
+				</NavLink>
+
+				<NavLink exact to="/">
+					<div className="action main-action">
+						<div className="action-btn">
+							<FiScissors />
 						</div>
 					</div>
 				</NavLink>

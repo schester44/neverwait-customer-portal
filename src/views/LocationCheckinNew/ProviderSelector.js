@@ -92,6 +92,7 @@ const Container = styled('div')(
 			z-index: 999;
 			overflow-x: hidden;
 			overflow-y: auto;
+			-webkit-overflow-scrolling: touch;
 			max-height: 600px;
 		}
 
@@ -155,7 +156,7 @@ const ProviderSelector = ({ uuid, value, onSelect, providers }) => {
 						const isAcceptingCheckins = provider?.currentShift?.acceptingCheckins
 						const isDisabled =
 							(!provider.isSchedulable || !isWorking || !isAcceptingCheckins) &&
-							!provider.sourcesNextShifts.acceptingCheckins
+							!provider?.sourcesNextShifts?.acceptingCheckins
 
 						return (
 							<ProviderItem

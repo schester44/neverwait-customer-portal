@@ -13,6 +13,7 @@ const Container = styled('div')`
 	display: flex;
 	flex-direction: column;
 	overflow: scroll;
+	-webkit-overflow-scrolling: touch;
 	padding: 10px;
 	z-index: 99;
 

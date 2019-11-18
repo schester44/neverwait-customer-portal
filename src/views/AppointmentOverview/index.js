@@ -1,7 +1,7 @@
 import React from 'react'
 import { Redirect, useParams, useHistory } from 'react-router-dom'
 import styled, { css, keyframes } from 'styled-components'
-import { format } from 'date-fns'
+import { format, differenceInMinutes } from 'date-fns'
 import { useMutation } from '@apollo/react-hooks'
 import { MobileView } from 'react-device-detect'
 import Swipe from 'react-easy-swipe'
@@ -51,7 +51,7 @@ const themeStyles = ({ theme }) => css`
 			line-height: 1;
 			margin: 0;
 			margin-top: -5px;
-			font-size: 40px;
+			font-size: 30px;
 			color: ${theme.colors.p500};
 		}
 	}
@@ -206,18 +206,16 @@ const AppointmentOverview = ({ profile }) => {
 							</div>
 						</MobileView>
 
-						{/* {differenceInMinutes(new Date(), appointment.startTime) > 3 && ( */}
-						{/* // TODO: Move this value to a setting */}
-						{appointment.status === 'confirmed' && (
-							<Button
-								intent="secondary"
-								style={{ width: '100%', fontSize: 14, textTransform: 'uppercase' }}
-								onClick={() => setState(prev => ({ ...prev, showCancelModal: true }))}
-							>
-								Cancel Appointment
-							</Button>
-						)}
-						{/* )} */}
+						{appointment.status === 'confirmed' &&
+							differenceInMinutes(new Date(), appointment.startTime) > 3 && (
+								<Button
+									intent="secondary"
+									style={{ width: '100%', fontSize: 14, textTransform: 'uppercase' }}
+									onClick={() => setState(prev => ({ ...prev, showCancelModal: true }))}
+								>
+									Cancel Appointment
+								</Button>
+							)}
 					</div>
 				</div>
 

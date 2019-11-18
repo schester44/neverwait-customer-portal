@@ -146,7 +146,7 @@ const AppointmentForm = ({ duration, services, location, employee, onAppointment
 				input: {
 					locationId: location.id,
 					userId: employee.id,
-					services,
+					services: services.map(id => parseInt(id)),
 					startTime: state.selectedTime
 				}
 			},

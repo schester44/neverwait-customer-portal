@@ -196,7 +196,10 @@ const RootContainer = ({ profileId, location }) => {
 
 		const { data } = await createAppointment({
 			variables: {
-				input: appointment
+				input: {
+					...appointment,
+					services: appointment.services.map(id => parseInt(id))
+				}
 			}
 		})
 

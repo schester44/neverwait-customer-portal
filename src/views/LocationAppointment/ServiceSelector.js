@@ -117,6 +117,7 @@ const Container = styled('div')(
 				width: 100%;
 				padding: 10px;
 				background: white;
+				z-index: 99;
 			}
 
 			.dropdown-scroll-container {

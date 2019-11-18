@@ -116,6 +116,10 @@ const useEnhancedLocationSubscription = ({ queryOptions }) => {
 						date: new Date()
 					})
 
+					if (!schedule) {
+						return { ...employee, isSchedulable: false }
+					}
+
 					const firstAvailableTime = getFirstAvailableTime({
 						appointments: employee.appointments,
 						// TODO: 20 mins should be configurable

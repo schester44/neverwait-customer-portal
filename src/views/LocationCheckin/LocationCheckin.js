@@ -74,7 +74,7 @@ const LocationCheckin = ({ profileId }) => {
 
 				const { appointment, employeeId, isNewRecord } = data.AppointmentsChange
 
-				const isDeleted = appointment?.deleted
+				const isDeleted = appointment?.deleted || appointment.status === 'deleted'
 
 				// let apollo handle updates.
 				if (!isNewRecord && !isDeleted) return

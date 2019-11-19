@@ -11,7 +11,6 @@ export const appointmentsSubscription = gql`
 				duration
 				startTime
 				endTime
-				deleted
 			}
 		}
 	}

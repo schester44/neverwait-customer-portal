@@ -133,7 +133,7 @@ export const locationDataQuery = gql`
 					}
 				}
 				appointments(
-					input: { where: { status: { not: "completed" }, startTime: { gte: $startTime }, endTime: { lte: $endTime } } }
+					input: { where: { status: { eq: confirmed }, startTime: { gte: $startTime }, endTime: { lte: $endTime } } }
 				) {
 					id
 					status

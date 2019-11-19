@@ -1,4 +1,5 @@
 import React from 'react'
+import { produce } from 'immer'
 import { Redirect, useParams, useHistory } from 'react-router-dom'
 import styled, { css, keyframes } from 'styled-components'
 import { format, differenceInHours } from 'date-fns'
@@ -8,6 +9,7 @@ import Swipe from 'react-easy-swipe'
 import { USER_DASHBOARD } from '../../routes'
 import isRecentAppointment from '../../helpers/isRecentAppointment'
 import { cancelAppointmentMutation } from '../../graphql/mutations'
+import { profileQuery } from '../../graphql/queries'
 
 import pling from '../../components/Pling'
 import NavHeader from '../../components/NavHeader'
@@ -145,6 +147,25 @@ const AppointmentOverview = ({ profile }) => {
 		await cancelAppointment({
 			variables: {
 				appointmentId
+			},
+			update: proxy => {
+				const cache = proxy.readQuery({
+					query: profileQuery,
+					variables: { skip: false }
+				})
+
+				proxy.writeQuery({
+					query: profileQuery,
+					variables: { skip: false },
+					data: produce(cache, draftState => {
+						draftState.profile.appointments.upcoming.splice(
+							profile.appointments.upcoming.findIndex(
+								({ id }) => parseInt(id) === parseInt(appointmentId)
+							),
+							1
+						)
+					})
+				})
 			}
 		})
 

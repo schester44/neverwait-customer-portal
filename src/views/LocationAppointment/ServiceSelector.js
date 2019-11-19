@@ -232,13 +232,13 @@ const ProviderSelector = ({
 	const { isOpen, onClose, onToggle } = useDisclosure()
 	const dropdownRef = React.useRef()
 
-	function outsidePClick() {
+	function outsideClick() {
 		if (isOpen) {
 			onClose()
 		}
 	}
 
-	useOutsideClick(dropdownRef, outsidePClick)
+	useOutsideClick(dropdownRef, outsideClick)
 
 	return (
 		<Container isDisabled={isDisabled}>

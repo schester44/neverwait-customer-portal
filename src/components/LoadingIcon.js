@@ -1,6 +1,5 @@
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
-import { lighten } from 'polished'
 
 const anim = keyframes`
 	0% {

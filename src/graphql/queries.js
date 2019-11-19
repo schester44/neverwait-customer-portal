@@ -16,7 +16,7 @@ export const profileQuery = gql`
 				address
 			}
 
-			appointments(limit: 10) {
+			appointments(limit: 10, where: { status: { eq: "confirmed" } }) {
 				past {
 					...appointment
 				}

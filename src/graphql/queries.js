@@ -16,7 +16,7 @@ export const profileQuery = gql`
 				address
 			}
 
-			appointments(limit: 10, where: { status: { eq: "confirmed" } }) {
+			appointments(limit: 20, where: { status: { in: [confirmed, completed] } }) {
 				past {
 					...appointment
 				}
@@ -99,7 +99,7 @@ export const locationDataQuery = gql`
 				appointments(
 					input: {
 						where: {
-							status: { not: "completed" }
+							status: { eq: confirmed }
 							startTime: { gte: $startTime }
 							endTime: { lte: $endTime }
 						}

@@ -42,13 +42,13 @@ const LocationCheckin = ({ profileId }) => {
 				variables: { locationId: location ? location.id : null }
 			})
 			.subscribe(({ data }) => {
-				if (!data || !data.AppointmentsChange) return
+				if (!data || !data.AppointmentsChange?.appointment) return
 
 				const locationData = client.readQuery({ query: locationDataQuery, ...queryOptions })
 
 				const { appointment, employeeId, isNewRecord } = data.AppointmentsChange
 
-				const isDeleted = appointment?.deleted || appointment.status === 'deleted'
+				const isDeleted = appointment.status === 'deleted'
 
 				// let apollo handle updates.
 				if (!isNewRecord && !isDeleted) return

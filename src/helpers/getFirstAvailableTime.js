@@ -11,10 +11,7 @@ const getFirstAvailableTime = ({
 	const now = new Date()
 	// sort by startTime so appointments are in the order of which they occur
 	const sortedAppointments = appointments
-		.filter(
-			({ status, endTime }) =>
-				status !== 'completed' && status !== 'deleted' && isAfter(endTime, now)
-		)
+		.filter(({ status, endTime }) => status === 'confirmed' && isAfter(endTime, now))
 		.sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
 
 	const isWorkingRightNow = isWorkingAtTime({

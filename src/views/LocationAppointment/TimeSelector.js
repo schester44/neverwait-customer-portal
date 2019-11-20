@@ -5,7 +5,6 @@ import { format } from 'date-fns'
 const Container = styled('div')(
 	props => css`
 		width: 100%;
-		height: 60px;
 		background: white;
 		border-radius: 8px;
 		box-shadow: 1px 1px 2px rgba(32, 32, 32, 0.1), 0px 1px 5px rgba(32, 32, 32, 0.05);
@@ -15,14 +14,15 @@ const Container = styled('div')(
 		padding: 5px;
 		-webkit-overflow-scrolling: touch;
 		overflow-x: auto;
-
-		@media (min-width: 768px) {
-			flex-wrap: wrap;
-			height: auto;
-		}
+		flex-wrap: wrap;
 
 		.time-slot {
-			width: 70px;
+			width: calc(50% - 10px);
+
+			@media (min-width: 768px) {
+				width: calc(10% - 10px);
+			}
+
 			font-weight: 600;
 			display: flex;
 			align-items: center;

@@ -36,6 +36,8 @@ const spin = keyframes`
 
 const Container = styled('div')(
 	props => css`
+		padding-bottom: 120px;
+
 		.loader {
 			animation: ${spin} 1s ease infinite;
 		}

@@ -61,13 +61,10 @@ export const createProfileAppointmentMutation = gql`
 				contactNumber
 			}
 			services {
+				id
 				name
-				sources {
-					id
-					serviceId
-					price
-					duration
-				}
+				price
+				duration
 			}
 			employee {
 				firstName
@@ -94,12 +91,8 @@ export const sequentialUpsertMutation = gql`
 			}
 			services {
 				name
-				sources {
-					id
-					serviceId
-					price
-					duration
-				}
+				price
+				duration
 			}
 			employee {
 				firstName

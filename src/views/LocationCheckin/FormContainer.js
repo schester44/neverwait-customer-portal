@@ -56,7 +56,7 @@ const Wrapper = styled('div')`
 `
 
 const getAppointmentDuration = (appointment, services) => {
-	return appointment.services.reduce((acc, id) => acc + services[id].sources?.[0]?.duration, 0)
+	return appointment.services.reduce((acc, id) => acc + services[id].duration, 0)
 }
 
 const sourceTypes = {
@@ -143,11 +143,8 @@ const RootContainer = ({ profileId, location }) => {
 		const duration = services.reduce((acc, id) => {
 			const service = state.services[id]
 
-			// This shouldnt happen
-			if (!service.sources || service.sources.length === 0) return acc
-
 			// assume the first service is the correct service
-			return acc + parseInt(service.sources[0].duration)
+			return acc + parseInt(service.duration)
 		}, 0)
 
 		const lastAppointment = getLastAppointment(employee.appointments, duration)

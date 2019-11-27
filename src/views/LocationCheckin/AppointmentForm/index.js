@@ -78,7 +78,7 @@ const AppointmentForm = ({ duration, services, location, employee, onAppointment
 	const [state, setState] = React.useState({
 		selectedDate: undefined,
 		selectedTime: undefined,
-		visibleDates: scheduler.datesFrom(new Date(), 30),
+		visibleDates: scheduler.datesFrom(new Date(), 7),
 		shiftSlots: [],
 		schedule: {
 			appointments: [],
@@ -134,7 +134,7 @@ const AppointmentForm = ({ duration, services, location, employee, onAppointment
 				employeeId: employee.id,
 				input: {
 					start_date: startOfDay(new Date()),
-					end_date: endOfDay(addDays(new Date(), 30))
+					end_date: endOfDay(addDays(new Date(), 7))
 				}
 			}
 		})

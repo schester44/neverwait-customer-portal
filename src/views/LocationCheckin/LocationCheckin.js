@@ -80,7 +80,7 @@ const LocationCheckin = ({ profileId }) => {
 							employeeId,
 							input: {
 								start_date: startOfDay(new Date()),
-								end_date: endOfDay(addDays(new Date(), 30))
+								end_date: endOfDay(addDays(new Date(), 7))
 							}
 						}
 					})
@@ -92,7 +92,7 @@ const LocationCheckin = ({ profileId }) => {
 							employeeId,
 							input: {
 								start_date: startOfDay(new Date()),
-								end_date: endOfDay(addDays(new Date(), 30))
+								end_date: endOfDay(addDays(new Date(), 7))
 							}
 						},
 						data: produce(employeeSchedule, draftState => {

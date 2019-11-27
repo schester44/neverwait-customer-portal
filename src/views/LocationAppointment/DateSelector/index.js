@@ -141,7 +141,7 @@ const isMobileCheck = () => {
 const isMobile = isMobileCheck()
 const scheduler = new SchedulerCreator()
 
-const dates = scheduler.datesFrom(new Date(), 30)
+const dates = scheduler.datesFrom(new Date(), 7)
 
 const DatePicker = ({ isDisabled, scheduleRanges, value, onSelect }) => {
 	const cellsRef = React.useRef()

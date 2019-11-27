@@ -78,7 +78,7 @@ const LocationAppointment = () => {
 		selectedProvider: undefined,
 		selectedDate: undefined,
 		selectedTime: undefined,
-		visibleDates: scheduler.datesFrom(new Date(), 30),
+		visibleDates: scheduler.datesFrom(new Date(), 7),
 		shiftSlots: [],
 		schedule: {
 			appointments: [],
@@ -189,7 +189,7 @@ const LocationAppointment = () => {
 							employeeId,
 							input: {
 								start_date: startOfDay(new Date()),
-								end_date: endOfDay(addDays(new Date(), 30))
+								end_date: endOfDay(addDays(new Date(), 7))
 							}
 						}
 					})
@@ -201,7 +201,7 @@ const LocationAppointment = () => {
 							employeeId,
 							input: {
 								start_date: startOfDay(new Date()),
-								end_date: endOfDay(addDays(new Date(), 30))
+								end_date: endOfDay(addDays(new Date(), 7))
 							}
 						},
 						data: produce(employeeSchedule, draftState => {
@@ -236,7 +236,7 @@ const LocationAppointment = () => {
 				employeeId: state.selectedProvider.id,
 				input: {
 					start_date: startOfDay(new Date()),
-					end_date: endOfDay(addDays(new Date(), 30))
+					end_date: endOfDay(addDays(new Date(), 7))
 				}
 			}
 		})

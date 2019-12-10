@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import { appointment, workingHours } from './fragments'
 
 export const profileQuery = gql`
-	{
+	query OnlineProfile {
 		profile {
 			id
 			firstName

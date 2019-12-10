@@ -19,15 +19,6 @@ const onErrorLink = onError(({ graphQLErrors = [] }) => {
 	}
 })
 
-const baseLink = setContext(() => {
-	return {
-		headers: {
-			// Let the backend know that this request comes from us. really shitty, bypassable way to let the API know that the requester at least is aware of the requirements to make the request.
-			'X-ici': true
-		}
-	}
-})
-
 export const wsLink = new WebSocketLink({
 	uri: process.env.REACT_APP_SUBSCRIPTION_URI,
 	options: {
@@ -59,6 +50,6 @@ const link = split(
 )
 
 const cache = new InMemoryCache()
-const client = new ApolloClient({ link: baseLink.concat(link), cache })
+const client = new ApolloClient({ link, cache })
 
 export default client

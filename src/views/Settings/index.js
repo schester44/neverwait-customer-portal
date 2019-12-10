@@ -9,9 +9,12 @@ import NavFooter from '../HomeScreen/NavFooter'
 import { Header } from '../HomeScreen/Header'
 import { FiEdit, FiLogOut, FiLock } from 'react-icons/fi'
 
-import { USER_SETTINGS_EDIT_ACCOUNT, USER_SETTINGS_CHANGE_PASSWORD, USER_PREFERENCES } from '../../routes'
+import {
+	USER_SETTINGS_EDIT_ACCOUNT,
+	USER_SETTINGS_CHANGE_PASSWORD,
+	USER_PREFERENCES
+} from '../../routes'
 import PasswordForm from './PasswordForm'
-import { lighten } from 'polished'
 
 const EditAccount = React.lazy(() => import('./Account'))
 
@@ -33,7 +36,7 @@ const MenuItemContainer = styled('div')`
 	align-items: center;
 	font-size: 20px;
 	cursor: pointer;
-	border-bottom: 1px solid ${({ theme }) => lighten(0.7, theme.colors.bodyColor)};
+	border-bottom: 1px solid #C6CACD;
 
 	.text {
 		opacity: 0.7;

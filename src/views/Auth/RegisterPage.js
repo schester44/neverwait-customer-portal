@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactGA from 'react-ga'
 import { Link, useHistory } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useMutation } from '@apollo/react-hooks'
 import omit from 'lodash/omit'
 import { FiArrowLeft } from 'react-icons/fi'
@@ -11,7 +11,11 @@ import { loginProfileMutation, registerProfileMutation } from '../../graphql/mut
 
 import { USER_DASHBOARD } from '../../routes'
 
-const themeStyles = ({ theme }) => `
+const themeStyles = ({ theme }) => css`
+	.title {
+		color: ${theme.colors.brand};
+	}
+
 	.back {
 		color: ${theme.colors.brand};
 	}
@@ -19,11 +23,11 @@ const themeStyles = ({ theme }) => `
 
 const Container = styled('div')`
 	width: 100%;
-	min-height: 100vh;
 	padding: 10px;
-	max-width: 1200px;
+	max-width: 768px;
 	margin: 0 auto;
 	padding-bottom: 40px;
+	position: relative;
 
 	.register-btn {
 		margin-top: 5vh;

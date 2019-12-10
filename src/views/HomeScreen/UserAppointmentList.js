@@ -38,6 +38,11 @@ const Placeholder = styled('div')`
 	justify-content: center;
 	flex-direction: column;
 	line-height: 1.5;
+
+	h3 {
+		text-align: center;
+		font-size: 1em;
+	}
 `
 
 const placeholder = type => (
@@ -80,7 +85,11 @@ const UserAppointmentList = ({ profileAppointments }) => {
 									}}
 									key={index}
 								>
-									<Appointment isPrimary={type === 'upcoming' && index === 0} key={index} appointment={appointment} />
+									<Appointment
+										isPrimary={type === 'upcoming' && index === 0}
+										key={index}
+										appointment={appointment}
+									/>
 								</Link>
 							)
 					  })}

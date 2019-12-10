@@ -23,24 +23,6 @@ const disabledStyles = ({ isDisabled }) =>
 		pointer-events: none;
 		color: #6a6a6a !important;
 		cursor: not-allowed;
-
-		width: 30px;
-		min-width: 30px;
-
-		.small-sub-class {
-			font-size: 10px;
-		}
-
-		.day {
-			width: 20px;
-			height: 20px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			border-radius: 100%;
-			font-weight: 700;
-			font-size: 10px;
-		}
 	`
 
 const desktopStyles = ({ isDesktop }) =>

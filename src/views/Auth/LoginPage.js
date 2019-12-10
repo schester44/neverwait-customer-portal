@@ -10,7 +10,6 @@ import Button from '../../components/Button'
 import { lighten } from 'polished'
 
 const themeStyles = ({ theme }) => `
-
 	.title  {
 		color: ${theme.colors.brand};
 	}
@@ -19,7 +18,7 @@ const themeStyles = ({ theme }) => `
 const Container = styled('div')`
 	width: 100%;
 	padding: 10px;
-	max-width: 1200px;
+	max-width: 768px;
 	margin: 0 auto;
 	padding-bottom: 40px;
 
@@ -119,7 +118,9 @@ const LoginPage = ({ action, isAttemptingAction }) => {
 				</div>
 			)}
 
-			<Link to={{ pathname: AUTH_REGISTER, state: { action, pathname: history.location.pathname } }}>
+			<Link
+				to={{ pathname: AUTH_REGISTER, state: { action, pathname: history.location.pathname } }}
+			>
 				<Button className="create-account-btn" ghost>
 					Create An Account
 				</Button>

@@ -2,13 +2,6 @@ import gql from 'graphql-tag'
 
 import { appointment } from './fragments'
 
-export const authWithToken = gql`
-	mutation authWithToken($key: String!) {
-		authWithToken(key: $key) {
-			token
-		}
-	}
-`
 export const forgotPasswordMutation = gql`
 	mutation forgotPassword($phoneNumber: String!) {
 		forgotProfilePassword(phoneNumber: $phoneNumber)

@@ -91,6 +91,7 @@ const LoginPage = ({ action, isAttemptingAction }) => {
 		})
 
 		if (data.loginProfile) {
+			localStorage.setItem('nw-portal-sess', true)
 			window.location.reload()
 		}
 	}

@@ -69,6 +69,8 @@ const UserSettingsMenu = ({ profile }) => {
 
 	const onLogout = async () => {
 		await logout()
+
+		localStorage.removeItem('nw-portal-sess')
 		window.location.reload()
 	}
 

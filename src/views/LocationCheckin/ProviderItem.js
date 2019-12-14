@@ -153,7 +153,7 @@ const ProviderItem = ({
 							<div className="time">
 								{provider.waitTime < 20
 									? 'NOW'
-									: format(addMinutes(new Date(), provider.waitTime), 'h:mma')}
+									: format(addMinutes(new Date(), provider.waitTime + 3), 'h:mma')}
 							</div>
 						</div>
 					)}

@@ -10,8 +10,8 @@ import { locationDataQuery, employeeScheduleQuery, profileQuery } from '../../gr
 import { createProfileAppointmentMutation } from '../../graphql/mutations'
 import { appointmentsSubscription } from '../../graphql/subscriptions'
 
-import SchedulerCreator from '../LocationCheckin/utils/ScheduleCreator'
-import getAvailableShiftSlots from '../LocationCheckin/utils/getAvailableShiftSlots'
+import SchedulerCreator from '../../helpers/ScheduleCreator'
+import getAvailableShiftSlots from '../../helpers/getAvailableShiftSlots'
 import timeFragments from '../../helpers/timeFragments'
 import { LOCATION_OVERVIEW } from '../../routes'
 

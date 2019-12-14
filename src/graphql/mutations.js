@@ -87,9 +87,12 @@ export const sequentialUpsertMutation = gql`
 				contactNumber
 			}
 			services {
+				id
 				name
+				serviceGroupId
 				price
 				duration
+				sourceId
 			}
 			employee {
 				firstName

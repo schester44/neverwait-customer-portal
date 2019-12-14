@@ -9,7 +9,7 @@ import AddToHomeScreen from './components/AddToHomeScreen'
 import MaintenanceMode from './views/MaintenanceMode'
 
 import { profileQuery } from './graphql/queries'
-import getCookie from './utils/getCookie'
+
 import {
 	LOCATION_CHECKIN,
 	LOCATION_APPOINTMENT,
@@ -32,7 +32,7 @@ const HomeScreen = React.lazy(() => import('./views/HomeScreen/HomeScreen'))
 const Explore = React.lazy(() => import('./views/Explore'))
 
 const LocationOverview = React.lazy(() => import('./views/LocationOverview'))
-const LocationCheckin = React.lazy(() => import('./views/LocationCheckinNew'))
+const LocationCheckin = React.lazy(() => import('./views/LocationCheckin'))
 const LocationAppointment = React.lazy(() => import('./views/LocationAppointment'))
 
 const Container = styled('div')`
@@ -52,7 +52,7 @@ const App = () => {
 	}, [location.pathname])
 
 	const { data, loading } = useQuery(profileQuery, {
-		skip: !getCookie('cusid-access') && !getCookie('cusid-refresh')
+		skip: !localStorage.getItem('nw-portal-sess')
 	})
 
 	const profile = data && data.profile ? data.profile : undefined

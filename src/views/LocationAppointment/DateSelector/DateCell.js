@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
-import ScheduleCreator from '../../LocationCheckin/utils/ScheduleCreator'
+import ScheduleCreator from '../../../helpers/ScheduleCreator'
 
 import { format } from 'date-fns'
 

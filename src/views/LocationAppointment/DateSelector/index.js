@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { css, keyframes } from 'styled-components'
-import SchedulerCreator from '../../LocationCheckin/utils/ScheduleCreator'
+import SchedulerCreator from '../../../helpers/ScheduleCreator'
 import { isSameDay, format } from 'date-fns'
 
 import DateCell from './DateCell'

@@ -10,7 +10,7 @@ import {
 	addMinutes
 } from 'date-fns'
 
-import { dateFromTimeString } from '../../../helpers/date-from'
+import { dateFromTimeString } from './date-from'
 
 export default class SchedulerCreator {
 	getShiftSlots(shifts, interval = 30, day = new Date()) {

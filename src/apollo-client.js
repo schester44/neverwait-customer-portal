@@ -6,9 +6,8 @@ import { HttpLink } from 'apollo-link-http'
 import { WebSocketLink } from 'apollo-link-ws'
 import { ApolloLink, split } from 'apollo-link'
 import { getMainDefinition } from 'apollo-utilities'
-import { setContext } from 'apollo-link-context'
 
-import pling from '../components/Pling'
+import pling from './components/Pling'
 
 const onErrorLink = onError(({ graphQLErrors = [] }) => {
 	if (graphQLErrors.length > 0) {

@@ -4,7 +4,7 @@ import { ApolloProvider } from '@apollo/react-hooks'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
 
-import client from './graphql/createClient'
+import client from './apollo-client'
 import App from './App'
 
 import { light as theme } from './themes'

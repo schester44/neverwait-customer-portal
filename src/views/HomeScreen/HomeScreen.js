@@ -103,11 +103,11 @@ const HomeScreen = ({ profile }) => {
 
 			<div className="actions">
 				<Button onClick={handleCheckin} style={{ width: '100%', marginBottom: 28 }}>
-					CHECK IN
+					Check In
 				</Button>
 
 				<Button onClick={handleCreateAppointment} style={{ width: '100%' }}>
-					BOOK APPOINTMENT
+					Book Appointment
 				</Button>
 			</div>
 

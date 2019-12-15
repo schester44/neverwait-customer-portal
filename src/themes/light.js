@@ -1,8 +1,8 @@
 const white = '#FFFFFF'
-const black = '#0F131A'
+const black = '#121927'
 
 const neutrals = {
-	n100: 'rgba(64, 80, 87, 1.0)',
+	n100: black,
 	n200: 'rgba(45, 50, 53, 1)',
 	n450: 'rgba(150, 157, 161, 1.0)',
 	n500: 'rgba(242, 242, 242, 1)',
@@ -10,7 +10,7 @@ const neutrals = {
 }
 
 const primary = {
-	p500: 'rgba(103, 120, 208, 1.0)'
+	p500: '#4C50AA'
 }
 
 const greens = {
@@ -35,7 +35,7 @@ const misc = {
 	brandSecondary: 'rgba(236, 90, 87, 1.0)',
 	brand: primary.p500,
 	shadow: neutrals.n500,
-	bodyBg: 'rgba(247, 249, 250, 1.0)',
+	bodyBg: 'rgba(248, 249, 249, 1.0)',
 	bodyColor: neutrals.n100,
 	success: greens.g500,
 	headerBg: white,
@@ -83,5 +83,5 @@ export const colors = {
 }
 
 export const fontStack = {
-	default: '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif'
+	default: 'Muli,-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif'
 }

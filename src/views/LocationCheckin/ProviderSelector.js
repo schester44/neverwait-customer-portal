@@ -78,6 +78,13 @@ const Container = styled('div')(
 				background: ${props.theme.colors.brand};
 				color: white;
 				margin-right: 12px;
+				overflow: hidden;
+
+				&-photo {
+					width: 32px;
+					height: 32px;
+					object-fit: cover;
+				}
 			}
 		}
 
@@ -136,7 +143,11 @@ const ProviderSelector = ({ uuid, value, onSelect, providers }) => {
 				) : (
 					<div className="selected-provider" style={{ paddingLeft: 0 }}>
 						<div className="avatar">
-							<FiUser />
+							{value.photo ? (
+								<img src={value.photo} alt="Provier" className="avatar-photo" />
+							) : (
+								<FiUser />
+							)}
 						</div>
 						{value.firstName} {value.lastName && value.lastName}
 					</div>

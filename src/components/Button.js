@@ -5,11 +5,9 @@ const sizeStyles = ({ size }) =>
 	size === 'small'
 		? css`
 				padding: 6px 10px;
-				font-size: 16px;
 		  `
 		: css`
 				padding: 14px;
-				font-size: 18px;
 		  `
 
 const ghostStyles = ({ ghost, theme }) =>
@@ -51,6 +49,9 @@ const StyledBtn = styled('button')`
 	text-align: center;
 	cursor: pointer;
 	border: none;
+	font-weight: 700;
+	line-height: 24px;
+	font-size: 17px;
 
 	&:disabled {
 		transition: opacity 1s ease;

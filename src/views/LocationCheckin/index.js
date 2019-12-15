@@ -170,6 +170,7 @@ const LocationCheckin = () => {
 
 	const isWaitTimeLongEnough = employee?.waitTime > 20
 
+	console.log({ isWaitTimeLongEnough })
 	return (
 		<Container>
 			<NavHeader

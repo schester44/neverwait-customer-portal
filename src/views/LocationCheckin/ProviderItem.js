@@ -76,6 +76,13 @@ const Container = styled('div')(
 			background: ${props.theme.colors.n450};
 			color: white;
 			margin-right: 8px;
+			overflow: hidden;
+
+			&-photo {
+				width: 32px;
+				height: 32px;
+				object-fit: cover;
+			}
 		}
 
 		${props.isWorking && !props.isDisabled
@@ -127,6 +134,7 @@ const ProviderItem = ({
 		!provider.isSchedulable &&
 		!provider.sourcesNextShifts.acceptingCheckins
 
+	console.log(provider)
 	return (
 		<Container
 			isDisabled={isDisabled}
@@ -139,7 +147,15 @@ const ProviderItem = ({
 			<div className="info">
 				<div className="left">
 					<div className="avatar">
-						{isSelected ? <FiCheck /> : isDisabled || !isBookable ? <FiUserX /> : <FiUser />}
+						{isSelected ? (
+							<FiCheck />
+						) : isDisabled || !isBookable ? (
+							<FiUserX />
+						) : provider.photo ? (
+							<img src={provider.photo} alt="Provider" className="avatar-photo" />
+						) : (
+							<FiUser />
+						)}
 					</div>
 					<div>
 						{provider.firstName} {provider.lastName && provider.lastName}

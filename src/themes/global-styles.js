@@ -45,14 +45,19 @@ export const createStyles = ({ theme, custom = '' }) => {
             color: ${theme.colors.bodyColor};
             background: ${theme.colors.bodyBg};
             font-family: ${theme.fontStack.default};
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
+        }
+
+        h1 {
+            font-weight: 700;
+            font-size: 24px;
+            font-weight: 900;
+            line-height: 32px;
         }
 
         h1.app-title {
@@ -64,13 +69,11 @@ export const createStyles = ({ theme, custom = '' }) => {
 		    color: inherit;
 	    }
 
-        .small-sub-text {
-			font-size: 10px;
-			text-transform: uppercase;
-			font-weight: 700;
-			line-height: 1.5;
-            color: ${theme.colors.n450};
-		}
+        p {
+            font-size: 17px;
+            font-weight: 400px;
+            line-height: 24px;
+        }
 
         ${custom};
     `

@@ -75,7 +75,6 @@ export default class SchedulerCreator {
 				}
 			} else {
 				if (range.day_of_week === format(date, 'dddd').toLowerCase()) {
-					console.log('here')
 					withinRange = isSameDay(date, start) || isAfter(date, start)
 				}
 			}

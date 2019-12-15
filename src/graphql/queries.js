@@ -14,6 +14,7 @@ export const profileQuery = gql`
 				name
 				uuid
 				address
+				photo
 			}
 
 			appointments(limit: 20, where: { status: { in: [confirmed, completed] } }) {
@@ -38,6 +39,7 @@ export const basicLocationInfoQuery = gql`
 			name
 			address
 			contactNumber
+			photo(transformations: { ar: "16-9", h: "250" })
 			working_hours {
 				...workingHours
 			}
@@ -73,6 +75,7 @@ export const locationDataQuery = gql`
 			employees(input: { where: { bookingEnabled: true } }) {
 				id
 				firstName
+				photo
 				schedule_ranges(input: { where: { start_date: $startTime, end_date: $endTime } }) {
 					start_date
 					end_date

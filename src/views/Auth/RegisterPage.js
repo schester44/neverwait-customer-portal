@@ -2,7 +2,6 @@ import React from 'react'
 import ReactGA from 'react-ga'
 import { Link, useHistory } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
-import omit from 'lodash/omit'
 import { FiArrowLeft } from 'react-icons/fi'
 
 import CreateAccountForm from './CreateAccountForm'
@@ -30,12 +29,14 @@ const CreateAccount = () => {
 	}
 
 	const handleSubmit = async () => {
+		const { confirmPassword, ...input } = fields
+
 		try {
 			const {
 				data: { registerProfile: response }
 			} = await registerProfile({
 				variables: {
-					input: omit(fields, ['confirmPassword'])
+					input
 				}
 			})
 

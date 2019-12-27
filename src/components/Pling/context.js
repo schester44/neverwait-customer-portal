@@ -1,8 +1,8 @@
 import React from 'react'
-import omit from 'lodash/omit'
 
 import generateId from './utils/generateId'
 import Pling from './Pling'
+import produce from 'immer'
 const noop = () => {}
 const PlingContext = React.createContext({ show: noop, dismiss: noop, dismissAll: noop })
 
@@ -51,11 +51,16 @@ export const PlingProvider = ({
 	const dismiss = id => {
 		if (!state.activeIds[id]) return
 
-		setState(prev => ({
-			...prev,
-			activeIds: omit(prev.activeIds, [id]),
-			active: prev.active.filter(pling => pling.id !== id)
-		}))
+		setState(prev =>
+			produce(prev, draft => {
+				delete draft.activeIds[id]
+				
+				draft.active.splice(
+					prev.active.findIndex(pling => pling.id === id),
+					1
+				)
+			})
+		)
 	}
 
 	const dismissAll = () => {

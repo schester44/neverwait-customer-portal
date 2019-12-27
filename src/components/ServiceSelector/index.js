@@ -1,13 +1,9 @@
 import React from 'react'
-import styled from 'styled-components'
-
 import Service from './Service'
-
-const Container = styled('div')``
 
 const ServiceSelector = ({ services = [], selected = {}, onSelect }) => {
 	return (
-		<Container>
+		<div>
 			{services.map(service => {
 				return (
 					<Service
@@ -18,7 +14,7 @@ const ServiceSelector = ({ services = [], selected = {}, onSelect }) => {
 					/>
 				)
 			})}
-		</Container>
+		</div>
 	)
 }
 

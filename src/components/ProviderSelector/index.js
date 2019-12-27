@@ -1,9 +1,7 @@
 import React from 'react'
-import styled from 'styled-components'
 
 import Provider from './Provider'
 
-const Container = styled('div')``
 
 const ProviderSelector = ({
 	isAppointmentSelector = false,
@@ -12,7 +10,7 @@ const ProviderSelector = ({
 	onSelect
 }) => {
 	return (
-		<Container>
+		<div>
 			{providers.map(provider => {
 				return (
 					<Provider
@@ -24,7 +22,7 @@ const ProviderSelector = ({
 					/>
 				)
 			})}
-		</Container>
+		</div>
 	)
 }
 

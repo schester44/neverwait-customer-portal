@@ -1,12 +1,11 @@
 import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom'
-import styled from 'styled-components'
 import ReactGA from 'react-ga'
 
-import Loading from './components/Loading'
 import AddToHomeScreen from './components/AddToHomeScreen'
 import MaintenanceMode from './views/MaintenanceMode'
+import LoadingScreen from './views/LoadingScreen'
 
 import { profileQuery } from './graphql/queries'
 
@@ -28,21 +27,11 @@ const ForgotPasswordPage = React.lazy(() => import('./views/Auth/ForgotPasswordP
 
 const UserAppointments = React.lazy(() => import('./views/HomeScreen/UserAppointments'))
 const UserSettings = React.lazy(() => import('./views/Settings'))
-const HomeScreen = React.lazy(() => import('./views/HomeScreen/HomeScreen'))
 const Explore = React.lazy(() => import('./views/Explore'))
 
 const LocationOverview = React.lazy(() => import('./views/LocationOverview'))
 const LocationCheckin = React.lazy(() => import('./views/LocationCheckin'))
 const LocationAppointment = React.lazy(() => import('./views/LocationAppointment'))
-
-const Container = styled('div')`
-	position: relative;
-	margin: 0 auto;
-	max-width: 1200px;
-	width: 100%;
-	height: 100%;
-	overflow-x: hidden;
-`
 
 const App = () => {
 	const location = useLocation()
@@ -63,19 +52,19 @@ const App = () => {
 		ReactGA.set({ userId: profile.id })
 	}, [profile])
 
-	if (loading) return <Loading />
+	if (loading) return <LoadingScreen />
 
 	if (process.env.REACT_APP_MAINTENANCE_MODE) {
 		return (
-			<React.Suspense fallback={<Loading />}>
+			<React.Suspense fallback={<LoadingScreen />}>
 				<MaintenanceMode />
 			</React.Suspense>
 		)
 	}
 
 	return (
-		<React.Suspense fallback={<Loading />}>
-			<Container>
+		<React.Suspense fallback={<LoadingScreen />}>
+			<div className="container mx-auto h-screen">
 				<AddToHomeScreen />
 
 				{profile ? (
@@ -98,10 +87,6 @@ const App = () => {
 
 						<Route path={LOCATION_SEARCH}>
 							<Explore locations={profile.locations} profile={profile} />
-						</Route>
-
-						<Route path="/" exact>
-							<HomeScreen profile={profile} />
 						</Route>
 
 						<Route path={LOCATION_OVERVIEW}>
@@ -135,10 +120,11 @@ const App = () => {
 						<Route path={AUTH_FORGOT_PASSWORD}>
 							<ForgotPasswordPage />
 						</Route>
+
 						<Redirect to={AUTH_LOGIN} />
 					</Switch>
 				)}
-			</Container>
+			</div>
 		</React.Suspense>
 	)
 }

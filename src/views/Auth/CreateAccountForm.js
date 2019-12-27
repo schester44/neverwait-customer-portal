@@ -26,20 +26,49 @@ const CreateAccountForm = ({ values = {}, setFieldValue, loading = false, handle
 
 	return (
 		<Container>
+			<p className="text-gray-600 leading-snug text-sm">
+				We send text message notifications to remind you of upcoming appointments so it's best to
+				use a cell phone if possible.
+			</p>
+
 			<div className="form-input">
-				<Input type="text" value={values.firstName} name="firstName" label="First Name" onChange={handleChange} />
+				<Input
+					type="text"
+					value={values.firstName}
+					name="firstName"
+					label="First Name"
+					onChange={handleChange}
+				/>
 			</div>
 
 			<div className="form-input">
-				<Input type="text" value={values.lastName} name="lastName" label="Last Name" onChange={handleChange} />
+				<Input
+					type="text"
+					value={values.lastName}
+					name="lastName"
+					label="Last Name"
+					onChange={handleChange}
+				/>
 			</div>
 
 			<div className="form-input">
-				<Input type="tel" value={values.phoneNumber} name="phoneNumber" label="Phone Number" onChange={handleChange} />
+				<Input
+					type="tel"
+					value={values.phoneNumber}
+					name="phoneNumber"
+					label="Phone Number"
+					onChange={handleChange}
+				/>
 			</div>
 
 			<div className="form-input">
-				<Input type="password" value={values.password} name="password" label="Password" onChange={handleChange} />
+				<Input
+					type="password"
+					value={values.password}
+					name="password"
+					label="Password"
+					onChange={handleChange}
+				/>
 			</div>
 
 			<div className="form-input">
@@ -52,13 +81,7 @@ const CreateAccountForm = ({ values = {}, setFieldValue, loading = false, handle
 				/>
 			</div>
 
-			<Button
-				intent={disabled ? 'primary' : 'success'}
-				className="submit-btn"
-				onClick={handleSubmit}
-				style={{ width: '100%', marginTop: 24 }}
-				disabled={disabled || loading}
-			>
+			<Button className="w-full mt-4" onClick={handleSubmit} disabled={disabled || loading}>
 				Create Account
 			</Button>
 		</Container>

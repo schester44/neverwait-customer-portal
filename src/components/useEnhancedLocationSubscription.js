@@ -41,7 +41,7 @@ const useEnhancedLocationSubscription = ({ queryOptions }) => {
 
 				const { appointment, employeeId, isNewRecord } = data.AppointmentsChange
 
-				const isDeleted = appointment.status === 'deleted'
+				const isDeleted = appointment.status === 'deleted' || appointment.status === 'canceled'
 
 				// let apollo handle updates.
 				if (!isNewRecord && !isDeleted) return
@@ -53,7 +53,7 @@ const useEnhancedLocationSubscription = ({ queryOptions }) => {
 						...employee,
 						appointments: isDeleted
 							? employee.appointments.filter(appt => appt.id !== appointment.id)
-							: employee.appointments.concat([appointment])
+							: employee.appointments.concat(appointment)
 					}
 				})
 

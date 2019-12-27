@@ -1,10 +1,12 @@
 import React from 'react'
-import styled, { css, keyframes } from 'styled-components'
 import { produce } from 'immer'
-import { startOfDay, endOfDay, addDays, format } from 'date-fns'
-import { FaStore } from 'react-icons/fa'
-import { Redirect, Link, useParams, generatePath } from 'react-router-dom'
+import { startOfDay, endOfDay, addDays } from 'date-fns'
+import { Redirect, Link, useParams, generatePath, useHistory } from 'react-router-dom'
 import { useQuery, useMutation, useApolloClient, useLazyQuery } from '@apollo/react-hooks'
+import { format } from 'date-fns'
+
+import { FaStore } from 'react-icons/fa'
+import { FiArrowLeft } from 'react-icons/fi'
 
 import { locationDataQuery, employeeScheduleQuery, profileQuery } from '../../graphql/queries'
 import { createProfileAppointmentMutation } from '../../graphql/mutations'
@@ -12,66 +14,46 @@ import { appointmentsSubscription } from '../../graphql/subscriptions'
 
 import SchedulerCreator from '../../helpers/ScheduleCreator'
 import getAvailableShiftSlots from '../../helpers/getAvailableShiftSlots'
-import timeFragments from '../../helpers/timeFragments'
 import { LOCATION_OVERVIEW } from '../../routes'
 
-import Loading from '../../components/Loading'
-import NavHeader from '../../components/NavHeader'
-import ProviderSelector from './ProviderSelector'
-import ServiceSelector from './ServiceSelector'
-import DateSelector from './DateSelector'
-import TimeSelector from './TimeSelector'
+import ProviderSelector from '../../components/ProviderSelector'
+import ServiceSelector from '../../components/ServiceSelector'
+import Loading from '../LoadingScreen'
 import FormFooter from '../../components/FormFooter'
 import Button from '../../components/Button'
-import SuccessView from './Success'
-import { FiLoader } from 'react-icons/fi'
 
-const spin = keyframes`
-	from {
-		transform: rotate(0);
-	}to {
-		transform: rotate(360deg);
+import DateSelector from './DateSelector'
+import TimeSelector from './TimeSelector'
+
+const Review = React.lazy(() => import('./Review'))
+const Success = React.lazy(() => import('./Success'))
+
+const renderTitle = ({ step }) => {
+	switch (step) {
+		case 1:
+			return 'Select Provider'
+		case 2:
+			return 'Select Services'
+		case 3:
+			return 'Select Date & Time'
+		case 4:
+			return 'Review'
+		default:
+			break
 	}
-`
-
-const Container = styled('div')(
-	props => css`
-		padding-bottom: 120px;
-
-		.loader {
-			animation: ${spin} 1s ease infinite;
-		}
-
-		.view {
-			padding: 14px;
-
-			.form-item {
-				margin-bottom: 24px;
-			}
-
-			.form-label {
-				color: ${props.theme.colors.n450};
-				font-size: 16px;
-				padding-bottom: 8px;
-				font-weight: 600;
-			}
-
-			.time-picker {
-				margin-top: 8px;
-			}
-		}
-	`
-)
+}
 
 const scheduler = new SchedulerCreator()
 
 const LocationAppointment = () => {
+	const history = useHistory()
 	const { uuid } = useParams()
 
 	const startTime = startOfDay(new Date())
-	const endTime = endOfDay(new Date())
+	const endTime = endOfDay(addDays(new Date(), 7))
 
 	const [state, setState] = React.useState({
+		step: 1,
 		createdAppointment: undefined,
 		providerServicesById: {},
 		selectedServices: [],
@@ -98,8 +80,6 @@ const LocationAppointment = () => {
 		)
 	}, [state.selectedServices, state.providerServicesById])
 
-	const selectedServicesTime = timeFragments(selectedServicesDuration)
-
 	const setShiftSlots = React.useCallback(
 		(schedule, date) => {
 			const shiftSlots = getAvailableShiftSlots(schedule, date, selectedServicesDuration)
@@ -124,7 +104,7 @@ const LocationAppointment = () => {
 		}
 	}, [startTime, endTime, uuid])
 
-	const { data = {}, loading } = useQuery(locationDataQuery, queryOptions)
+	const { data, loading } = useQuery(locationDataQuery, queryOptions)
 	const [createProfileAppointment, { loading: createLoading }] = useMutation(
 		createProfileAppointmentMutation
 	)
@@ -139,7 +119,7 @@ const LocationAppointment = () => {
 	)
 
 	const client = useApolloClient()
-	const location = data.locationByUUID
+	const location = data?.locationByUUID
 
 	// Effect is needed because this component initializes without a locationId to subscribe to and there is no skip property to prevent from subscribing with an empty location
 	React.useEffect(() => {
@@ -157,7 +137,7 @@ const LocationAppointment = () => {
 
 				const { appointment, employeeId, isNewRecord } = data.AppointmentsChange
 
-				const isDeleted = appointment.status === 'deleted'
+				const isDeleted = appointment.status === 'deleted' || appointment.status === 'canceled'
 
 				// let apollo handle updates.
 				if (!isNewRecord && !isDeleted) return
@@ -259,12 +239,20 @@ const LocationAppointment = () => {
 		})
 	}, [state.selectedProvider, employeeSchedule, selectedServicesDuration, state.selectedDate])
 
-	if (loading) return <Loading />
+	const employee = React.useMemo(
+		() =>
+			!state.selectedProvider || !location
+				? undefined
+				: location.employees.find(emp => emp.id === state.selectedProvider.id),
+		[state.selectedProvider, location]
+	)
+
+	if (loading) return <div>Loading...</div>
 
 	// TODO: This redirects when there is a network error.
 	if (!loading && !location) return <Redirect to="/" />
 
-	const handleEmployeeSelection = selectedProvider => {
+	const handleProviderSelection = selectedProvider => {
 		const providerServicesById = selectedProvider.services.reduce((acc, service) => {
 			const source = service.sources.find(
 				source => source.type === 'onlineappointment' || source.type === 'default'
@@ -298,6 +286,15 @@ const LocationAppointment = () => {
 		setState(prev => ({ ...prev, selectedTime }))
 	}
 
+	const handleServiceSelection = service => {
+		setState(prev => ({
+			...prev,
+			selectedServices: prev.selectedServices.includes(service.id)
+				? prev.selectedServices.filter(id => id !== service.id)
+				: prev.selectedServices.concat([service.id])
+		}))
+	}
+
 	const handleConfirm = async () => {
 		const { data } = await createProfileAppointment({
 			variables: {
@@ -329,64 +326,84 @@ const LocationAppointment = () => {
 	}
 
 	return (
-		<Container>
-			<NavHeader
-				actions={[
-					<Link to={generatePath(LOCATION_OVERVIEW, { uuid })}>
-						<FaStore size="28px" />
-					</Link>
-				]}
-			/>
-			<div className="view">
-				<h1>Book Appointment</h1>
-				<p className="small-sub-text" style={{ fontSize: 16 }}>
-					{location.name}
-				</p>
-				<p style={{ marginBottom: 24 }} className="small-sub-text">
-					{location.address}
-				</p>
-
-				<div className="form">
-					<div className="form-item">
-						<p className="form-label">Select Provider</p>
-						<ProviderSelector
-							providers={location.employees}
-							value={state.selectedProvider}
-							onSelect={handleEmployeeSelection}
-						/>
-					</div>
-
-					<div className="form-item">
-						<p className="form-label" style={{ opacity: !state.selectedProvider ? 0.3 : 1 }}>
-							Select Services
-						</p>
-						<ServiceSelector
-							selectedServicesTime={selectedServicesTime}
-							selectedServicesPrice={selectedServicesPrice}
-							servicesById={state.providerServicesById}
-							value={state.selectedServices}
-							isDisabled={!state.selectedProvider}
-							services={state.selectedProvider?.services}
-							onSelect={service => {
-								setState(prev => ({
-									...prev,
-									selectedServices: prev.selectedServices.includes(service.id)
-										? prev.selectedServices.filter(id => id !== service.id)
-										: prev.selectedServices.concat([service.id])
-								}))
+		<div>
+			{!state.createdAppointment && (
+				<div className="px-4 mb-2 bg-gray-900 pb-12 shadow-lg">
+					<div className="flex justify-between items-center pt-2 pb-4">
+						<FiArrowLeft
+							className="text-3xl text-gray-100"
+							onClick={() => {
+								if (state.step === 1) {
+									history.goBack()
+								} else {
+									setState(prev => ({
+										...prev,
+										step: prev.step - 1,
+										selectedDate: prev.step - 1 < 3 ? undefined : prev.selectedDate,
+										selectedTime: prev.step - 1 < 3 ? undefined : prev.selectedTime
+									}))
+								}
 							}}
 						/>
+
+						<p className="items-center text-gray-100 text-lg font-bold">Appointment</p>
+
+						<Link
+							className="text-3xl text-gray-100"
+							to={{
+								state: {
+									from: history.location.pathname,
+								},
+								pathname: generatePath(LOCATION_OVERVIEW, { uuid })
+							}}
+						>
+							<FaStore />
+						</Link>
 					</div>
 
-					<div className="form-item">
-						<p
-							className="form-label"
-							style={{ opacity: state.selectedServices.length === 0 ? 0.3 : 1 }}
-						>
-							Select Date & Time
-						</p>
+					{!state.createdAppointment && (
+						<p className="text-sm text-indigo-200 mt-2 leading-snug">Step {state.step} of 4</p>
+					)}
 
-						{employeeSchedule?.employeeSchedule && (
+					<h1 className="jaf-domus leading-none text-white font-black mb-4 text-3xl">
+						{renderTitle({ step: state.step })}
+					</h1>
+				</div>
+			)}
+
+			<div
+				className="bg-white pl-2 pt-2 -mt-12 overflow-x-hidden"
+				style={{ borderTopLeftRadius: 50 }}
+			>
+				{state.step === 1 && (
+					<div className="pb-24">
+						<ProviderSelector
+							isAppointmentSelector={true}
+							providers={location.employees}
+							selected={state.selectedProvider?.id}
+							onSelect={handleProviderSelection}
+						/>
+					</div>
+				)}
+
+				{state.step === 2 && (
+					<div className="pb-24">
+						<ServiceSelector
+							selected={state.selectedServices}
+							services={state.selectedProvider?.services}
+							onSelect={handleServiceSelection}
+						/>
+					</div>
+				)}
+
+				{fetchLoading && <Loading />}
+
+				{!fetchLoading &&
+					state.step === 3 &&
+					(!employeeSchedule?.employeeSchedule ? (
+						<div>Loading...</div>
+					) : (
+						<div className="pb-24">
 							<DateSelector
 								value={state.selectedDate}
 								isDisabled={state.selectedServices.length === 0}
@@ -394,58 +411,98 @@ const LocationAppointment = () => {
 								scheduleRanges={employeeSchedule.employeeSchedule.schedule_ranges || []}
 								appointments={employeeSchedule.employeeSchedule.appointments || []}
 							/>
-						)}
 
-						{state.selectedDate && (
-							<div className="time-picker">
+							{state.selectedDate && (
 								<TimeSelector
 									slots={state.shiftSlots}
 									value={state.selectedTime}
 									onSelect={handleTimeSelection}
 								/>
-							</div>
-						)}
-					</div>
-				</div>
+							)}
+						</div>
+					))}
+
+				{state.step === 4 && !state.createdAppointment && (
+					<Review
+						selectedServicesPrice={selectedServicesPrice}
+						provider={employee}
+						selectedTime={state.selectedTime}
+						selectedServiceIds={state.selectedServices}
+						providerServicesById={state.providerServicesById}
+						location={location}
+					/>
+				)}
 			</div>
 
-			{state.selectedTime &&
-				(state.createdAppointment ? (
-					<SuccessView appointment={state.createdAppointment} />
-				) : (
-					<FormFooter>
-						<div>
-							<p
-								style={{
-									fontSize: 16,
-									fontWeight: 700,
-									opacity: 1,
-									color: 'rgba(253, 241, 227, 1)'
-								}}
-							>
-								${selectedServicesPrice}
-							</p>
+			{state.createdAppointment && (
+				<Success totalPrice={selectedServicesPrice} appointment={state.createdAppointment} />
+			)}
 
-							<p className="small-sub-text" style={{ opacity: 1, color: 'white' }}>
-								{format(state.selectedTime, 'h:mma')} appointment
-							</p>
+			{state.step === 1 && state.selectedProvider && (
+				<FormFooter>
+					<Button onClick={() => setState(prev => ({ ...prev, step: 2 }))} className="w-full">
+						Book Now
+					</Button>
+				</FormFooter>
+			)}
 
-							<p className="small-sub-text" style={{ opacity: 1, color: 'white' }}>
-								{format(state.selectedTime, 'dddd, MMMM Do')}
-							</p>
-						</div>
-
+			{state.step === 2 && state.selectedServices.length > 0 && (
+				<FormFooter
+					action={
 						<Button
-							inverted
-							disabled={createLoading || fetchLoading}
-							onClick={handleConfirm}
-							style={{ width: '50%' }}
+							className="ml-1 w-full"
+							disabled={createLoading}
+							onClick={() => {
+								setState(prev => ({ ...prev, step: 3 }))
+							}}
 						>
-							{createLoading ? <FiLoader className="loader" /> : 'Book Now'}
+							Next
 						</Button>
-					</FormFooter>
-				))}
-		</Container>
+					}
+				>
+					<div>
+						<p className="text-gray-600 text-sm leading-tight">
+							{state.selectedServices.length} selected
+						</p>
+						<p className="text-gray-900 text-sm font-black leading-tight">
+							${selectedServicesPrice}
+						</p>
+					</div>
+				</FormFooter>
+			)}
+
+			{state.step === 3 && state.selectedTime && (
+				<FormFooter
+					action={
+						<Button
+							onClick={() => setState(prev => ({ ...prev, step: prev.step + 1 }))}
+							className="w-full"
+						>
+							Next
+						</Button>
+					}
+				>
+					<div>
+						<p className="text-gray-600 text-sm leading-tight">
+							{format(state.selectedTime, 'dddd MMM Do')}
+						</p>
+						<p className="text-gray-900 text-sm leading-tight">
+							at <span className="font-black">{format(state.selectedTime, 'h:mma')}</span>
+						</p>
+					</div>
+				</FormFooter>
+			)}
+
+			{state.step === 4 && !state.createdAppointment && (
+				<FormFooter
+					action={
+						<Button className="w-full" onClick={handleConfirm}>
+							Confirm
+						</Button>
+					}
+				/>
+			)}
+		</div>
 	)
 }
 

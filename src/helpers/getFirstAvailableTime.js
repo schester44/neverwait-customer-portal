@@ -34,15 +34,29 @@ const getFirstAvailableTime = ({
 				return new Date()
 			}
 
-			if (
-				sortedAppointments.length === 1 &&
-				isWorkingAtTime({
-					schedule,
-					time: addMinutes(appointments[0].endTime || new Date(), duration + 2),
-					sourceType
-				})
-			) {
-				return sortedAppointments[0].endTime
+			// When there is only 1 appointment
+			if (sortedAppointments.length === 1) {
+				// If the employee works at the end of this appointment then the end of the only appointment is the next shift available time.
+				if (
+					isWorkingAtTime({
+						schedule,
+						time: addMinutes(sortedAppointments[0].endTime, 2),
+						sourceType
+					})
+				) {
+					return sortedAppointments[0].endTime
+				}
+
+				// if he isn't working at the end of that appointment, then add the duration and see if he is working then...
+				if (
+					isWorkingAtTime({
+						schedule,
+						time: addMinutes(sortedAppointments[0].endTime, duration + 2),
+						sourceType
+					})
+				) {
+					return addMinutes(sortedAppointments[0].endTime, duration + 2)
+				}
 			}
 		}
 
@@ -55,7 +69,8 @@ const getFirstAvailableTime = ({
 		// If theres more than 20 minutes of dead time between the two appointments then our last appointment is the previous appointment
 		// if (difference > duration) {
 		if (
-			(difference > duration || i === sortedAppointments.length - 1) &&
+			// We need the i !== 0 check or else it will return `new Date` when there is only 1 appointment that goes past the employees shift end. first index logic is handled up above anyways
+			difference > duration &&
 			// make sure they're working and that the appointment doesn't exceed their shift
 			isWorkingAtTime({
 				schedule,
@@ -64,6 +79,17 @@ const getFirstAvailableTime = ({
 			})
 		) {
 			return previous?.endTime || new Date()
+		}
+
+		if (
+			i === sortedAppointments.length - 1 &&
+			isWorkingAtTime({
+				schedule,
+				time: addMinutes(sortedAppointments[i].endTime, duration + 2),
+				sourceType
+			})
+		) {
+			return sortedAppointments[i].endTime
 		}
 	}
 }

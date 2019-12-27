@@ -1,5 +1,4 @@
 import React from 'react'
-import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 import { FiArrowLeft } from 'react-icons/fi'
@@ -10,39 +9,25 @@ import Button from '../../components/Button'
 import Input from '../../components/Input'
 import pling from '../../components/Pling'
 
-import { Header } from '../HomeScreen/Header'
 import { USER_PREFERENCES } from '../../routes'
-
-const Container = styled('div')`
-	width: 100%;
-	min-height: 100%;
-	position: relative;
-
-	.back {
-		position: absolute;
-		font-size: 32px;
-		line-height: 1;
-		left: 10px;
-		top: 7px;
-	}
-
-	.content {
-		padding: 20px;
-	}
-
-	.form-input {
-		width: 100%;
-		padding: 8px 0;
-	}
-`
 
 const Account = ({ profile }) => {
 	const history = useHistory()
 	const [values, setValues] = React.useState(profile)
 	const [updateProfile, { loading }] = useMutation(updateProfileMutation)
 
+	const isDisabled =
+		values.phoneNumber.trim().length < 10 ||
+		values.firstName.trim().length === 0 ||
+		loading ||
+		isNaN(parseInt(values.phoneNumber))
+
 	const handleSubmit = async () => {
 		const { firstName, lastName, phoneNumber } = values
+
+		if (isDisabled) {
+			return
+		}
 
 		await updateProfile({
 			variables: {
@@ -57,46 +42,47 @@ const Account = ({ profile }) => {
 		pling({ message: 'Account updated!', intent: 'info' })
 	}
 
-	const handleChange = ({ target: { name, value } }) => setValues(prev => ({ ...prev, [name]: value }))
+	const handleChange = ({ target: { name, value } }) =>
+		setValues(prev => ({ ...prev, [name]: value }))
 
 	const onBack = () => history.push(USER_PREFERENCES)
 
 	return (
-		<Container>
-			<Header title="Edit Account">
-				<div className="back" onClick={onBack}>
-					<FiArrowLeft />
-				</div>
-			</Header>
-
-			<div className="content">
-				<div className="form-input">
-					<Input type="text" value={values.firstName} name="firstName" label="First Name" onChange={handleChange} />
-				</div>
-
-				<div className="form-input">
-					<Input type="text" value={values.lastName} name="lastName" label="Last Name" onChange={handleChange} />
-				</div>
-
-				<div className="form-input">
-					<Input
-						type="tel"
-						value={values.phoneNumber}
-						name="phoneNumber"
-						label="Phone Number"
-						onChange={handleChange}
-					/>
-				</div>
-
-				<Button
-					onClick={handleSubmit}
-					style={{ width: '100%', marginTop: 24 }}
-					disabled={values.phoneNumber.trim().length < 10 || values.firstName.trim().length === 0 || loading}
-				>
-					Update Account
-				</Button>
+		<div className="container mx-auto px-4">
+			<div className="absolute text-3xl top-0 left-0 mt-2 ml-2 text-gray-900" onClick={onBack}>
+				<FiArrowLeft />
 			</div>
-		</Container>
+
+			<h1 className="mt-2 mb-8 mx-auto text-center font-black">Account</h1>
+
+			<Input
+				type="text"
+				value={values.firstName}
+				name="firstName"
+				label="First Name"
+				onChange={handleChange}
+			/>
+
+			<Input
+				type="text"
+				value={values.lastName}
+				name="lastName"
+				label="Last Name"
+				onChange={handleChange}
+			/>
+
+			<Input
+				type="tel"
+				value={values.phoneNumber}
+				name="phoneNumber"
+				label="Phone Number"
+				onChange={handleChange}
+			/>
+
+			<Button className="w-full mt-8" onClick={handleSubmit} disabled={isDisabled}>
+				Update Account
+			</Button>
+		</div>
 	)
 }
 

@@ -1,135 +1,217 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
-import styled, { keyframes, css } from 'styled-components'
+import clsx from 'clsx'
+import styled, { keyframes } from 'styled-components'
+import { NavLink, useRouteMatch, useHistory, generatePath } from 'react-router-dom'
+import { useQuery } from '@apollo/react-hooks'
+import { FiUser, FiX, FiScissors, FiCalendar } from 'react-icons/fi'
+import { FaCalendarDay, FaCalendarCheck } from 'react-icons/fa'
+import {
+	USER_PREFERENCES,
+	LOCATION_CHECKIN,
+	LOCATION_SEARCH,
+	LOCATION_APPOINTMENT
+} from '../../routes'
+import { profileQuery } from '../../graphql/queries'
 
-import { FiUser, FiScissors, FiCalendar } from 'react-icons/fi'
-import { USER_PREFERENCES } from '../../routes'
-
-const themeStyles = ({ theme }) => css`
-	.contents {
-		border-top: 1px solid ${theme.colors.shadow};
-		background: ${theme.colors.headerBg};
-	}
-`
-
-const slideUp = keyframes`
+const popUp = keyframes`
 	from {
-		opacity: 1;
-		transform: translateY(80px);
-	}
+		opacity: 0;
+		transform: translateY(50px);
+	} 
 	to {
-		opacity: 1;
 		transform: translateY(0px);
+		opacity: 1;
 	}
 `
 
-const animateStyles = ({ animate }) =>
-	animate &&
-	css`
-		animation: ${slideUp} 0.5s 0.3s ease forwards;
+const disappear = keyframes`
+	from {
+		transform: translateY(0px);
+		opacity: 1;
+	} 
+	to {
+		transform: translateY(50px);
 		opacity: 0;
-	`
+	}
+`
+
+const spin = keyframes`
+	from {
+		transform: rotate(0deg);
+	} 
+	to {
+		transform: rotate(180deg);
+	}
+`
 
 const Container = styled('div')`
-	position: fixed;
-
-	bottom: 0;
-	left: 0;
-	width: 100%;
-
-	.contents {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-		max-width: 1200px;
-		margin: 0 auto;
-		padding-top: 5px;
-		padding-bottom: 8px;
+	.close-btn {
+		animation: ${spin} 0.25s ease forwards;
 	}
 
-	.border-left {
-		border-left: 1px solid ${({ theme }) => theme.colors.bodyBg};
+	.rotate-once {
+		transform: rotate(180deg);
 	}
 
-	.border-right {
-		border-right: 1px solid ${({ theme }) => theme.colors.bodyBg};
+	.action-bar {
+		transform: translateY(100px);
+		opacity: 0;
+		pointer-events: none;
 	}
 
-	.action-btn {
-		width: 50px;
-		height: 50px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 8px;
+	.navbar-show-actions {
+		animation: ${popUp} 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.575) forwards;
+		pointer-events: inherit;
 	}
 
-	a {
-		flex: 1;
-
-		&.active {
-			.action-btn {
-				background: rgba(106, 122, 202, 0.2);
-				color: ${({ theme }) => theme.colors.brand};
-			}
-		}
+	.navbar-hide-actions {
+		animation: ${disappear} 0.2s ease forwards;
 	}
-
-	.placeholder {
-		flex: 1;
-		height: 50px;
-	}
-
-	.action {
-		font-size: 24px;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		flex-direction: column;
-		justify-content: center;
-		width: 100%;
-		padding: 5px 0 10px 0;
-
-		.text {
-			padding-top: 4px;
-			font-size: 12px;
-			font-weight: 500;
-			opacity: 0.5;
-		}
-	}
-
-	${animateStyles};
-	${themeStyles};
 `
 
-const NavFooter = ({ animate = false }) => {
+const Action = ({ exact = false, to, children, style, buttonClassName = '' }) => {
 	return (
-		<Container className="app-nav-footer" animate={animate}>
-			<div className="contents">
-				<NavLink to="/profile/appointments">
-					<div className="action">
-						<div className="action-btn">
-							<FiCalendar />
-						</div>
-					</div>
-				</NavLink>
+		<NavLink exact={exact} to={to}>
+			<div
+				style={style}
+				className={clsx(
+					'rounded text-3xl w-12 h-12 flex items-center justify-center',
+					buttonClassName
+				)}
+			>
+				{children}
+			</div>
+		</NavLink>
+	)
+}
 
-				<NavLink exact to="/">
-					<div className="action main-action">
-						<div className="action-btn">
-							<FiScissors />
-						</div>
-					</div>
-				</NavLink>
+const NavFooter = () => {
+	const [isActionsVisible, setActionsVisible] = React.useState(false)
+	const actionsHaveBeenSeenOnce = React.useRef(false)
+	const match = useRouteMatch()
+	const history = useHistory()
 
-				<NavLink to={USER_PREFERENCES}>
-					<div className="action">
-						<div className="action-btn">
-							<FiUser />
-						</div>
+	const { data } = useQuery(profileQuery, {
+		skip: !localStorage.getItem('nw-portal-sess')
+	})
+
+	const profile = data?.profile
+
+	const filteredLocations = React.useMemo(() => {
+		if (profile.appointments.upcoming.length === 0 && profile.appointments.past.length === 0) {
+			return profile.locations
+		}
+
+		let locationIds = {}
+
+		profile.appointments.upcoming.forEach(appt => {
+			locationIds[appt.location.id] = true
+		})
+
+		profile.appointments.past.forEach(appt => {
+			locationIds[appt.location.id] = true
+		})
+
+		return profile.locations.filter(location => !!locationIds[location.id])
+	}, [profile])
+
+	const shouldRedirectToLastAppointment =
+		filteredLocations.length === 1 || filteredLocations.length <= profile.locations.length
+
+	const handleCheckin = () => {
+		if (shouldRedirectToLastAppointment) {
+			history.push(
+				generatePath(LOCATION_CHECKIN, {
+					uuid: filteredLocations[0].uuid
+				}),
+				{ from: history.location.pathname }
+			)
+		} else {
+			history.push(LOCATION_SEARCH, { action: 'checkin' }, { from: history.location.pathname })
+		}
+	}
+
+	const handleCreateAppointment = () => {
+		if (shouldRedirectToLastAppointment) {
+			history.push(generatePath(LOCATION_APPOINTMENT, { uuid: filteredLocations[0].uuid }), {
+				from: history.location.pathname
+			})
+		} else {
+			history.push(LOCATION_SEARCH, { action: 'checkin' }, { from: history.location.pathname })
+		}
+	}
+
+	return (
+		<Container className="fixed bottom-0 left-0 w-full bg-white z-50 border-gray-200 border-t">
+			<div
+				className={clsx('action-bar fixed w-full', {
+					'navbar-show-actions': isActionsVisible,
+					'navbar-hide-actions': !isActionsVisible && !!actionsHaveBeenSeenOnce.current
+				})}
+				style={{ bottom: 110, left: 0 }}
+			>
+				<div
+					style={{ borderRadius: 50 }}
+					className="w-11/12 shadow-lg bg-indigo-500 px-4 py-3 mx-auto text-white flex"
+				>
+					<div
+						onClick={handleCheckin}
+						className="jaf-domus shadow flex-1 text-center cursor-pointer mr-1 bg-white rounded-l-full flex hover:bg-gray-100 items-center justify-center flex-col text-indigo-500 font-black px-2 py-2 text-sm"
+					>
+						<FaCalendarCheck className="text-2xl mb-1" />
+						Check In Now
 					</div>
-				</NavLink>
+					<div
+						onClick={handleCreateAppointment}
+						className="jaf-domus shadow flex-1 text-center cursor-pointer ml-1 bg-white rounded-r-full flex hover:bg-gray-100 items-center justify-center flex-col text-indigo-500 font-black px-2 py-2 text-sm"
+					>
+						<FaCalendarDay className="text-2xl mb-1" />
+						Book Appointment
+					</div>
+				</div>
+			</div>
+
+			<div className="container mx-auto flex items-center justify-around py-2 px-2">
+				<Action
+					buttonClassName={
+						match.path === '/profile/appointments' ? 'text-indigo-500 bg-gray-100' : 'text-gray-700'
+					}
+					to="/profile/appointments"
+				>
+					<FiCalendar />
+				</Action>
+
+				{match.path === '/l/:uuid' ? (
+					//  hide the action btn when on the location page since it shows those primary action btns
+					<span />
+				) : (
+					<div
+						onClick={() => {
+							actionsHaveBeenSeenOnce.current = true
+							setActionsVisible(prev => !prev)
+						}}
+						className={clsx(
+							'main-action-btn rounded text-2xl flex items-center justify-center -mt-12 bg-indigo-500 rounded-full w-16 h-16 border-8 border-white text-white'
+						)}
+					>
+						{isActionsVisible ? (
+							<FiX className="close-btn" />
+						) : (
+							<FiScissors
+								className={actionsHaveBeenSeenOnce.current ? 'close-btn' : 'rotate-once'}
+							/>
+						)}
+					</div>
+				)}
+
+				<Action
+					buttonClassName={
+						match.path === USER_PREFERENCES ? 'text-indigo-500 bg-gray-100' : 'text-gray-700'
+					}
+					to={USER_PREFERENCES}
+				>
+					<FiUser />
+				</Action>
 			</div>
 		</Container>
 	)

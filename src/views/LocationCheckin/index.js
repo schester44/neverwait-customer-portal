@@ -1,63 +1,54 @@
 import React from 'react'
 import ReactGA from 'react-ga'
 import { produce } from 'immer'
-import { Redirect, Link, generatePath, useParams } from 'react-router-dom'
-import styled, { css, keyframes } from 'styled-components'
+import { Redirect, Link, generatePath, useParams, useHistory, useLocation } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 import { FaStore } from 'react-icons/fa'
-import { FiLoader } from 'react-icons/fi'
-import { format, addMinutes, startOfDay, endOfDay } from 'date-fns'
-import timeFragments from '../../helpers/timeFragments'
+import { FiArrowLeft } from 'react-icons/fi'
+import { format, isAfter, addMinutes, startOfDay, endOfDay } from 'date-fns'
 
-import NavHeader from '../../components/NavHeader'
+import pling from '../../components/Pling'
 import FormFooter from '../../components/FormFooter'
 import Button from '../../components/Button'
+import LoadingScreen from '../LoadingScreen'
 
-import Loading from '../../components/Loading'
-
-import ProviderSelector from './ProviderSelector'
-import ServiceSelector from '../LocationAppointment/ServiceSelector'
+import ProviderSelector from '../../components/ProviderSelector'
+import ServiceSelector from '../../components/ServiceSelector'
 import useEnhancedLocationSubscription from '../../components/useEnhancedLocationSubscription'
 import { LOCATION_OVERVIEW } from '../../routes'
 
 import { profileQuery } from '../../graphql/queries'
 import { sequentialUpsertMutation } from '../../graphql/mutations'
-import Success from './Success'
+import Success from '../LocationAppointment/Success'
+import Review from './Review'
+import { dateFromTimeString } from '../../helpers/date-from'
 
-const spin = keyframes`
-	from {
-		transform: rotate(0);
-	}to {
-		transform: rotate(360deg);
+const renderTitle = ({ step, isFinished }) => {
+	if (isFinished) return null
+
+	switch (step) {
+		case 1:
+			return 'Select Provider'
+		case 2:
+			return 'Select Services'
+		case 3:
+			return 'Review'
+		default:
+			break
 	}
-`
-const Container = styled('div')(
-	props => css`
-		.loader {
-			animation: ${spin} 1s ease infinite;
-		}
-
-		.view {
-			padding: 14px;
-
-			.form-item {
-				margin-bottom: 24px;
-			}
-
-			.form-label {
-				color: ${props.theme.colors.n450};
-				font-size: 16px;
-				padding-bottom: 8px;
-				font-weight: 600;
-			}
-		}
-	`
-)
+}
 
 const LocationCheckin = () => {
 	const { uuid } = useParams()
+	const history = useHistory()
+	const routerLocation = useLocation()
+
+	React.useEffect(() => {
+		ReactGA.pageview(routerLocation.pathname + routerLocation.search)
+	}, [routerLocation])
 
 	const [state, setState] = React.useState({
+		step: 1,
 		isReviewing: false,
 		createdAppointment: undefined,
 		providerServicesById: {},
@@ -86,7 +77,7 @@ const LocationCheckin = () => {
 		[state.selectedProvider, employees]
 	)
 
-	const { duration: selectedServicesDuration, price: selectedServicesPrice } = React.useMemo(() => {
+	const { price: selectedServicesPrice } = React.useMemo(() => {
 		return state.selectedServices.reduce(
 			(acc, id) => {
 				acc.price += parseInt(state.providerServicesById[id].price)
@@ -115,14 +106,20 @@ const LocationCheckin = () => {
 		}
 	})
 
-	const selectedServicesTime = timeFragments(selectedServicesDuration)
-
-	if (loading) return <Loading />
+	if (loading) return <LoadingScreen />
 
 	// TODO: This redirects when there is a network error.
 	if (!loading && !location) return <Redirect to="/" />
 
-	const handleEmployeeSelection = selectedProvider => {
+	const handleProviderSelection = selectedProvider => {
+		if (!selectedProvider.isSchedulable) {
+			if (state.selectedProvider && selectedProvider.id !== state.selectedProvider) {
+				setState(prev => ({ ...prev, selectedProvider: undefined }))
+			}
+
+			return
+		}
+
 		const providerServicesById = selectedProvider.services.reduce((acc, service) => {
 			const source = service.sources.find(
 				source => source.type === 'onlinecheckin' || source.type === 'default'
@@ -132,6 +129,7 @@ const LocationCheckin = () => {
 
 			acc[service.id] = service
 
+			// Get the correct price / duration of the services
 			acc[service.id].price = source.price
 			acc[service.id].duration = source.duration
 
@@ -140,13 +138,44 @@ const LocationCheckin = () => {
 
 		setState(prev => ({
 			...prev,
+			step: 2,
 			selectedProvider,
 			providerServicesById,
 			selectedServices: prev.selectedServices.filter(id => !!providerServicesById[id])
 		}))
 	}
 
-	const handleConfirm = async () => {
+	const handleServiceSelection = service => {
+		const selectedServices = state.selectedServices.includes(service.id)
+			? state.selectedServices.filter(id => id !== service.id)
+			: state.selectedServices.concat(service.id)
+
+		const duration = selectedServices.reduce(
+			(acc, id) => acc + parseInt(state.providerServicesById[id].duration, 10),
+			0
+		)
+
+		if (
+			isAfter(
+				addMinutes(employee.firstAvailableTime, duration),
+				dateFromTimeString(employee.currentShift.end_time)
+			)
+		) {
+			// FIXME: if it exceeds the current shift, does the value fall within nextAvailableShifts.onlineCheckins? if so, then we can still select services since the staff works.
+
+			pling({
+				message: `The provider's work day is almost over. This service item cannot be selected.`
+			})
+			return
+		}
+
+		setState(prev => ({
+			...prev,
+			selectedServices
+		}))
+	}
+
+	const handleSubmit = async () => {
 		if (createLoading) return
 
 		const { data } = await createAppointment({
@@ -170,181 +199,141 @@ const LocationCheckin = () => {
 
 	const isWaitTimeLongEnough = employee?.waitTime > 20
 
-	console.log({ isWaitTimeLongEnough })
 	return (
-		<Container>
-			<NavHeader
-				actions={[
-					<Link to={generatePath(LOCATION_OVERVIEW, { uuid })}>
-						<FaStore size="28px" />
+		<div>
+			<div className="bg-gray-900 px-4 mb-2 px-4 pb-12">
+				<div className="flex justify-between items-center pt-2 pb-4">
+					<FiArrowLeft
+						className="text-3xl text-gray-100"
+						onClick={() => {
+							if (state.step === 1) {
+								history.goBack()
+							} else {
+								setState(prev => ({ ...prev, step: prev.step - 1 }))
+							}
+						}}
+					/>
+
+					<p className="text-lg font-bold text-center text-gray-100">Online Check-in</p>
+
+					<Link
+						className="text-3xl text-gray-100"
+						to={{
+							state: {
+								from: history.location.pathname
+							},
+							pathname: generatePath(LOCATION_OVERVIEW, { uuid })
+						}}
+					>
+						<FaStore />
 					</Link>
-				]}
-			/>
-			<div className="view">
-				<h1>Online Check-in</h1>
-				<p className="small-sub-text" style={{ fontSize: 16 }}>
-					{location.name}
-				</p>
-				<p style={{ marginBottom: 24 }} className="small-sub-text">
-					{location.address}
-				</p>
-
-				<div className="form">
-					<div className="form-item">
-						<p className="form-label">Select Provider</p>
-						<ProviderSelector
-							uuid={uuid}
-							providers={employees}
-							value={state.selectedProvider}
-							onSelect={handleEmployeeSelection}
-						/>
-					</div>
-
-					<div className="form-item">
-						<p className="form-label" style={{ opacity: !state.selectedProvider ? 0.3 : 1 }}>
-							Select Services
-						</p>
-						<ServiceSelector
-							selectedServicesTime={selectedServicesTime}
-							selectedServicesPrice={selectedServicesPrice}
-							servicesById={state.providerServicesById}
-							value={state.selectedServices}
-							isDisabled={!state.selectedProvider}
-							services={state.selectedProvider?.services}
-							onSelect={service => {
-								setState(prev => ({
-									...prev,
-									selectedServices: prev.selectedServices.includes(service.id)
-										? prev.selectedServices.filter(id => id !== service.id)
-										: prev.selectedServices.concat([service.id])
-								}))
-							}}
-						/>
-					</div>
 				</div>
+
+				{!state.createdAppointment && (
+					<p className="text-sm text-indigo-200 mt-2 leading-snug">Step {state.step} of 3</p>
+				)}
+
+				<h1 className="jaf-domus leading-none text-white font-black mb-4 text-3xl">
+					{renderTitle({
+						step: isWaitTimeLongEnough ? state.step : 1,
+						isFinished: !!state.createdAppointment
+					})}
+				</h1>
 			</div>
 
-			{state.createdAppointment && <Success appointment={state.createdAppointment} />}
+			{!state.createdAppointment && (
+				<div className="view -mt-12 bg-white pt-2 pl-2" style={{ borderTopLeftRadius: 50 }}>
+					{(state.step === 1 || !isWaitTimeLongEnough) && (
+						<ProviderSelector
+							providers={employees}
+							selected={state.selectedProvider}
+							onSelect={handleProviderSelection}
+						/>
+					)}
+					{isWaitTimeLongEnough && state.step === 2 && (
+						<ServiceSelector
+							selected={state.selectedServices}
+							services={state.selectedProvider?.services}
+							onSelect={handleServiceSelection}
+						/>
+					)}
+				</div>
+			)}
 
 			{!state.createdAppointment && employee && !isWaitTimeLongEnough && (
 				<FormFooter>
 					<div>
-						<p style={{ textAlign: 'center', color: 'rgba(251, 241, 229, 1.0)' }}>
-							This providers wait time is short enough to not need to check in online. You can just
+						<p className="text-center text-md leading-none font-bold">
+							No need to check in with {state.selectedProvider.firstName} right now. You can just
 							show up!
 						</p>
 
-						<p
-							style={{
-								opacity: 0.7,
-								fontSize: 14,
-								lineHeight: 1.2,
-								marginTop: 16,
-								textAlign: 'center'
-							}}
-						>
+						<p className="text-sm text-gray-600 mt-4 leading-tight text-center mb-4">
 							Act fast! There's no line at the moment but we can't guarantee that there won't be one
 							by the time you get to {location.name}.
 						</p>
+
+						<Button
+							className="btn-sm"
+							onClick={() => {
+								setState(prev => ({
+									...prev,
+									step: 1,
+									selectedProvider: undefined,
+									providerServicesById: undefined,
+									selectedServices: []
+								}))
+							}}
+						>
+							Close
+						</Button>
 					</div>
 				</FormFooter>
 			)}
 
-			{!state.createdAppointment && state.isReviewing && (
-				<FormFooter>
-					<div style={{ width: '100%' }}>
-						<div>
-							<p style={{ textAlign: 'center', lineHeight: 1.2 }}>
-								You are checking in with {employee.firstName} at {location.name}. The estimated time
-								of your service is today at
-							</p>
+			{state.createdAppointment && (
+				<Success type="checkin" appointment={state.createdAppointment} />
+			)}
 
-							<div
-								style={{
-									marginTop: 8,
-									textAlign: 'center',
-									marginBottom: 16,
-									fontSize: 26,
-									fontWeight: 600,
-									color: 'rgba(253, 241, 227, 1)'
-								}}
-							>
-								{format(addMinutes(new Date(), employee.waitTime + 3), 'h:mma')}.
-							</div>
+			{state.step === 3 && !state.createdAppointment && (
+				<Review
+					selectedServicesPrice={selectedServicesPrice}
+					services={state.selectedServices.map(id => state.providerServicesById[id])}
+					provider={employee}
+					location={location}
+				/>
+			)}
 
-							<p
-								className="small-sub-text"
-								style={{
-									marginBottom: 16,
-									textAlign: 'center',
-									color: 'rgba(249,249,249,1)',
-									lineHeight: 1.5
-								}}
-							>
-								The above time has not been secured and is only an estimate. Click Confirm to lock
-								in your scheduled time.
-							</p>
-						</div>
+			{!state.createdAppointment && isWaitTimeLongEnough && state.selectedServices.length > 0 && (
+				<FormFooter
+					action={
 						<Button
 							disabled={createLoading}
-							style={{ width: '100%' }}
-							inverted
-							onClick={handleConfirm}
+							onClick={() => {
+								if (state.step === 3) {
+									handleSubmit()
+								} else {
+									setState(prev => ({ ...prev, step: 3 }))
+								}
+							}}
+							style={{ marginLeft: state.step === 3 ? 0 : 10, width: '100%' }}
 						>
-							{createLoading ? <FiLoader className="loader" /> : 'Confirm'}
+							{state.step === 3 ? (createLoading ? 'Loading...' : 'Confirm') : 'Next'}
 						</Button>
+					}
+				>
+					{state.step !== 3 && (
+						<div>
+							<p className="font-bold leading-tight">${selectedServicesPrice}</p>
 
-						<div style={{ textAlign: 'center', marginTop: 16 }}>
-							<span onClick={() => setState(prev => ({ ...prev, isReviewing: false }))}>
-								Cancel
-							</span>
+							<p className="text-sm text-gray-600 leading-tight">
+								today at {format(addMinutes(new Date(), employee.waitTime + 3), 'h:mma')}
+							</p>
 						</div>
-					</div>
+					)}
 				</FormFooter>
 			)}
-
-			{!state.createdAppointment &&
-				isWaitTimeLongEnough &&
-				state.selectedServices.length > 0 &&
-				!state.isReviewing && (
-					<FormFooter>
-						<div>
-							<p
-								style={{
-									fontSize: 16,
-									fontWeight: 700,
-									opacity: 1,
-									color: 'rgba(253, 241, 227, 1)'
-								}}
-							>
-								${selectedServicesPrice}
-							</p>
-
-							<p
-								className="small-sub-text"
-								style={{ opacity: 1, marginTop: 5, lineHeight: 1.2, margin: 0, color: 'white' }}
-							>
-								estimated service time: <br /> today at{' '}
-								<span
-									style={{
-										color: 'rgba(253, 241, 227, 1)'
-									}}
-								>
-									{format(addMinutes(new Date(), employee.waitTime + 3), 'h:mma')}
-								</span>
-							</p>
-						</div>
-
-						<Button
-							inverted
-							onClick={() => setState(prev => ({ ...prev, isReviewing: true }))}
-							style={{ width: '50%' }}
-						>
-							Review
-						</Button>
-					</FormFooter>
-				)}
-		</Container>
+		</div>
 	)
 }
 

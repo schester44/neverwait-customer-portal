@@ -31,7 +31,7 @@ const Container = styled('div')(
 			}
 
 			&-update {
-				background: ${props.theme.colors.brand};
+				background: rgba(100, 105, 229, 1);
 				color: white;
 			}
 
@@ -57,7 +57,7 @@ const Container = styled('div')(
 		.right {
 			.time {
 				text-align: right;
-				color: ${props.theme.colors.brand};
+				color: rgba(100, 105, 229, 1);
 			}
 		}
 
@@ -73,7 +73,7 @@ const Container = styled('div')(
 			width: 32px;
 			height: 32px;
 			border-radius: 50%;
-			background: ${props.theme.colors.n450};
+			background: gray;
 			color: white;
 			margin-right: 8px;
 			overflow: hidden;
@@ -89,7 +89,7 @@ const Container = styled('div')(
 			? css`
 					cursor: pointer;
 					.avatar {
-						background: ${props.theme.colors.success};
+						background: green;
 					}
 
 					&:hover {

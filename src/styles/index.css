@@ -1,0 +1,86 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+@font-face {
+	font-family: 'jaf-domus';
+	src: url('../themes/assets/jaf-domus/jaf-domus-700.ttf');
+	font-weight: 700;
+}
+
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body,
+html,
+#root {
+	width: 100%;
+	height: 100%;
+	font-family: Muli, -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto,
+		'Helvetica Neue', Arial, sans-serif;
+}
+
+body {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+h1 {
+	@apply font-black;
+	@apply text-2xl;
+}
+
+.jaf-domus {
+	font-family: jaf-domus;
+}
+
+p {
+	@apply text-xl;
+}
+
+.btn {
+	@apply text-center font-bold px-4 py-3 rounded cursor-pointer shadow;
+}
+
+.btn-sm {
+	@apply text-sm px-2 py-2;
+}
+
+.btn-ghost {
+	@apply border-indigo-500 text-indigo-500 border;
+}
+
+.btn-secondary {
+	@apply bg-white text-indigo-500;
+}
+
+.btn-disabled {
+	@apply opacity-50 cursor-not-allowed;
+}
+
+.btn-ghost:hover {
+	@apply text-indigo-700;
+}
+
+.btn-primary {
+	@apply bg-indigo-500 text-white;
+}
+
+.btn-primary:hover {
+	@apply bg-indigo-700;
+}
+
+a {
+	@apply text-indigo-500;
+}
+
+a.active.user-navbar .action-link {
+	@apply text-indigo-500 border-indigo-500;
+}

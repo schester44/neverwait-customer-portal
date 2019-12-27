@@ -1,36 +1,21 @@
 import React from 'react'
 import { generatePath, Link, useLocation } from 'react-router-dom'
-import styled from 'styled-components'
-import { LOCATION_CHECKIN } from '../../../routes'
-
-const Container = styled('div')`
-	border-radius: 8px;
-	background: white;
-	box-shadow: 0px 1px 2px rgba(32, 32, 32, 0.1);
-	padding: 20px;
-	margin-bottom: 16px;
-
-	h1 {
-		color: ${({ theme }) => theme.colors.bodyColor};
-	}
-`
+import { LOCATION_OVERVIEW } from '../../../routes'
 
 const Location = ({ location }) => {
 	const routerLocation = useLocation()
 
-	console.log(routerLocation)
-
 	return (
 		<Link
 			to={{
-				pathname: generatePath(LOCATION_CHECKIN, { uuid: location.uuid }),
+				pathname: generatePath(LOCATION_OVERVIEW, { uuid: location.uuid }),
 				state: { from: routerLocation.pathname }
 			}}
 		>
-			<Container>
-				<h1>{location.name}</h1>
-				<p className="small-sub-text">{location.address}</p>
-			</Container>
+			<div className="mb-2 cursor-pointer hover:bg-gray-300 bg-gray-200 rounded-lg px-4 py-4">
+				<h3 className="font-bold text-xl text-gray-900">{location.name}</h3>
+				<p className="text-sm text-gray-600">{location.address}</p>
+			</div>
 		</Link>
 	)
 }

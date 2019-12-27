@@ -2,19 +2,19 @@ import React from 'react'
 import { render } from 'react-dom'
 import { ApolloProvider } from '@apollo/react-hooks'
 import { BrowserRouter as Router } from 'react-router-dom'
-import { ThemeProvider } from 'styled-components'
 
 import client from './apollo-client'
 import App from './App'
 
-import { light as theme } from './themes'
-import { createStyles } from './themes/global-styles'
+import './styles/tailwind.css'
 
 import ReactGA from 'react-ga'
 
 import * as Sentry from '@sentry/browser'
 
-ReactGA.initialize(process.env.REACT_APP_GATRACKINGID, { debug: process.env.NODE_ENV !== 'production' })
+ReactGA.initialize(process.env.REACT_APP_GATRACKINGID, {
+	debug: process.env.NODE_ENV !== 'production'
+})
 
 if (process.env.NODE_ENV === 'production') {
 	Sentry.init({
@@ -30,16 +30,11 @@ if (process.env.NODE_ENV === 'production') {
 	})
 }
 
-const GlobalStyles = createStyles({ theme })
-
 render(
 	<ApolloProvider client={client}>
-		<ThemeProvider theme={theme}>
-			<Router>
-				<GlobalStyles />
-				<App />
-			</Router>
-		</ThemeProvider>
+		<Router>
+			<App />
+		</Router>
 	</ApolloProvider>,
 	document.getElementById('root')
 )

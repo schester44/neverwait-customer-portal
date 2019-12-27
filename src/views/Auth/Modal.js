@@ -8,8 +8,6 @@ const Container = styled('div')`
 	left: 0;
 	width: 100%;
 	height: 100vh;
-	background: ${({ theme }) => theme.colors.bodyBg};
-	color: ${({ theme }) => theme.colors.bodyColor};
 	display: flex;
 	flex-direction: column;
 	overflow: scroll;

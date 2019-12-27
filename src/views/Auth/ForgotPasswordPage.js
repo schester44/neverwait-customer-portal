@@ -1,82 +1,15 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
-import styled from 'styled-components'
 
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 
-import { loginProfileMutation, forgotPasswordMutation, resetPasswordMutation } from '../../graphql/mutations'
-
-const themeStyles = ({ theme }) => `
-	background: ${theme.colors.n700};
-`
-
-const Container = styled('div')`
-	width: 100%;
-	min-height: 100vh;
-	padding: 10px 20px;
-	max-width: 1200px;
-	margin: 0 auto;
-
-	.form-input {
-		margin-bottom: 16px;
-	}
-
-	.form {
-		margin-top: 30px;
-		margin-bottom: 30px;
-	}
-
-	.description {
-		opacity: 0.7;
-	}
-
-	.separator {
-		width: 100%;
-		text-align: center;
-		position: relative;
-		margin: 20px 5px;
-
-		& > div {
-			&:before {
-				left: 0;
-				top: 10px;
-				position: absolute;
-				content: ' ';
-				width: calc(50% - 15px);
-				height: 1px;
-				background: rgba(249, 249, 249, 0.2);
-			}
-
-			&:after {
-				right: 0;
-				top: 10px;
-				position: absolute;
-				content: ' ';
-				width: calc(50% - 15px);
-				height: 1px;
-				background: rgba(249, 249, 249, 0.2);
-			}
-		}
-	}
-
-	.create-account-btn {
-		width: 100%;
-	}
-
-	.title {
-		text-align: center;
-		padding: 24px;
-	}
-
-	.subtitle {
-		padding-bottom: 10px;
-		font-weight: 400;
-	}
-
-	${themeStyles};
-`
+import {
+	loginProfileMutation,
+	forgotPasswordMutation,
+	resetPasswordMutation
+} from '../../graphql/mutations'
 
 const LoginPage = () => {
 	const history = useHistory()
@@ -92,7 +25,8 @@ const LoginPage = () => {
 		password: ''
 	})
 
-	const handleChange = ({ target: { name, value } }) => setState(prev => ({ ...prev, [name]: value }))
+	const handleChange = ({ target: { name, value } }) =>
+		setState(prev => ({ ...prev, [name]: value }))
 
 	const handleSend = async () => {
 		await forgotPassword({
@@ -133,53 +67,68 @@ const LoginPage = () => {
 	}
 
 	return (
-		<Container>
-			<h1 className="title">NEVERWAIT</h1>
+		<div className="container mx-auto p-4">
+			<h1 className="text-center  text-2xl jaf-domus">NEVERWAIT</h1>
 			{!state.pinFormVisible ? (
 				<div>
-					<h2 className="subtitle">Forgot Password</h2>
-					<p className="description">Enter your phone number and we will text you a temporary password.</p>
-					<div className="form">
-						<div className="form-input">
-							<Input
-								type="tel"
-								value={state.phoneNumber}
-								name="phoneNumber"
-								label="Phone Number"
-								onChange={handleChange}
-							/>
-						</div>
-					</div>
+					<h2 className="text-2xl font-black mt-8 mb-4">Forgot Your Password?</h2>
+					<p className="text-lg text-gray-600">
+						Enter your phone number and we will text you a temporary password.
+					</p>
+
+					<Input
+						type="tel"
+						value={state.phoneNumber}
+						name="phoneNumber"
+						label="Phone Number"
+						onChange={handleChange}
+					/>
+
 					<Button
+						className="w-full mt-4"
 						onClick={handleSend}
 						disabled={forgotPassLoading || resetPassLoading || state.phoneNumber.trim().length < 10}
-						style={{ width: '100%' }}
 					>
 						Send Temporary Password
 					</Button>
+
+					<Link to="/">
+						<p className="text-indigo-300 text-center text-sm cursor-pointer mt-8">
+							or click here to login
+						</p>
+					</Link>
 				</div>
 			) : (
 				<div>
-					<h2 className="subtitle">Enter Pin</h2>
-					<p className="description">
-						We sent a pin code to your phone number. To reset your password, enter the code and your new password below.
-					</p>
-					<div className="form">
-						<div className="form-input">
-							<Input type="number" value={state.code} name="code" label="Pin Code" onChange={handleChange} />
-						</div>
+					<h2 className="text-2xl font-black mt-8 mb-4">Enter Pin</h2>
 
-						<div className="form-input">
-							<Input
-								type="password"
-								value={state.password}
-								name="password"
-								label="New Password"
-								onChange={handleChange}
-							/>
-						</div>
+					<p className="text-lg text-gray-600">
+						We sent a pin code to your phone. To reset your password, enter the code and your new
+						password below.
+					</p>
+
+					<div className="form-input">
+						<Input
+							type="number"
+							value={state.code}
+							name="code"
+							label="Pin Code"
+							onChange={handleChange}
+						/>
 					</div>
+
+					<div className="form-input">
+						<Input
+							type="password"
+							value={state.password}
+							name="password"
+							label="New Password"
+							onChange={handleChange}
+						/>
+					</div>
+
 					<Button
+						className="w-full mt-4"
 						onClick={handlePasswordChange}
 						disabled={
 							forgotPassLoading ||
@@ -187,13 +136,12 @@ const LoginPage = () => {
 							state.code.trim().length <= 3 ||
 							state.password.trim().length <= 3
 						}
-						style={{ width: '100%' }}
 					>
 						Update Password
 					</Button>
 				</div>
 			)}
-		</Container>
+		</div>
 	)
 }
 

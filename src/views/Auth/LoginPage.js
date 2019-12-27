@@ -1,77 +1,17 @@
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
-import styled from 'styled-components'
 import LoginForm from './LoginForm'
 
 import { loginProfileMutation } from '../../graphql/mutations'
 import { AUTH_REGISTER } from '../../routes'
 import Button from '../../components/Button'
-import { lighten } from 'polished'
-
-const themeStyles = ({ theme }) => `
-	.title  {
-		color: ${theme.colors.brand};
-	}
-`
-
-const Container = styled('div')`
-	width: 100%;
-	padding: 10px;
-	max-width: 768px;
-	margin: 0 auto;
-	padding-bottom: 40px;
-
-	.separator {
-		width: 100%;
-		text-align: center;
-		position: relative;
-		margin: 20px 5px;
-		color: ${({ theme }) => lighten(0.2, theme.colors.brand)};
-
-		& > div {
-			&:before {
-				left: 0;
-				top: 10px;
-				position: absolute;
-				content: ' ';
-				width: calc(50% - 15px);
-				height: 1px;
-				background: ${({ theme }) => lighten(0.5, theme.colors.brand)};
-			}
-
-			&:after {
-				right: 5px;
-				top: 10px;
-				position: absolute;
-				content: ' ';
-				width: calc(50% - 20px);
-				height: 1px;
-				background: ${({ theme }) => lighten(0.5, theme.colors.brand)};
-			}
-		}
-	}
-
-	.create-account-btn {
-		width: 100%;
-	}
-
-	.title {
-		text-align: center;
-		padding: 16px;
-		font-size: 18px;
-	}
-
-	${themeStyles};
-`
 
 const LoginPage = ({ action, isAttemptingAction }) => {
 	const history = useHistory()
 	const [login, { loading }] = useMutation(loginProfileMutation)
 
 	const [fields, set] = React.useState({
-		firstName: '',
-		lastName: '',
 		phoneNumber: '',
 		password: ''
 	})
@@ -97,8 +37,8 @@ const LoginPage = ({ action, isAttemptingAction }) => {
 	}
 
 	return (
-		<Container>
-			<h1 className="title">LOG IN</h1>
+		<div className="container mx-auto px-4">
+			<h1 className="mt-4 mb-6 mx-auto text-center font-black">LOG IN</h1>
 
 			<LoginForm
 				loading={loading}
@@ -107,26 +47,25 @@ const LoginPage = ({ action, isAttemptingAction }) => {
 				handleSubmit={handleSubmit}
 			/>
 
-			<div className="separator">
-				<div>or</div>
-			</div>
-
-			{isAttemptingAction && (
-				<div>
-					<p className="small-sub-text" style={{ textAlign: 'center', marginBottom: 14 }}>
-						Create an account. Its fast, easy, and free!
-					</p>
-				</div>
-			)}
+			<div className="w-full text-center text-gray-500 my-4">or</div>
 
 			<Link
 				to={{ pathname: AUTH_REGISTER, state: { action, pathname: history.location.pathname } }}
 			>
-				<Button className="create-account-btn" ghost>
+				<Button className="w-full" type="ghost">
 					Create An Account
 				</Button>
 			</Link>
-		</Container>
+
+			{isAttemptingAction && (
+				<div>
+					<p className="text-center text-gray-600 text-sm mt-4">
+						Creating an account is fast, easy, and free! Plus it makes booking appointments super
+						quick!
+					</p>
+				</div>
+			)}
+		</div>
 	)
 }
 

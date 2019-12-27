@@ -1,78 +1,24 @@
 import React from 'react'
-import styled, { css } from 'styled-components'
+import clsx from 'clsx'
 
-const sizeStyles = ({ size }) =>
-	size === 'small'
-		? css`
-				padding: 6px 10px;
-		  `
-		: css`
-				padding: 14px;
-		  `
+const types = {
+	ghost: 'btn-ghost',
+	primary: 'btn-primary',
+	disabled: 'btn-disabled',
+	secondary: 'btn-secondary'
+}
 
-const ghostStyles = ({ ghost, theme }) =>
-	ghost &&
-	css`
-		background: transparent;
-		border: 1px solid ${theme.elements.button.background};
-		color: ${theme.elements.button.background};
-	`
-
-const successIntentStyles = ({ theme, intent }) =>
-	intent === 'success' &&
-	`
-	background:	${theme.colors.success};
-	border: 1px solid ${theme.colors.success};
-`
-
-const secondaryIntentStyles = ({ theme, intent }) =>
-	intent === 'secondary' &&
-	`
-	background:	${theme.colors.brandSecondary};
-	border: 1px solid ${theme.colors.brandSecondary};
-`
-
-const invertedStyles = ({ inverted }) =>
-	inverted &&
-	css`
-		color: ${({ theme }) => theme.elements.button.background};
-		background: ${({ theme }) => theme.elements.button.text};
-		border: 1px solid ${({ theme }) => theme.elements.button.background};
-		box-shadow: 0px 8px 6px -6px rgba(32, 32, 32, 0.2);
-	`
-
-const StyledBtn = styled('button')`
-	border: 0;
-	background: ${({ theme }) => theme.elements.button.background};
-	color: ${({ theme }) => theme.elements.button.text};
-	border-radius: 8px;
-	text-align: center;
-	cursor: pointer;
-	border: none;
-	font-weight: 700;
-	line-height: 24px;
-	font-size: 17px;
-
-	&:disabled {
-		transition: opacity 1s ease;
-		cursor: not-allowed;
-		opacity: 0.2;
-	}
-
-	${sizeStyles}
-
-	@media (min-width: 1200px) {
-		padding: 20px;
-	}
-
-	${ghostStyles};
-	${successIntentStyles};
-	${secondaryIntentStyles};
-	${invertedStyles};
-`
-
-const Button = props => {
-	return <StyledBtn {...props}>{props.children}</StyledBtn>
+const Button = ({ type = 'primary', children, className, disabled, ...props }) => {
+	return (
+		<div
+			className={clsx('btn',
+				className,
+				types[type] || types.primary, { 'btn-disabled': disabled })}				
+			{...props}
+		>
+			{children}
+		</div>
+	)
 }
 
 export default Button

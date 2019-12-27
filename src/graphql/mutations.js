@@ -65,6 +65,7 @@ export const createProfileAppointmentMutation = gql`
 			employee {
 				firstName
 				lastName
+				photo
 			}
 		}
 	}

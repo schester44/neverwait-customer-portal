@@ -1,65 +1,8 @@
 import React from 'react'
-import styled, { css } from 'styled-components'
-import ScheduleCreator from '../../../helpers/ScheduleCreator'
-
+import clsx from 'clsx'
 import { format } from 'date-fns'
 
-const selectedStyles = ({ isSelected, theme }) =>
-	isSelected &&
-	css`
-		cursor: default;
-
-		.day {
-			background: ${theme.colors.brand};
-			color: white;
-			font-size: 14px;
-		}
-	`
-
-const disabledStyles = ({ isDisabled }) =>
-	isDisabled &&
-	css`
-		opacity: 0.3;
-		pointer-events: none;
-		color: #6a6a6a !important;
-		cursor: not-allowed;
-	`
-
-const desktopStyles = ({ isDesktop }) =>
-	isDesktop &&
-	css`
-		width: 60px;
-	`
-
-const Container = styled('div')(
-	props => css`
-		height: 100%;
-		width: 60px;
-		min-width: 60px;
-		padding: 10px;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		flex-direction: column;
-		user-select: none;
-		cursor: pointer;
-
-		.day {
-			width: 32px;
-			height: 32px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			border-radius: 100%;
-			font-weight: 700;
-			background: rgba(247, 249, 248, 1);
-		}
-
-		${selectedStyles};
-		${disabledStyles};
-		${desktopStyles};
-	`
-)
+import ScheduleCreator from '../../../helpers/ScheduleCreator'
 
 const scheduler = new ScheduleCreator()
 
@@ -77,17 +20,38 @@ const DateCell = React.forwardRef(
 		}
 
 		return (
-			<Container
+			<div
+				style={{ minWidth: 60 }}
+				className={clsx(
+					'mb-1 mx-1 h-full rounded border w-28 h-28 p-2 flex justify-between items-center flex-col select-none',
+					{
+						'cursor-pointer': canSchedule,
+						'cursor-not-allowed opacity-25': !canSchedule,
+						'border-indigo-500 bg-gray-100': isSelected,
+						'border-gray-100': !isSelected
+					}
+				)}
 				data-date={date}
 				ref={ref}
-				isDisabled={!canSchedule}
-				isDesktop={isDesktop}
-				isSelected={isSelected}
 				onClick={handleClick}
 			>
-				<div className="small-sub-text">{format(date, 'ddd')}</div>
-				<div className="day">{format(date, 'DD')}</div>
-			</Container>
+				<p
+					className={clsx('text-sm text-center', {
+						'text-indigo-500': isSelected,
+						'text-gray-700': !isSelected
+					})}
+				>
+					{format(date, 'ddd')}
+				</p>
+				<p
+					className={clsx('font-black text-center', {
+						'text-indigo-500': isSelected,
+						'text-gray-700': !isSelected
+					})}
+				>
+					{format(date, 'DD')}
+				</p>
+			</div>
 		)
 	}
 )

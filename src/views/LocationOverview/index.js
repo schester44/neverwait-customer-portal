@@ -3,10 +3,12 @@ import styled, { keyframes } from 'styled-components'
 import { useParams, useHistory, Link } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks'
 import { basicLocationInfoQuery } from '../../graphql/queries'
-import NavHeader from '../../components/NavHeader'
-import { FiClock, FiChevronDown, FiChevronUp } from 'react-icons/fi'
+import { FiArrowLeft } from 'react-icons/fi'
+import { FiClock, FiPhone, FiChevronDown, FiChevronUp } from 'react-icons/fi'
 import NavFooter from '../HomeScreen/NavFooter'
-import { format, addMinutes, startOfDay } from 'date-fns'
+import { format, addMinutes, startOfDay, isWithinRange } from 'date-fns'
+import clsx from 'clsx'
+import { MobileView } from 'react-device-detect'
 
 import ClosingSoon from './ClosingSoon'
 import WorkingHour from './WorkingHour'
@@ -26,70 +28,35 @@ const slideDown = keyframes`
 const slideUp = keyframes`
 	from {
 		height: 250px;
+		opacity: 1;
+		background: rgba(242, 242, 242, 1);
 	}
 	to {
 		height: 0px;
+		opacity: 0;
+		background: #fff;
 	}
 `
 
-const Container = styled('div')`
-	.view {
-		display: flex;
-		flex-direction: column;
-		padding-bottom: 90px;
-	}
-
-	.pad {
-		padding-left: 14px;
-		padding-right: 14px;
-	}
-
-	.location-hours {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		cursor: pointer;
-		font-size: 17px;
-		line-height: 24px;
-
-		.left {
-			display: flex;
-			align-items: center;
-		}
-
-		&-current {
-			padding-left: 20px;
-		}
-	}
-
-	.hours-container {
-		padding: 14px;
-
-		&.show {
-			background: rgba(242, 242, 242, 1);
-			.location-hours-details {
-				animation: ${slideDown} 0.5s ease forwards;
-			}
-		}
-
-		&.hide {
-			.location-hours-details {
-				animation: ${slideUp} 0.5s ease forwards;
-			}
-		}
-	}
-
-	.location-photo {
-		width: 100%;
-		height: 250px;
-		object-fit: cover;
-	}
-
+const Hours = styled('div')`
 	.location-hours-details {
-		height: 0px;
+		height: 0;
+		opacity: 0;
 		overflow: hidden;
-		margin-top: 14px;
-		padding-left: 48px;
+	}
+
+	&.show {
+		background: rgba(242, 242, 242, 1);
+
+		.location-hours-details {
+			animation: ${slideDown} 0.5s ease forwards;
+		}
+	}
+
+	&.hide {
+		.location-hours-details {
+			animation: ${slideUp} 0.5s ease forwards;
+		}
 	}
 `
 
@@ -109,68 +76,94 @@ const LocationOverview = () => {
 	const workHourKeys = Object.keys(location.working_hours)
 
 	return (
-		<Container hasPhoto={!!location.photo}>
-			{!!history.location.state?.from && (
-				<NavHeader
-					onBack={() => {
-						history.push(history.location.state?.from)
-					}}
-				/>
-			)}
-			<img className="location-photo" src={location.photo} alt={location.name} />
+		<div className="h-screen flex flex-col">
+			<div
+				className={clsx('overflow-hidden w-full bg-indigo-700', {
+					'h-0': !location.photo,
+					'h-64': !!location.photo
+				})}
+				style={{ borderBottomRightRadius: '50%' }}
+			>
+				{!!history.location.state?.from && (
+					<div className="px-2 py-2 absolute top-0 left-0 mt-2 l-2">
+						<FiArrowLeft
+							className="text-3xl text-gray-700"
+							onClick={() => {
+								history.push(history.location.state.from)
+							}}
+						/>
+					</div>
+				)}
 
-			<div className="view">
-				<div className="pad" style={{ paddingTop: 8 }}>
-					<h1>{location.name}</h1>
-					<p>{location.address}</p>
-					<p style={{ paddingBottom: 16, borderBottom: '1px solid rgba(242,242,242,1)' }}>
-						{location.contactNumber}
-					</p>
+				{location.photo && (
+					<img className="w-full h-full object-cover" src={location.photo} alt={location.name} />
+				)}
+			</div>
+
+			<div className="flex flex-col flex-1">
+				<div className="px-4 pt-4">
+					<div className="flex items-center">
+						<h1>{location.name}</h1>
+
+						{location.contactNumber && (
+							<MobileView>
+								<a href={`tel:${location.contactNumber}`}>
+									<div className="ml-2 rounded-full bg-green-500 text-white flex justify-center items-center text-lg w-8 h-8 shadow-lg">
+										<FiPhone />
+									</div>
+								</a>
+							</MobileView>
+						)}
+					</div>
+					<p className="text-gray-700 text-lg">{location.address}</p>
+					<p className="text-gray-700 text-lg">{location.contactNumber}</p>
 				</div>
 
 				<ClosingSoon today={location.working_hours[todaysName]} />
 
-				<div
-					className={`hours-container ${showHours ? 'show' : initialLoad.current ? '' : 'hide'}`}
+				<Hours
+					className={clsx('mt-4', { show: showHours, hide: !showHours && !initialLoad.current })}
 				>
 					<div
 						onClick={() => {
 							setShowHours(prev => !prev)
 							initialLoad.current = false
 						}}
-						className="location-hours"
+						className="flex justify-between items-center border-t border-gray-200 pr-2"
 					>
-						<div className="left">
+						<div className="flex items-center px-4 py-4">
 							<FiClock size={28} />
-							<div className="location-hours-current">
-								{location.working_hours[todaysName]?.open ? (
-									<span>
-										Open Now{' '}
-										{format(
-											addMinutes(
-												startOfDay(new Date()),
-												location.working_hours[todaysName].startTime
-											),
-											'h:mma'
-										)}{' '}
-										-
-										{format(
-											addMinutes(
-												startOfDay(new Date()),
-												location.working_hours[todaysName].endTime
-											),
-											'h:mma'
-										)}
-									</span>
-								) : (
-									<span>Closed Now</span>
-								)}
-							</div>
+
+							{location.working_hours[todaysName]?.open &&
+							isWithinRange(
+								new Date(),
+								addMinutes(startOfDay(new Date()), location.working_hours[todaysName].startTime),
+								addMinutes(startOfDay(new Date()), location.working_hours[todaysName].endTime)
+							) ? (
+								<span className="text-lg pl-2">
+									Open Now{' '}
+									{format(
+										addMinutes(
+											startOfDay(new Date()),
+											location.working_hours[todaysName].startTime
+										),
+										'h:mma'
+									)}{' '}
+									-{' '}
+									{format(
+										addMinutes(startOfDay(new Date()), location.working_hours[todaysName].endTime),
+										'h:mma'
+									)}
+								</span>
+							) : (
+								<span className="text-lg pl-2">Closed Now</span>
+							)}
 						</div>
+
 						{showHours ? <FiChevronUp size={28} /> : <FiChevronDown size={28} />}
 					</div>
 
-					<div className="location-hours-details">
+					<div className="location-hours-details px-4">
 						{workHourKeys.map(day => {
 							if (day === '__typename') return null
 
@@ -184,20 +177,20 @@ const LocationOverview = () => {
 							)
 						})}
 					</div>
-				</div>
+				</Hours>
 
-				<div className="pad" style={{ paddingTop: 16, borderTop: '1px solid rgba(242,242,242,1)' }}>
+				<div className="px-4 pb-20 mt-4 flex flex-col justify-end flex-1">
 					<Link to={`${history.location.pathname}/checkin`}>
-						<Button style={{ width: '100%', marginBottom: 14 }}>Check In</Button>
+						<Button className="w-full mb-4">Check In</Button>
 					</Link>
 					<Link to={`${history.location.pathname}/appointment`}>
-						<Button style={{ width: '100%' }}>Book Appointment</Button>
+						<Button className="w-full mb-4">Book Appointment</Button>
 					</Link>
 				</div>
 			</div>
 
 			<NavFooter />
-		</Container>
+		</div>
 	)
 }
 

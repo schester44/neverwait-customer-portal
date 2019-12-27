@@ -101,7 +101,7 @@ const CustomerAuthView = ({ onLogin }) => {
 			)}
 
 			<p>Create an account or login to continue.</p>
-			<Button
+			<button
 				style={{ width: '100%' }}
 				onClick={() => {
 					setFormState({
@@ -118,9 +118,9 @@ const CustomerAuthView = ({ onLogin }) => {
 				}}
 			>
 				Create an account
-			</Button>
+			</button>
 			<p style={{ marginTop: '10%' }}>Already have an account?</p>
-			<Button
+			<button
 				style={{ width: '100%' }}
 				onClick={() => {
 					setFormState({
@@ -134,7 +134,7 @@ const CustomerAuthView = ({ onLogin }) => {
 				}}
 			>
 				Sign In
-			</Button>
+			</button>
 		</Container>
 	)
 }

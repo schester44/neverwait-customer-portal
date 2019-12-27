@@ -16,6 +16,8 @@ export const appointment = gql`
 			name
 			address
 			contactNumber
+			uuid
+			photo
 		}
 		services {
 			name

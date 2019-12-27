@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactGA from 'react-ga'
 import { Link, useHistory } from 'react-router-dom'
-import styled, { css } from 'styled-components'
 import { useMutation } from '@apollo/react-hooks'
 import omit from 'lodash/omit'
 import { FiArrowLeft } from 'react-icons/fi'
@@ -9,51 +8,8 @@ import { FiArrowLeft } from 'react-icons/fi'
 import CreateAccountForm from './CreateAccountForm'
 import { loginProfileMutation, registerProfileMutation } from '../../graphql/mutations'
 
-import { USER_DASHBOARD } from '../../routes'
-
-const themeStyles = ({ theme }) => css`
-	.title {
-		color: ${theme.colors.brand};
-	}
-
-	.back {
-		color: ${theme.colors.brand};
-	}
-`
-
-const Container = styled('div')`
-	width: 100%;
-	padding: 10px;
-	max-width: 768px;
-	margin: 0 auto;
-	padding-bottom: 40px;
-	position: relative;
-
-	.register-btn {
-		margin-top: 5vh;
-		text-align: center;
-
-		p {
-			margin-bottom: 8px;
-		}
-	}
-
-	.back {
-		position: absolute;
-		top: 24px;
-		left: 10px;
-		font-size: 28px;
-		line-height: 1;
-	}
-
-	.title {
-		text-align: center;
-		padding: 16px;
-		font-size: 18px;
-	}
-
-	${themeStyles};
-`
+import { USER_DASHBOARD, AUTH_LOGIN } from '../../routes'
+import Button from '../../components/Button'
 
 const CreateAccount = () => {
 	const history = useHistory()
@@ -121,14 +77,14 @@ const CreateAccount = () => {
 	}
 
 	return (
-		<Container>
-			<Link to="/">
+		<div className="container mx-auto px-4 pb-4">
+			<Link to="/" className="absolute top-0 left-0 mt-4 ml-4 text-3xl text-gray-900">
 				<div className="back">
 					<FiArrowLeft />
 				</div>
 			</Link>
 
-			<h1 className="title">SIGN UP</h1>
+			<h1 className="mt-4 mb-6 mx-auto text-center font-black">SIGN UP</h1>
 
 			<CreateAccountForm
 				loading={loading || createLoading}
@@ -136,7 +92,17 @@ const CreateAccount = () => {
 				setFieldValue={setFieldValue}
 				handleSubmit={handleSubmit}
 			/>
-		</Container>
+
+			<div className="w-full border border-gray-200 mt-4 h-0" />
+
+			<p className="text-center text-sm text-gray-600 mt-4 mb-4">Already have an account?</p>
+
+			<Link to={AUTH_LOGIN}>
+				<Button type="ghost" className="w-full btn-sm">
+					Log In
+				</Button>
+			</Link>
+		</div>
 	)
 }
 

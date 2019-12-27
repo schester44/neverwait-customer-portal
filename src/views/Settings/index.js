@@ -1,12 +1,10 @@
 import React from 'react'
-import styled from 'styled-components'
 import { Switch, Route, Link, Redirect } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 
 import { customerLogout } from '../../graphql/mutations'
 
 import NavFooter from '../HomeScreen/NavFooter'
-import { Header } from '../HomeScreen/Header'
 import { FiEdit, FiLogOut, FiLock } from 'react-icons/fi'
 
 import {
@@ -18,49 +16,15 @@ import PasswordForm from './PasswordForm'
 
 const EditAccount = React.lazy(() => import('./Account'))
 
-const Container = styled('div')`
-	width: 100%;
-	min-height: 100%;
-	display: flex;
-	flex-direction: column;
-
-	.content {
-		padding: 20px;
-	}
-`
-
-const MenuItemContainer = styled('div')`
-	width: 100%;
-	padding: 20px;
-	display: flex;
-	align-items: center;
-	font-size: 20px;
-	cursor: pointer;
-	border-bottom: 1px solid #C6CACD;
-
-	.text {
-		opacity: 0.7;
-	}
-
-	&:hover {
-		.text {
-			opacity: 1;
-		}
-	}
-
-	.icon {
-		opacity: 1 !important;
-		margin-right: 16px;
-		font-size: 24px;
-	}
-`
-
 const MenuItem = ({ icon: Icon, text, ...props }) => {
 	return (
-		<MenuItemContainer {...props}>
-			<div className="icon">{Icon && <Icon />}</div>
-			<div className="text">{text}</div>
-		</MenuItemContainer>
+		<div
+			className="border-b-2 text-xl cursor-pointer flex items-center px-4 py-4 border-gray-200"
+			{...props}
+		>
+			<div className="mr-2 text-gray-900">{Icon && <Icon />}</div>
+			<div className="text text-gray-600">{text}</div>
+		</div>
 	)
 }
 
@@ -75,7 +39,7 @@ const UserSettingsMenu = ({ profile }) => {
 	}
 
 	return (
-		<Container>
+		<div>
 			<Switch>
 				<Route exact path={USER_SETTINGS_EDIT_ACCOUNT}>
 					<EditAccount profile={profile} />
@@ -86,14 +50,14 @@ const UserSettingsMenu = ({ profile }) => {
 				</Route>
 
 				<Route exact path={USER_PREFERENCES}>
-					<Header title="Settings" />
+					<div className="mx-auto px-2 container">
+						<h1 className="my-4 text-4xl mx-auto text-center font-black">Settings</h1>
 
-					<div className="content">
-						<Link to={USER_SETTINGS_EDIT_ACCOUNT}>
+						<Link className="text-gray-900" to={USER_SETTINGS_EDIT_ACCOUNT}>
 							<MenuItem icon={FiEdit} text="Edit Account" />
 						</Link>
 
-						<Link to={USER_SETTINGS_CHANGE_PASSWORD}>
+						<Link className="text-gray-900" to={USER_SETTINGS_CHANGE_PASSWORD}>
 							<MenuItem icon={FiLock} text="Change Password" />
 						</Link>
 
@@ -105,7 +69,7 @@ const UserSettingsMenu = ({ profile }) => {
 			</Switch>
 
 			<NavFooter />
-		</Container>
+		</div>
 	)
 }
 

@@ -4,18 +4,11 @@ import styled, { css } from 'styled-components'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import Appointments from './UserAppointmentList'
 import NavFooter from './NavFooter'
-import { Header, NavBar } from './Header'
+import { NavBar } from './Header'
 
 import { USER_APPOINTMENTS, APPOINTMENT_OVERVIEW } from '../../routes'
 
 const AppointmentOverview = React.lazy(() => import('../AppointmentOverview'))
-
-const DEFAULT_HEIGHT = 95
-
-const themeStyles = ({ theme }) => `
-	background: ${theme.colors.bodyBg};
-	color: ${theme.colors.bodyColor};
-`
 
 const overviewStyles = ({ isShowingOverview }) =>
 	isShowingOverview &&
@@ -49,15 +42,8 @@ const Container = styled('div')`
 	display: flex;
 	flex-direction: column;
 
-	.title {
-		transform: translateY(0px);
-		transition: all 0.4s ease;
-	}
-
-	div.transition-group {
-		position: relative;
-		width: 100%;
-		height: calc(100vh - 95px);
+	.transition-group {
+		flex: 1;
 	}
 
 	.fade-enter {
@@ -80,33 +66,10 @@ const Container = styled('div')`
 		transform: translateX(${({ isShowingPast }) => (isShowingPast ? '-100vw' : '100vw')});
 	}
 
-	.app-header {
-		transition: all 0.3s ease;
-		height: ${DEFAULT_HEIGHT}px;
-
-		.overview {
-			opacity: 0;
-		}
+	.swipe-container {
+		-webkit-overflow-scrolling: touch;
 	}
 
-	.view {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		flex: 1;
-		padding-bottom: 73px;
-
-		.swipe-container {
-			width: 100%;
-			height: 100%;
-			overflow: auto;
-			-webkit-overflow-scrolling: touch;
-		}
-	}
-
-	${themeStyles};
 	${overviewStyles};
 `
 
@@ -119,9 +82,10 @@ const UserHomeScreen = ({ profile }) => {
 	return (
 		<Container isShowingPast={isShowingPast} isShowingOverview={isShowingOverview}>
 			{!isShowingOverview && (
-				<Header title="NEVERWAIT">
+				<div className="bg-white border-b border-gray-200">
+					<h1 className="jaf-domus text-center mt-2">NEVERWAIT</h1>
 					<NavBar />
-				</Header>
+				</div>
 			)}
 
 			<TransitionGroup className="transition-group">
@@ -131,24 +95,22 @@ const UserHomeScreen = ({ profile }) => {
 					classNames="fade"
 				>
 					<React.Suspense fallback={null}>
-						<div className="view">
-							<Switch location={location}>
-								<Route path={USER_APPOINTMENTS}>
-									<Appointments profileAppointments={profile.appointments || {}} />
-								</Route>
+						<Switch location={location}>
+							<Route path={USER_APPOINTMENTS}>
+								<Appointments profileAppointments={profile.appointments || {}} />
+							</Route>
 
-								<Route path={APPOINTMENT_OVERVIEW}>
-									<AppointmentOverview profile={profile} />
-								</Route>
+							<Route path={APPOINTMENT_OVERVIEW}>
+								<AppointmentOverview profile={profile} />
+							</Route>
 
-								<Redirect to={generatePath(USER_APPOINTMENTS, { type: 'upcoming' })} />
-							</Switch>
-						</div>
+							<Redirect to={generatePath(USER_APPOINTMENTS, { type: 'upcoming' })} />
+						</Switch>
 					</React.Suspense>
 				</CSSTransition>
 			</TransitionGroup>
 
-			<NavFooter highlightCheckin={true} animate={location?.state?.returningFromOverview} />
+			<NavFooter highlightCheckin={true} />
 		</Container>
 	)
 }

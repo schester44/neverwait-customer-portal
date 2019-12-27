@@ -1,124 +1,117 @@
 import React from 'react'
-import { Link, generatePath } from 'react-router-dom'
-import styled, { keyframes } from 'styled-components'
-
+import { Link, generatePath, useHistory } from 'react-router-dom'
 import { format } from 'date-fns'
+import { FaStore } from 'react-icons/fa'
+import { FiArrowLeft, FiPhone } from 'react-icons/fi'
+import { MobileView } from 'react-device-detect'
+
+import { USER_APPOINTMENTS, LOCATION_OVERVIEW } from '../../routes'
+
 import Button from '../../components/Button'
-import { USER_APPOINTMENTS } from '../../routes'
+import FormFooter from '../../components/FormFooter'
 
-const enter = keyframes`
-	from {
-		transform: translateY(120px);
-	}
-	to {
-		transform: translateY(0px);
-	}
-`
+const Success = ({ type = 'appointment', appointment, totalPrice }) => {
+	const history = useHistory()
 
-const Container = styled('div')`
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	width: 100%;
+	const title = type === 'appointment' ? 'Appointment Created!' : 'Check-in Confirmed!'
 
-	.mask {
-	}
-
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	flex-direction: column;
-
-	.info {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		flex-direction: column;
-		flex: 1;
-	}
-
-	padding: 20px;
-	margin: 0 auto;
-	z-index: 999;
-
-	@media (min-width: 1200px) {
-		max-width: 1200px;
-		left: calc(50% - 600px);
-	}
-
-	animation: ${enter} 0.2s ease forwards;
-
-	color: ${({ theme }) => theme.colors.bodyBg};
-	background: ${({ theme }) => theme.colors.brand};
-`
-
-const vowels = {
-	a: true,
-	e: true,
-	i: true,
-	o: true,
-	u: true
-}
-
-const MulltipleServices = ({ employeeFirstName }) => {
 	return (
-		<p style={{ textAlign: 'center', fontSize: 14 }}>
-			Appointment booked with {employeeFirstName}.
-		</p>
-	)
-}
-const SingleService = ({ service, employeeFirstName }) => (
-	<p style={{ textAlign: 'center', fontSize: 14 }}>
-		You've booked {vowels[service.charAt(0).toLowerCase()] ? ' an ' : ' a '} {service} appointment
-		booked with {employeeFirstName}.
-	</p>
-)
-
-const Success = ({ appointment }) => {
-	return (
-		<>
+		<div className="flex justify-between items-center flex-col">
 			<div
-				className="mask"
-				style={{
-					position: 'fixed',
-					width: '100vw',
-					height: '100vh',
-					top: 0,
-					left: 0,
-					background: 'rgba(249, 249, 249, .3)'
-				}}
-			></div>
-			<Container>
-				<div className="info">
-					<h1 style={{ paddingBottom: 16 }}>Success!</h1>
+				className="relative flex flex-col bg-gray-900 w-full h-64"
+				style={{ borderBottomRightRadius: '50%' }}
+			>
+				<div className="flex justify-between items-center pt-1 pb-2 px-2">
+					<FiArrowLeft
+						className="text-3xl text-white"
+						onClick={() => {
+							history.push('/')
+						}}
+					/>
 
-					{appointment.services.length > 1 ? (
-						<MulltipleServices employeeFirstName={appointment.employee.firstName} />
-					) : (
-						<SingleService
-							service={appointment.services[0].name}
-							employeeFirstName={appointment.employee.firstName}
-						/>
-					)}
-
-					<h1 style={{ margin: '50px 0', color: 'white' }}>
-						You can expect to be in the chair around:{' '}
-						<span style={{ color: 'rgba(242, 209, 116, 1)' }}>
-							{format(appointment.startTime, 'h:mma')}.
-						</span>
-					</h1>
+					<p className="text-center text-sm font-bold text-white">{title}</p>
+					<Link
+						className="text-3xl text-white"
+						to={{
+							state: {
+								from: history.location.pathname
+							},
+							pathname: generatePath(LOCATION_OVERVIEW, {
+								uuid: appointment.location.uuid
+							})
+						}}
+					>
+						<FaStore />
+					</Link>
+				</div>
+				<div className="flex flex-1 flex-col items-center justify-center text-white text-4xl font-black pb-12 leading-snug">
+					{format(appointment.startTime, 'MMM Do, YYYY')}
+					<br />
+					{format(appointment.startTime, 'h:mma')} - {format(appointment.endTime, 'h:mma')}
 				</div>
 
-				<Link
-					to={generatePath(USER_APPOINTMENTS, { type: 'upcoming' })}
-					style={{ width: '100%', display: 'block' }}
+				<div
+					className="absolute border-8 border-white ml-10 bg-gray-500 w-20 h-20 text-3xl text-white flex justify-center items-center bottom-0 -mb-8"
+					style={{ borderRadius: '25px' }}
 				>
-					<Button inverted style={{ width: '100%' }}>
-						Finish
-					</Button>
+					{appointment.employee.photo ? (
+						<img
+							src={appointment.employee.photo}
+							alt="Provider"
+							className="w-full h-full object-cover"
+						/>
+					) : (
+						appointment.employee.firstName.charAt(0)
+					)}
+				</div>
+
+				{appointment.location.contactNumber && (
+					<MobileView>
+						<a href={`tel:${appointment.location.contactNumber}`}>
+							<div className="absolute rounded-full border-8 border-white ml-32 bg-green-500 text-white flex justify-center items-center text-lg bottom-0 -mb-6 w-12 h-12">
+								<FiPhone />
+							</div>
+						</a>
+					</MobileView>
+				)}
+			</div>
+
+			<div className="px-2 pt-10">
+				{type === 'appointment' ? (
+					<p className="text-center mb-4">
+						Appointment booked with {appointment.employee.firstName} for{' '}
+						{format(appointment.startTime, 'dddd MMMM Do, YYYY')} at{' '}
+						{format(appointment.startTime, 'h:mma')}.
+					</p>
+				) : (
+					<p className="text-center mb-4">
+						Checked in with for today at {format(appointment.startTime, 'h:mma')}with{' '}
+						{appointment.employee.firstName} .
+					</p>
+				)}
+
+				<h3 className="text-xl mb-2 font-bold">Service Details</h3>
+
+				{appointment.services.map((service, idx) => {
+					return (
+						<div className="pl-1 flex justify-between mb-2 pb-2 border-b border-gray-200" key={idx}>
+							<span>{service.name}</span>
+							<span>${service.price}</span>
+						</div>
+					)
+				})}
+				<p className="pl-1 font-black flex justify-between">
+					<span>Total</span>
+					<span>${totalPrice}</span>
+				</p>
+			</div>
+
+			<FormFooter>
+				<Link className="w-full block" to={generatePath(USER_APPOINTMENTS, { type: 'upcoming' })}>
+					<Button className="w-full">Finish</Button>
 				</Link>
-			</Container>
-		</>
+			</FormFooter>
+		</div>
 	)
 }
 

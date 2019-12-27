@@ -65,7 +65,7 @@ const Container = styled('div')(
 			font-weight: 700;
 
 			.check {
-				color: ${props.theme.colors.success};
+				color: green;
 			}
 
 			.avatar {
@@ -75,7 +75,7 @@ const Container = styled('div')(
 				width: 32px;
 				height: 32px;
 				border-radius: 50%;
-				background: ${props.theme.colors.brand};
+				background: rgba(100, 105, 229, 1.0);
 				color: white;
 				margin-right: 12px;
 				overflow: hidden;
@@ -191,9 +191,9 @@ const ProviderSelector = ({ uuid, value, onSelect, providers }) => {
 						<div style={{ padding: 10 }}>
 							<p style={{ textAlign: 'center', marginTop: 14 }}>Select a provider from above, or</p>
 							<Link to={generatePath(LOCATION_APPOINTMENT, { uuid })}>
-								<Button ghost style={{ marginTop: 14, width: '100%' }}>
+								<button ghost style={{ marginTop: 14, width: '100%' }}>
 									Book An Appointment
-								</Button>
+								</button>
 							</Link>
 						</div>
 					)}

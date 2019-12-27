@@ -7,7 +7,7 @@ const Container = styled('div')`
 
 const MenuItem = styled('div')`
 	padding: 8px;
-	border-top: 1px solid ${({ theme }) => theme.colors.n700};
+	border-top: 1px solid red;
 	cursor: pointer;
 `
 

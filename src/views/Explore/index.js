@@ -1,40 +1,14 @@
 import React from 'react'
-import styled from 'styled-components'
 import { Redirect } from 'react-router-dom'
 
 import NavFooter from '../HomeScreen/NavFooter'
-import { Header } from '../HomeScreen/Header'
 
 import Location from './components/Location'
 
-const Container = styled('div')`
-	width: 100%;
-	min-height: 100%;
-	display: flex;
-	flex-direction: column;
-
-	padding-top: 45px;
-
-	.content {
-		padding: 20px;
-	}
-
-	.sell-it {
-		padding-top: 25px;
-		padding-bottom: 10px;
-		width: 100%;
-		text-align: center;
-
-		h4 {
-			padding-top: 4px;
-			opacity: 0.5;
-		}
-	}
-`
-
 const Explore = ({ locations, profile }) => {
 	const filteredLocations = React.useMemo(() => {
-		if (profile.appointments.upcoming.length === 0 && profile.appointments.past.length === 0) return locations
+		if (profile.appointments.upcoming.length === 0 && profile.appointments.past.length === 0)
+			return locations
 
 		let locationIds = {}
 
@@ -49,31 +23,29 @@ const Explore = ({ locations, profile }) => {
 		return locations.filter(location => !!locationIds[location.id])
 	}, [locations, profile])
 
-	const shouldRedirectToLastAppointment = filteredLocations.length === 1 && filteredLocations.length <= locations.length
+	const shouldRedirectToLastAppointment =
+		filteredLocations.length === 1 && filteredLocations.length <= locations.length
 
 	if (shouldRedirectToLastAppointment) {
 		return <Redirect to="/" />
 	}
 
 	return (
-		<Container>
-			<Header title="Explore" />
+		<div className="container mx-auto px-4">
+			<h1 className="text-center mt-2 text-2xl">Explore</h1>
 
-			<div className="sell-it">
-				<h2>Select a location</h2>
-				<h4>The perfect barber or stylist is just ahead.</h4>
-			</div>
+			<h4 className="my-4 text-gray-700 text-center">
+				The perfect barber or stylist is just ahead.
+			</h4>
 
-			<div className="content">
-				{filteredLocations.map(location => {
-					if (location.uuid.includes('demo')) return null
+			{filteredLocations.map(location => {
+				if (location.uuid.includes('demo')) return null
 
-					return <Location location={location} key={location.id} />
-				})}
-			</div>
+				return <Location location={location} key={location.id} />
+			})}
 
 			<NavFooter />
-		</Container>
+		</div>
 	)
 }
 

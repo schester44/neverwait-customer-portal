@@ -4,7 +4,7 @@ import { format, addMinutes } from 'date-fns'
 const Review = ({ selectedServicesPrice, provider, services, location }) => {
 	return (
 		<div className="container mx-auto px-2">
-			<p className="mb-3 leading-snug text-lg">
+			<p className="mb-3 leading-snug px-2 pt-2 text-lg">
 				Please review and confirm you'd like to check-in with {provider.firstName}{' '}
 				<span className="font-black text-red-500">
 					today at {format(addMinutes(new Date(), provider.waitTime + 3), 'h:mma')}.

@@ -1,16 +1,15 @@
 import React from 'react'
 import { produce } from 'immer'
-import { startOfDay, endOfDay, addDays } from 'date-fns'
+import { startOfDay, endOfDay, addDays, isEqual } from 'date-fns'
 import { Redirect, Link, useParams, generatePath, useHistory } from 'react-router-dom'
-import { useQuery, useMutation, useApolloClient, useLazyQuery } from '@apollo/react-hooks'
+import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import { format } from 'date-fns'
-
+import memoize from 'memoize-one'
 import { FaStore } from 'react-icons/fa'
 import { FiArrowLeft } from 'react-icons/fi'
 
-import { locationDataQuery, employeeScheduleQuery, profileQuery } from '../../graphql/queries'
+import { employeeScheduleQuery, profileQuery } from '../../graphql/queries'
 import { createProfileAppointmentMutation } from '../../graphql/mutations'
-import { appointmentsSubscription } from '../../graphql/subscriptions'
 
 import SchedulerCreator from '../../helpers/ScheduleCreator'
 import getAvailableShiftSlots from '../../helpers/getAvailableShiftSlots'
@@ -21,7 +20,7 @@ import ServiceSelector from '../../components/ServiceSelector'
 import Loading from '../LoadingScreen'
 import FormFooter from '../../components/FormFooter'
 import Button from '../../components/Button'
-
+import useEnhancedLocationSubscription from '../../components/useEnhancedLocationSubscription'
 import DateSelector from './DateSelector'
 import TimeSelector from './TimeSelector'
 
@@ -45,12 +44,11 @@ const renderTitle = ({ step }) => {
 
 const scheduler = new SchedulerCreator()
 
+const _memoizedGetAvailableShiftSlots = memoize(getAvailableShiftSlots)
+
 const LocationAppointment = () => {
 	const history = useHistory()
 	const { uuid } = useParams()
-
-	const startTime = startOfDay(new Date())
-	const endTime = endOfDay(addDays(new Date(), 7))
 
 	const [state, setState] = React.useState({
 		step: 1,
@@ -82,29 +80,37 @@ const LocationAppointment = () => {
 
 	const setShiftSlots = React.useCallback(
 		(schedule, date) => {
-			const shiftSlots = getAvailableShiftSlots(schedule, date, selectedServicesDuration)
+			const shiftSlots = _memoizedGetAvailableShiftSlots(schedule, date, selectedServicesDuration)
+
+			const slotStillExists = !state.selectedTime
+				? false
+				: shiftSlots.find(shift => isEqual(shift.start_time, state.selectedTime))
 
 			setState(prev => ({
 				...prev,
 				schedule,
-				shiftSlots
+				shiftSlots,
+				// If the slot doesn't exist then its possible the user had selected the time slot but then someone else booked it. so we should clear out that slot since its no longer available.
+				selectedTime: slotStillExists ? prev.selectedTime : undefined
 			}))
 		},
-		[selectedServicesDuration]
+		[selectedServicesDuration, state.selectedTime]
 	)
 
 	const queryOptions = React.useMemo(() => {
 		return {
-			variables: {
-				startTime,
-				endTime,
-				uuid,
-				sourceType: 'onlineappointment'
-			}
+			startTime: startOfDay(new Date()),
+			endTime: endOfDay(addDays(new Date(), 7)),
+			uuid,
+			sourceType: 'onlineappointment'
 		}
-	}, [startTime, endTime, uuid])
+	}, [uuid])
 
-	const { data, loading } = useQuery(locationDataQuery, queryOptions)
+	const { employees, location, loading } = useEnhancedLocationSubscription({
+		queryOptions,
+		computeEmployeeAvailability: false
+	})
+
 	const [createProfileAppointment, { loading: createLoading }] = useMutation(
 		createProfileAppointmentMutation
 	)
@@ -113,106 +119,21 @@ const LocationAppointment = () => {
 		employeeScheduleQuery,
 		{
 			onCompleted: data => {
-				setShiftSlots(data.employeeSchedule, new Date())
+				console.log('shift slots')
+				setShiftSlots(data.employeeSchedule, state.selectedDate || new Date())
 			}
 		}
 	)
 
-	const client = useApolloClient()
-	const location = data?.locationByUUID
-
-	// Effect is needed because this component initializes without a locationId to subscribe to and there is no skip property to prevent from subscribing with an empty location
-	React.useEffect(() => {
-		if (!location) return
-
-		const subscription = client
-			.subscribe({
-				query: appointmentsSubscription,
-				variables: { locationId: location ? location.id : null }
-			})
-			.subscribe(({ data }) => {
-				if (!data.AppointmentsChange?.appointment) return
-
-				const locationData = client.readQuery({ query: locationDataQuery, ...queryOptions })
-
-				const { appointment, employeeId, isNewRecord } = data.AppointmentsChange
-
-				const isDeleted = appointment.status === 'deleted' || appointment.status === 'canceled'
-
-				// let apollo handle updates.
-				if (!isNewRecord && !isDeleted) return
-
-				const employees = locationData.locationByUUID.employees.map(employee => {
-					if (+employeeId !== +employee.id) return employee
-
-					return {
-						...employee,
-						appointments: isDeleted
-							? employee.appointments.filter(appt => appt.id !== appointment.id)
-							: employee.appointments.concat([appointment])
-					}
-				})
-
-				client.writeQuery({
-					query: locationDataQuery,
-					...queryOptions,
-					data: produce(locationData, draftState => {
-						draftState.locationByUUID.employees = employees
-					})
-				})
-
-				try {
-					const employeeSchedule = client.readQuery({
-						query: employeeScheduleQuery,
-						variables: {
-							locationId: location.id,
-							employeeId,
-							input: {
-								start_date: startOfDay(new Date()),
-								end_date: endOfDay(addDays(new Date(), 7))
-							}
-						}
-					})
-
-					client.writeQuery({
-						query: employeeScheduleQuery,
-						variables: {
-							locationId: location.id,
-							employeeId,
-							input: {
-								start_date: startOfDay(new Date()),
-								end_date: endOfDay(addDays(new Date(), 7))
-							}
-						},
-						data: produce(employeeSchedule, draftState => {
-							if (isDeleted) {
-								draftState.employeeSchedule.appointments.slice(
-									draftState.employeeSchedule.appointments.findIndex(
-										appt => appt.id === appointment.id
-									),
-									1
-								)
-							} else {
-								draftState.employeeSchedule.appointments.push(appointment)
-							}
-						})
-					})
-				} catch (error) {
-					console.error('locationcehckin error', error)
-				}
-			})
-
-		return () => {
-			subscription.unsubscribe()
-		}
-	}, [location, client, queryOptions])
+	const locationId = location?.id
 
 	React.useEffect(() => {
-		if (!location || !state.selectedProvider) return
+		if (!locationId || !state.selectedProvider) return
 
+		// Grab the providers schedule if the provider changes
 		fetchSchedule({
 			variables: {
-				locationId: location.id,
+				locationId: locationId,
 				employeeId: state.selectedProvider.id,
 				input: {
 					start_date: startOfDay(new Date()),
@@ -220,15 +141,22 @@ const LocationAppointment = () => {
 				}
 			}
 		})
-	}, [fetchSchedule, location, state.selectedProvider])
+	}, [fetchSchedule, locationId, state.selectedProvider])
 
 	const employee = React.useMemo(
 		() =>
-			!state.selectedProvider || !location
+			!state.selectedProvider || !employees
 				? undefined
-				: location.employees.find(emp => emp.id === state.selectedProvider.id),
-		[state.selectedProvider, location]
+				: employees.find(emp => emp.id === state.selectedProvider.id),
+		[state.selectedProvider, employees]
 	)
+
+	React.useEffect(() => {
+		if (!employeeSchedule || !state.selectedDate) return
+
+		// Anytime our selected provider's schedule changes, re-compute the available slots
+		setShiftSlots(employeeSchedule.employeeSchedule, state.selectedDate)
+	}, [employeeSchedule, setShiftSlots, state.selectedDate])
 
 	if (loading) return <div>Loading...</div>
 
@@ -263,15 +191,7 @@ const LocationAppointment = () => {
 
 	const handleDateSelection = selectedDate => {
 		setState(prev => {
-			const shiftSlots = getAvailableShiftSlots(
-				employeeSchedule.employeeSchedule,
-				selectedDate,
-				selectedServicesDuration
-			)
-
-			console.log(selectedServicesDuration)
-
-			return { ...prev, shiftSlots, selectedDate, selectedTime: undefined }
+			return { ...prev, selectedDate, selectedTime: undefined }
 		})
 	}
 
@@ -366,13 +286,13 @@ const LocationAppointment = () => {
 
 			<div
 				className="bg-white px-2 pt-2 -mt-12 overflow-x-hidden"
-				style={{ borderTopLeftRadius: 50 }}
+				style={{ borderTopLeftRadius: 35 }}
 			>
 				{state.step === 1 && (
 					<div className="pb-24">
 						<ProviderSelector
 							isAppointmentSelector={true}
-							providers={location.employees}
+							providers={employees}
 							selected={state.selectedProvider?.id}
 							onSelect={handleProviderSelection}
 						/>

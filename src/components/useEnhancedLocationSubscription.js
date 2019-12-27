@@ -11,7 +11,7 @@ import { locationDataQuery, employeeScheduleQuery } from '../graphql/queries'
 import { appointmentsSubscription } from '../graphql/subscriptions'
 import getSourcesNextShifts from '../helpers/getSourcesNextShifts'
 
-const useEnhancedLocationSubscription = ({ queryOptions }) => {
+const useEnhancedLocationSubscription = ({ queryOptions, computeEmployeeAvailability = true }) => {
 	const client = useApolloClient()
 
 	const { data, loading } = useQuery(locationDataQuery, { variables: queryOptions })
@@ -91,7 +91,7 @@ const useEnhancedLocationSubscription = ({ queryOptions }) => {
 						data: produce(employeeSchedule, draftState => {
 							if (isDeleted) {
 								draftState.employeeSchedule.appointments.slice(
-									draftState.employeeSchedule.appointments.findIndex(
+									employeeSchedule.employeeSchedule.appointments.findIndex(
 										appt => appt.id === appointment.id
 									),
 									1
@@ -110,52 +110,54 @@ const useEnhancedLocationSubscription = ({ queryOptions }) => {
 			setState(() => {
 				let hasWorkingEmployees = false
 
-				const enhancedEmployees = employees.map(employee => {
-					const schedule = scheduleRangeFromDate({
-						scheduleRanges: employee.schedule_ranges,
-						date: new Date()
-					})
+				const enhancedEmployees = computeEmployeeAvailability
+					? employees
+					: employees.map(employee => {
+							const schedule = scheduleRangeFromDate({
+								scheduleRanges: employee.schedule_ranges,
+								date: new Date()
+							})
 
-					if (!schedule) {
-						return { ...employee, isSchedulable: false }
-					}
+							if (!schedule) {
+								return { ...employee, isSchedulable: false }
+							}
 
-					const firstAvailableTime = getFirstAvailableTime({
-						appointments: employee.appointments,
-						// TODO: 20 mins should be configurable
-						duration: 20,
-						schedule,
-						sourceType: 'acceptingCheckins'
-					})
+							const firstAvailableTime = getFirstAvailableTime({
+								appointments: employee.appointments,
+								// TODO: 20 mins should be configurable
+								duration: 20,
+								schedule,
+								sourceType: 'acceptingCheckins'
+							})
 
-					const sourcesNextShifts = getSourcesNextShifts({ schedule, firstAvailableTime })
+							const sourcesNextShifts = getSourcesNextShifts({ schedule, firstAvailableTime })
 
-					const currentShift = shiftFromTime({
-						schedule,
-						time: new Date()
-					})
+							const currentShift = shiftFromTime({
+								schedule,
+								time: new Date()
+							})
 
-					if (!firstAvailableTime) {
-						return { ...employee, isSchedulable: false, currentShift, sourcesNextShifts }
-					}
+							if (!firstAvailableTime) {
+								return { ...employee, isSchedulable: false, currentShift, sourcesNextShifts }
+							}
 
-					const isSchedulable = isScheduledToWork(employee, firstAvailableTime)
+							const isSchedulable = isScheduledToWork(employee, firstAvailableTime)
 
-					const waitTime = waitTimeInMinutes(firstAvailableTime)
+							const waitTime = waitTimeInMinutes(firstAvailableTime)
 
-					if (isSchedulable) {
-						hasWorkingEmployees = true
-					}
+							if (isSchedulable) {
+								hasWorkingEmployees = true
+							}
 
-					return {
-						...employee,
-						isSchedulable,
-						waitTime,
-						firstAvailableTime,
-						sourcesNextShifts,
-						currentShift
-					}
-				})
+							return {
+								...employee,
+								isSchedulable,
+								waitTime,
+								firstAvailableTime,
+								sourcesNextShifts,
+								currentShift
+							}
+					  })
 
 				return {
 					hasWorkingEmployees,
@@ -172,7 +174,7 @@ const useEnhancedLocationSubscription = ({ queryOptions }) => {
 			window.clearInterval(timer)
 			subscription.unsubscribe()
 		}
-	}, [client, location, queryOptions])
+	}, [client, location, computeEmployeeAvailability, queryOptions])
 
 	return {
 		loading,

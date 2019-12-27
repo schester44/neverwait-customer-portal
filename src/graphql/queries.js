@@ -129,6 +129,7 @@ export const employeeScheduleQuery = gql`
 	query($locationId: ID!, $employeeId: ID!, $input: EmployeeScheduleInput!) {
 		employeeSchedule(locationId: $locationId, employeeId: $employeeId, input: $input) {
 			appointments {
+				id
 				startTime
 				endTime
 			}

@@ -1,19 +1,16 @@
 import React from 'react'
-import { addMinutes, isWithinRange, startOfDay, format, endOfDay } from 'date-fns'
+import { addMinutes, isWithinRange, startOfDay, format } from 'date-fns'
 import { FiClock, FiChevronDown, FiChevronUp } from 'react-icons/fi'
 
-const LocationDrawerHeader = ({ isDrawerVisible, closedDates, today, onClick }) => {
+const LocationDrawerHeader = ({ isClosedToday, isDrawerVisible, today, onClick }) => {
 	const isOpenToday =
+		!isClosedToday &&
 		today?.open &&
 		isWithinRange(
 			new Date(),
 			addMinutes(startOfDay(new Date()), today.startTime),
 			addMinutes(startOfDay(new Date()), today.endTime)
 		)
-
-	const closedDate = closedDates.find(date =>
-		isWithinRange(new Date(), startOfDay(date.start_date), endOfDay(date.end_date))
-	)
 
 	return (
 		<div
@@ -23,7 +20,7 @@ const LocationDrawerHeader = ({ isDrawerVisible, closedDates, today, onClick }) 
 			<div className="flex items-center px-4 py-4">
 				<FiClock size={28} />
 
-				{isOpenToday && !closedDate ? (
+				{isOpenToday ? (
 					<span className="text-lg pl-2">
 						Open Now {format(addMinutes(startOfDay(new Date()), today.startTime), 'h:mma')} -{' '}
 						{format(addMinutes(startOfDay(new Date()), today.endTime), 'h:mma')}

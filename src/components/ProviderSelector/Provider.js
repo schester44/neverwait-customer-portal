@@ -113,7 +113,7 @@ const Provider = ({ provider, isSelected, isAppointmentSelector, onClick }) => {
 						</p>
 					</div>
 					<div className="flex items-center">
-						{provider.isSchedulable && (
+						{!isAppointmentSelector && provider.isSchedulable && (
 							<div>
 								<p className="font-bold text-lg text-gray-900 text-right">
 									{format(addMinutes(new Date(), provider.waitTime), 'h:mma')}
@@ -126,9 +126,7 @@ const Provider = ({ provider, isSelected, isAppointmentSelector, onClick }) => {
 							</div>
 						)}
 
-						{provider.isSchedulable && (
-							<FiChevronRight className="chevron text-3xl text-gray-500" />
-						)}
+						{isSchedulable && <FiChevronRight className="chevron text-3xl text-gray-500" />}
 					</div>
 				</div>
 			</div>

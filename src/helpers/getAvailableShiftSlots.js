@@ -6,6 +6,7 @@ const scheduler = new SchedulerCreator()
 const getAvailableShiftSlots = (schedule, date, duration = 0) => {
 	const workDay = scheduler.find(schedule.schedule_ranges, date)
 
+	console.log('getAvailableShiftSlots')
 	if (!workDay) return []
 
 	let shiftSlots = scheduler.getShiftSlots(workDay.schedule_shifts, 5, date)

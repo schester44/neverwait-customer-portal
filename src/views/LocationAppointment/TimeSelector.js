@@ -1,6 +1,6 @@
 import React from 'react'
 import clsx from 'clsx'
-import { format } from 'date-fns'
+import { format, isEqual } from 'date-fns'
 
 const TimeSelector = ({ slots, value, onSelect }) => {
 	return (
@@ -14,7 +14,7 @@ const TimeSelector = ({ slots, value, onSelect }) => {
 			)}
 
 			{slots.map((slot, idx) => {
-				const isSelected = slot.start_time === value
+				const isSelected = value && isEqual(slot.start_time, value)
 
 				return (
 					<div key={`slot-${idx}`} className="w-1/3 p-1">

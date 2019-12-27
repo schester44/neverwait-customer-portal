@@ -24,7 +24,7 @@
 		"graphql-tag": "^2.10.1",
 		"immer": "^4.0.2",
 		"jwt-decode": "^2.2.0",
-		"memoize-one": "^4.0.0",
+		"memoize-one": "^5.1.1",
 		"npm-run-all": "^4.1.5",
 		"polished": "^3.4.1",
 		"prop-types": "^15.6.1",

@@ -6,7 +6,7 @@ import { basicLocationInfoQuery } from '../../graphql/queries'
 import { FiArrowLeft } from 'react-icons/fi'
 import { FiPhone } from 'react-icons/fi'
 import NavFooter from '../HomeScreen/NavFooter'
-import { format, addDays } from 'date-fns'
+import { format, addDays, isWithinRange, startOfDay, endOfDay } from 'date-fns'
 import clsx from 'clsx'
 import { MobileView } from 'react-device-detect'
 
@@ -83,7 +83,11 @@ const LocationOverview = () => {
 	const todaysName = format(new Date(), 'dddd').toLowerCase()
 	const workHourKeys = Object.keys(location.working_hours)
 
-	console.log(location)
+	const closedDate = location.closed_dates.find(date =>
+		isWithinRange(new Date(), startOfDay(date.start_date), endOfDay(date.end_date))
+	)
+
+	const isClosedToday = !!closedDate || !location.working_hours[todaysName]?.open
 
 	return (
 		<div className="h-screen flex flex-col">
@@ -136,7 +140,7 @@ const LocationOverview = () => {
 				>
 					<LocationDrawerHeader
 						isDrawerVisible={showHours}
-						closedDates={location.closed_dates}
+						isClosedToday={isClosedToday}
 						today={location.working_hours[todaysName]}
 						onClick={() => {
 							setShowHours(prev => !prev)
@@ -162,9 +166,15 @@ const LocationOverview = () => {
 				</Hours>
 
 				<div className="px-4 pb-20 mt-4 flex flex-col justify-end flex-1">
-					<Link to={`${history.location.pathname}/checkin`}>
-						<Button className="w-full mb-4">Check In</Button>
-					</Link>
+					{isClosedToday ? (
+						<Button disabled={isClosedToday} className="w-full mb-4">
+							Check In
+						</Button>
+					) : (
+						<Link to={`${history.location.pathname}/checkin`}>
+							<Button className="w-full mb-4">Check In</Button>
+						</Link>
+					)}
 					<Link to={`${history.location.pathname}/appointment`}>
 						<Button className="w-full mb-4">Book Appointment</Button>
 					</Link>

@@ -15,6 +15,7 @@ const Success = ({ type = 'appointment', appointment, totalPrice }) => {
 
 	const title = type === 'appointment' ? 'Appointment Created!' : 'Check-in Confirmed!'
 
+	console.log(totalPrice)
 	return (
 		<div className="flex justify-between items-center flex-col">
 			<div

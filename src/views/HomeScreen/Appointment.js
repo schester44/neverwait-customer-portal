@@ -26,7 +26,7 @@ const Appointment = ({ appointment }) => {
 			</div>
 
 			<p
-				className={clsx('text-2xl font-black', {
+				className={clsx('text-2xl pl-1 font-black', {
 					'text-gray-700': !isApptToday,
 					'text-indigo-500': isApptToday
 				})}

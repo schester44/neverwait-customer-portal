@@ -117,7 +117,7 @@ const AppointmentOverview = ({ profile }) => {
 				)}
 			</div>
 
-			<div style={{ borderTopLeftRadius: '50px' }} className="-mt-12 bg-white relative z-0">
+			<div style={{ borderTopLeftRadius: 35 }} className="-mt-12 bg-white relative z-0">
 				<div className="container mx-auto h-full px-4">
 					<h1 className="text-3xl pt-2">{appointment.location.name}</h1>
 					<p className="text-gray-600 text-lg">{appointment.location.address}</p>

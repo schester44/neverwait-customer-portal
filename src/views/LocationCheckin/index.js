@@ -5,7 +5,7 @@ import { Redirect, Link, generatePath, useParams, useHistory, useLocation } from
 import { useMutation } from '@apollo/react-hooks'
 import { FaStore } from 'react-icons/fa'
 import { FiArrowLeft } from 'react-icons/fi'
-import { format, isAfter, addMinutes, startOfDay, endOfDay } from 'date-fns'
+import { format, isAfter, addMinutes, startOfDay, endOfDay, isWithinRange } from 'date-fns'
 
 import pling from '../../components/Pling'
 import FormFooter from '../../components/FormFooter'
@@ -22,6 +22,7 @@ import { sequentialUpsertMutation } from '../../graphql/mutations'
 import Success from '../LocationAppointment/Success'
 import Review from './Review'
 import { dateFromTimeString } from '../../helpers/date-from'
+import NavFooter from '../HomeScreen/NavFooter'
 
 const renderTitle = ({ step, isFinished }) => {
 	if (isFinished) return null
@@ -105,6 +106,16 @@ const LocationCheckin = () => {
 			})
 		}
 	})
+
+	const closedDate = React.useMemo(() => {
+		if (!location) return
+
+		return location.closed_dates.find(date =>
+			isWithinRange(new Date(), startOfDay(date.start_date), endOfDay(date.end_date))
+		)
+	}, [location])
+
+	const isClosedToday = !!closedDate
 
 	if (loading) return <LoadingScreen />
 
@@ -201,49 +212,65 @@ const LocationCheckin = () => {
 
 	return (
 		<div>
-			<div className="bg-gray-900 px-4 mb-2 px-4 pb-12">
-				<div className="flex justify-between items-center pt-2 pb-4">
-					<FiArrowLeft
-						className="text-3xl text-gray-100"
-						onClick={() => {
-							if (state.step === 1) {
-								history.goBack()
-							} else {
-								setState(prev => ({ ...prev, step: prev.step - 1 }))
-							}
-						}}
-					/>
+			{!state.createdAppointment && (
+				<div className="bg-gray-900 px-4 mb-2 px-4 pb-12">
+					<div className="flex justify-between items-center pt-2 pb-4">
+						<FiArrowLeft
+							className="text-3xl text-gray-100"
+							onClick={() => {
+								if (state.step === 1) {
+									history.goBack()
+								} else {
+									setState(prev => ({ ...prev, step: prev.step - 1 }))
+								}
+							}}
+						/>
 
-					<p className="text-lg font-bold text-center text-gray-100">Online Check-in</p>
+						<p className="text-lg font-bold text-center text-gray-100">Online Check-in</p>
 
-					<Link
-						className="text-3xl text-gray-100"
-						to={{
-							state: {
-								from: history.location.pathname
-							},
-							pathname: generatePath(LOCATION_OVERVIEW, { uuid })
-						}}
-					>
-						<FaStore />
-					</Link>
+						<Link
+							className="text-3xl text-gray-100"
+							to={{
+								state: {
+									from: history.location.pathname
+								},
+								pathname: generatePath(LOCATION_OVERVIEW, { uuid })
+							}}
+						>
+							<FaStore />
+						</Link>
+					</div>
+
+					{!state.createdAppointment && (
+						<p className="text-sm text-indigo-200 mt-2 leading-snug">
+							Step {isWaitTimeLongEnough ? state.step : 1} of 3
+						</p>
+					)}
+
+					<h1 className="jaf-domus leading-none text-white font-black mb-4 text-3xl">
+						{renderTitle({
+							step: isWaitTimeLongEnough ? state.step : 1,
+							isFinished: !!state.createdAppointment
+						})}
+					</h1>
 				</div>
-
-				{!state.createdAppointment && (
-					<p className="text-sm text-indigo-200 mt-2 leading-snug">Step {state.step} of 3</p>
-				)}
-
-				<h1 className="jaf-domus leading-none text-white font-black mb-4 text-3xl">
-					{renderTitle({
-						step: isWaitTimeLongEnough ? state.step : 1,
-						isFinished: !!state.createdAppointment
-					})}
-				</h1>
-			</div>
+			)}
 
 			{!state.createdAppointment && (
-				<div className="view -mt-12 bg-white pt-2 pl-2" style={{ borderTopLeftRadius: 50 }}>
-					{(state.step === 1 || !isWaitTimeLongEnough) && (
+				<div
+					className="view -mt-12 bg-white pt-2 overflow-x-hidden"
+					style={{ borderTopLeftRadius: 35 }}
+				>
+					{isClosedToday && (
+						<>
+							<p className="text-lg text-center mt-12">
+								This location is closed today. ({closedDate.description})
+							</p>
+							<NavFooter />
+						</>
+					)}
+
+					{(state.step === 1 || !isWaitTimeLongEnough) && !isClosedToday && (
 						<ProviderSelector
 							providers={employees}
 							selected={state.selectedProvider}
@@ -257,24 +284,40 @@ const LocationCheckin = () => {
 							onSelect={handleServiceSelection}
 						/>
 					)}
+
+					{isWaitTimeLongEnough && state.step === 3 && !state.createdAppointment && (
+						<Review
+							selectedServicesPrice={selectedServicesPrice}
+							services={state.selectedServices.map(id => state.providerServicesById[id])}
+							provider={employee}
+							location={location}
+						/>
+					)}
 				</div>
+			)}
+
+			{state.createdAppointment && (
+				<Success
+					totalPrice={selectedServicesPrice}
+					type="checkin"
+					appointment={state.createdAppointment}
+				/>
 			)}
 
 			{!state.createdAppointment && employee && !isWaitTimeLongEnough && (
 				<FormFooter>
-					<div>
-						<p className="text-center text-md leading-none font-bold">
+					<div className="py-12">
+						<p className="text-center text-xl font-bold">
 							No need to check in with {state.selectedProvider.firstName} right now. You can just
 							show up!
 						</p>
 
-						<p className="text-sm text-gray-600 mt-4 leading-tight text-center mb-4">
+						<p className="text-sm text-gray-600 text-center my-8">
 							Act fast! There's no line at the moment but we can't guarantee that there won't be one
 							by the time you get to {location.name}.
 						</p>
 
 						<Button
-							className="btn-sm"
 							onClick={() => {
 								setState(prev => ({
 									...prev,
@@ -289,19 +332,6 @@ const LocationCheckin = () => {
 						</Button>
 					</div>
 				</FormFooter>
-			)}
-
-			{state.createdAppointment && (
-				<Success type="checkin" appointment={state.createdAppointment} />
-			)}
-
-			{state.step === 3 && !state.createdAppointment && (
-				<Review
-					selectedServicesPrice={selectedServicesPrice}
-					services={state.selectedServices.map(id => state.providerServicesById[id])}
-					provider={employee}
-					location={location}
-				/>
 			)}
 
 			{!state.createdAppointment && isWaitTimeLongEnough && state.selectedServices.length > 0 && (

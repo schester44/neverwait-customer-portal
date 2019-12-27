@@ -99,9 +99,9 @@ const LocationOverview = () => {
 				style={{ borderBottomRightRadius: '50%' }}
 			>
 				{!!history.location.state?.from && (
-					<div className="px-2 py-2 absolute top-0 left-0 mt-2 l-2">
+					<div className="px-2 py-2 absolute top-0 left-0 l-2">
 						<FiArrowLeft
-							className="text-3xl text-gray-700"
+							className="text-3xl text-white"
 							onClick={() => {
 								history.push(history.location.state.from)
 							}}

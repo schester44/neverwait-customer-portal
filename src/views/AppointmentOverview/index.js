@@ -15,16 +15,14 @@ import { cancelAppointmentMutation } from '../../graphql/mutations'
 import { profileQuery } from '../../graphql/queries'
 
 import pling from '../../components/Pling'
-import FormFooter from '../../components/FormFooter'
+import Modal from '../../components/Modal'
 import Button from '../../components/Button'
 
 const AppointmentOverview = ({ profile }) => {
 	const history = useHistory()
 	const { id: appointmentId } = useParams()
 
-	const [state, setState] = React.useState({
-		showCancelModal: false
-	})
+	const [state, setState] = React.useState({ showCancelModal: false })
 
 	const [cancelAppointment, { loading: cancelLoading }] = useMutation(cancelAppointmentMutation)
 
@@ -120,8 +118,8 @@ const AppointmentOverview = ({ profile }) => {
 			<div style={{ borderTopLeftRadius: 35 }} className="-mt-12 bg-white relative z-0">
 				<div className="container mx-auto h-full px-4">
 					<h1 className="text-3xl pt-2">{appointment.location.name}</h1>
-					<p className="text-gray-600 text-lg">{appointment.location.address}</p>
-					<p className="text-gray-600 text-lg">{appointment.location.contactNumber}</p>
+					<p className="text-gray-700 text-lg">{appointment.location.address}</p>
+					<p className="text-gray-700 text-lg">{appointment.location.contactNumber}</p>
 
 					<div className="mt-2 mb-3 text-2xl font-black text-indigo-500">
 						{format(appointment.startTime, 'dddd MMM Do, YYYY')}
@@ -181,7 +179,7 @@ const AppointmentOverview = ({ profile }) => {
 					</div>
 
 					{state.showCancelModal && (
-						<FormFooter>
+						<Modal onClose={() => setState(prev => ({ ...prev, showCancelModal: false }))}>
 							<div>
 								<p className="text-sm text-red-600 font-bold text-center text-gray-700">
 									Are you sure you want to cancel this appointment?
@@ -203,7 +201,7 @@ const AppointmentOverview = ({ profile }) => {
 									Nevermind
 								</Button>
 							</div>
-						</FormFooter>
+						</Modal>
 					)}
 				</div>
 			</div>

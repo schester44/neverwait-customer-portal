@@ -17,14 +17,15 @@
 	box-sizing: border-box;
 }
 
-body,
-html,
-#root {
+html{height:100%}
+
+body, html, #root {
 	width: 100%;
 	height: 100%;
 	font-family: Muli, -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto,
 		'Helvetica Neue', Arial, sans-serif;
 }
+
 
 body {
 	-webkit-touch-callout: none;

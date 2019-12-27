@@ -394,7 +394,7 @@ const LocationAppointment = () => {
 				{!fetchLoading &&
 					state.step === 3 &&
 					(!employeeSchedule?.employeeSchedule ? (
-						<div>Loading...</div>
+						<Loading />
 					) : (
 						<div className="pb-24">
 							<DateSelector

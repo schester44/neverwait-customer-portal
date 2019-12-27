@@ -7,7 +7,7 @@ import Appointment from './Appointment'
 
 const placeholder = type => (
 	<div
-		style={{ height: 'calc(100vh - 200px)' }}
+		style={{ height: 'calc(100vh - 210px)' }}
 		className="flex flex-col justify-center items-center"
 	>
 		<p className="text-sm text-center text-gray-900 font-bold">You have no {type} appointments.</p>

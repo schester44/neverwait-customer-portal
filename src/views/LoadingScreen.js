@@ -1,5 +1,4 @@
 import React from 'react'
-import Background from './HomeScreen/HomeScreenBackground'
 import styled from 'styled-components'
 
 const Container = styled('div')`
@@ -9,6 +8,7 @@ const Container = styled('div')`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	overflow: hidden;
 
 	.loader,
 	.loader:after {
@@ -46,10 +46,9 @@ const Container = styled('div')`
 	}
 `
 
-const LoadingScreen = ({ animate = true }) => {
+const LoadingScreen = () => {
 	return (
 		<Container>
-			{animate && <Background showSplash={false} />}
 			<div className="loader">Loading...</div>
 		</Container>
 	)

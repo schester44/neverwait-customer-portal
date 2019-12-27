@@ -23,6 +23,7 @@ const Explore = ({ locations, profile }) => {
 		return locations.filter(location => !!locationIds[location.id])
 	}, [locations, profile])
 
+	// The only time we should redirect to the last appointment's location is if there is only 1 filtered location (and if the total locations on the app are > 1)
 	const shouldRedirectToLastAppointment =
 		filteredLocations.length === 1 && filteredLocations.length <= locations.length
 

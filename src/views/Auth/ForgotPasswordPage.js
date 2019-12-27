@@ -61,7 +61,7 @@ const LoginPage = () => {
 				}
 			})
 
-			history.push('/')
+			history.push('/profile/appointments')
 			window.location.reload()
 		}
 	}

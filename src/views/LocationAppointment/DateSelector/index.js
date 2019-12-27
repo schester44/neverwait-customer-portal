@@ -25,7 +25,7 @@ const DatePicker = ({ scheduleRanges, value, onSelect }) => {
 	return (
 		<div className="appearance-none flex w-full h-auto items-center border-b border-gray-200">
 			<div
-				className="w-full flex overflow-x-auto overflow-y-hidden whitespace-no-wrap"
+				className="w-full sm:justify-center flex overflow-x-auto overflow-y-hidden whitespace-no-wrap"
 				ref={cellsRef}
 			>
 				{dates.map((date, idx) => {

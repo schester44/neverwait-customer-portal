@@ -222,23 +222,6 @@ const LocationAppointment = () => {
 		})
 	}, [fetchSchedule, location, state.selectedProvider])
 
-	React.useEffect(() => {
-		if (!state.selectedDate || !employeeSchedule) return
-
-		setState(prev => {
-			const shiftSlots = getAvailableShiftSlots(
-				employeeSchedule.employeeSchedule,
-				prev.selectedDate,
-				selectedServicesDuration
-			)
-
-			return {
-				...prev,
-				shiftSlots
-			}
-		})
-	}, [state.selectedProvider, employeeSchedule, selectedServicesDuration, state.selectedDate])
-
 	const employee = React.useMemo(
 		() =>
 			!state.selectedProvider || !location
@@ -279,7 +262,17 @@ const LocationAppointment = () => {
 	}
 
 	const handleDateSelection = selectedDate => {
-		setState(prev => ({ ...prev, selectedDate, selectedTime: undefined }))
+		setState(prev => {
+			const shiftSlots = getAvailableShiftSlots(
+				employeeSchedule.employeeSchedule,
+				selectedDate,
+				selectedServicesDuration
+			)
+
+			console.log(selectedServicesDuration)
+
+			return { ...prev, shiftSlots, selectedDate, selectedTime: undefined }
+		})
 	}
 
 	const handleTimeSelection = selectedTime => {
@@ -328,7 +321,7 @@ const LocationAppointment = () => {
 	return (
 		<div>
 			{!state.createdAppointment && (
-				<div className="px-4 mb-2 bg-gray-900 pb-12 shadow-lg">
+				<div className="px-4 mb-2 bg-gray-900 pb-12">
 					<div className="flex justify-between items-center pt-2 pb-4">
 						<FiArrowLeft
 							className="text-3xl text-gray-100"
@@ -352,7 +345,7 @@ const LocationAppointment = () => {
 							className="text-3xl text-gray-100"
 							to={{
 								state: {
-									from: history.location.pathname,
+									from: history.location.pathname
 								},
 								pathname: generatePath(LOCATION_OVERVIEW, { uuid })
 							}}
@@ -372,7 +365,7 @@ const LocationAppointment = () => {
 			)}
 
 			<div
-				className="bg-white pl-2 pt-2 -mt-12 overflow-x-hidden"
+				className="bg-white px-2 pt-2 -mt-12 overflow-x-hidden"
 				style={{ borderTopLeftRadius: 50 }}
 			>
 				{state.step === 1 && (

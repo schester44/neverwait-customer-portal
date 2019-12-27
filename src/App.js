@@ -93,7 +93,7 @@ const App = () => {
 							<LocationOverview />
 						</Route>
 
-						<Redirect to="/" />
+						<Redirect to="/profile/appointments" />
 					</Switch>
 				) : (
 					<Switch>

@@ -3,18 +3,14 @@ import SchedulerCreator from './ScheduleCreator'
 
 const scheduler = new SchedulerCreator()
 
-const getShiftSlots = (schedule, date, duration = 0) => {
+const getAvailableShiftSlots = (schedule, date, duration = 0) => {
 	const workDay = scheduler.find(schedule.schedule_ranges, date)
 
 	if (!workDay) return []
 
 	let shiftSlots = scheduler.getShiftSlots(workDay.schedule_shifts, 5, date)
 
-	const slots = []
-
-	for (let i = 0; i < shiftSlots.length; i++) {
-		const slot = shiftSlots[i]
-
+	const slots = shiftSlots.filter(slot => {
 		// Create slots based on the time this person works.
 		const isAvailable = schedule.appointments.every(appointment => {
 			const slotStartOverlapsAppt = isWithinRange(
@@ -29,32 +25,28 @@ const getShiftSlots = (schedule, date, duration = 0) => {
 				appointment.endTime
 			)
 
-			// We subtract 1 so an appt that ends at 10:15 doesn't overlap the 10:15 slot
-			const apptWouldOverlapExisting = isWithinRange(
-				addMinutes(slot.start_time, duration - 1),
+			const slotWithAddedDurationOverlapsAppointment = isWithinRange(
 				appointment.startTime,
-				appointment.endTime
+				slot.start_time,
+				addMinutes(slot.start_time, duration > 0 ? duration - 1 : 0)
 			)
 
-			const apptWouldOverflowSchedule = isAfter(
-				addMinutes(slot.start_time, duration - 1),
+			const appointmentExceedsSchedule = isAfter(
+				addMinutes(slot.start_time, duration > 0 ? duration - 1 : 0),
 				slot.shiftEnd
 			)
 
 			return (
+				!slotWithAddedDurationOverlapsAppointment &&
 				!slotStartOverlapsAppt &&
 				!slotEndOverlapsAppt &&
-				!apptWouldOverlapExisting &&
-				!apptWouldOverflowSchedule
+				!appointmentExceedsSchedule
 			)
 		})
 
-		if (isAvailable) {
-			slots.push(slot)
-		}
-	}
+		return isAvailable
+	})
 
 	return slots
 }
-
-export default getShiftSlots
+export default getAvailableShiftSlots

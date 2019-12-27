@@ -25,7 +25,7 @@ const Success = ({ type = 'appointment', appointment, totalPrice }) => {
 					<FiArrowLeft
 						className="text-3xl text-white"
 						onClick={() => {
-							history.push('/')
+							history.push('/profile/appointments')
 						}}
 					/>
 

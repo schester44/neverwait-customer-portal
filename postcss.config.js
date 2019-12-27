@@ -1,5 +1,20 @@
 const tailwindcss = require('tailwindcss')
 
+const purgecss = require('@fullhuman/postcss-purgecss')({
+	// Specify the paths to all of the template files in your project
+	content: ['./src/**/*.html', './src/**/*.js'],
+
+	// Include any special characters you're using in this regular expression
+	// Reference: https://tailwindcss.com/docs/controlling-file-size#writing-purgeable-html
+	defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || []
+})
+
+let plugins = [tailwindcss('./tailwind.config.js'), require('autoprefixer')]
+
+if (process.env.NODE_ENV === 'production') {
+	plugins = plugins.concat([purgecss])
+}
+
 module.exports = {
-	plugins: [tailwindcss('./tailwind.js'), require('autoprefixer')]
+	plugins
 }

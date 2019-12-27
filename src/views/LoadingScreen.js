@@ -13,18 +13,17 @@ const Container = styled('div')`
 	.loader,
 	.loader:after {
 		border-radius: 50%;
-		width: 10em;
-		height: 10em;
+		width: 5em;
+		height: 5em;
 	}
 	.loader {
-		margin: 60px auto;
 		font-size: 10px;
 		position: relative;
 		text-indent: -9999em;
-		border-top: 1.1em solid rgba(104, 109, 230, 0.2);
-		border-right: 1.1em solid rgba(104, 109, 230, 0.2);
-		border-bottom: 1.1em solid rgba(104, 109, 230, 0.2);
-		border-left: 1.1em solid rgba(104, 109, 230, 1);
+		border-top: 0.6em solid rgba(104, 109, 230, 0.2);
+		border-right: 0.6em solid rgba(104, 109, 230, 0.2);
+		border-bottom: 0.6em solid rgba(104, 109, 230, 0.2);
+		border-left: 0.6em solid rgba(104, 109, 230, 1);
 		transform: translateZ(0);
 		animation: load8 1.1s infinite linear;
 	}

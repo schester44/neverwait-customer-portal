@@ -39,8 +39,8 @@ h1 {
 
 .jaf-domus {
 	font-family: jaf-domus;
-}
 
+}
 p {
 	@apply text-xl;
 }

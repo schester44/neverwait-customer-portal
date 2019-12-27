@@ -4,15 +4,16 @@ import { useParams, useHistory, Link } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks'
 import { basicLocationInfoQuery } from '../../graphql/queries'
 import { FiArrowLeft } from 'react-icons/fi'
-import { FiClock, FiPhone, FiChevronDown, FiChevronUp } from 'react-icons/fi'
+import { FiPhone } from 'react-icons/fi'
 import NavFooter from '../HomeScreen/NavFooter'
-import { format, addMinutes, startOfDay, isWithinRange } from 'date-fns'
+import { format, addDays } from 'date-fns'
 import clsx from 'clsx'
 import { MobileView } from 'react-device-detect'
 
 import ClosingSoon from './ClosingSoon'
 import WorkingHour from './WorkingHour'
 import Button from '../../components/Button'
+import LocationDrawerHeader from './LocationDrawerHeader'
 
 const slideDown = keyframes`
 	from {
@@ -60,10 +61,17 @@ const Hours = styled('div')`
 	}
 `
 
+const startDate = new Date()
+const endDate = addDays(startDate, 7)
+
 const LocationOverview = () => {
 	const { uuid } = useParams()
 	const history = useHistory()
-	const { data, loading } = useQuery(basicLocationInfoQuery, { variables: { uuid } })
+
+	const { data, loading } = useQuery(basicLocationInfoQuery, {
+		variables: { uuid, startDate, endDate }
+	})
+
 	const [showHours, setShowHours] = React.useState(false)
 	const initialLoad = React.useRef(true)
 
@@ -74,6 +82,8 @@ const LocationOverview = () => {
 
 	const todaysName = format(new Date(), 'dddd').toLowerCase()
 	const workHourKeys = Object.keys(location.working_hours)
+
+	console.log(location)
 
 	return (
 		<div className="h-screen flex flex-col">
@@ -124,44 +134,15 @@ const LocationOverview = () => {
 				<Hours
 					className={clsx('mt-4', { show: showHours, hide: !showHours && !initialLoad.current })}
 				>
-					<div
+					<LocationDrawerHeader
+						isDrawerVisible={showHours}
+						closedDates={location.closed_dates}
+						today={location.working_hours[todaysName]}
 						onClick={() => {
 							setShowHours(prev => !prev)
 							initialLoad.current = false
 						}}
-						className="flex justify-between items-center border-t border-gray-200 pr-2"
-					>
-						<div className="flex items-center px-4 py-4">
-							<FiClock size={28} />
-
-							{location.working_hours[todaysName]?.open &&
-							isWithinRange(
-								new Date(),
-								addMinutes(startOfDay(new Date()), location.working_hours[todaysName].startTime),
-								addMinutes(startOfDay(new Date()), location.working_hours[todaysName].endTime)
-							) ? (
-								<span className="text-lg pl-2">
-									Open Now{' '}
-									{format(
-										addMinutes(
-											startOfDay(new Date()),
-											location.working_hours[todaysName].startTime
-										),
-										'h:mma'
-									)}{' '}
-									-{' '}
-									{format(
-										addMinutes(startOfDay(new Date()), location.working_hours[todaysName].endTime),
-										'h:mma'
-									)}
-								</span>
-							) : (
-								<span className="text-lg pl-2">Closed Now</span>
-							)}
-						</div>
-
-						{showHours ? <FiChevronUp size={28} /> : <FiChevronDown size={28} />}
-					</div>
+					/>
 
 					<div className="location-hours-details px-4">
 						{workHourKeys.map(day => {
@@ -169,6 +150,7 @@ const LocationOverview = () => {
 
 							return (
 								<WorkingHour
+									closedDates={location.closed_dates}
 									isToday={day === todaysName}
 									key={day}
 									day={day}

@@ -25,6 +25,15 @@ export const appointment = gql`
 	}
 `
 
+export const closedDate = gql`
+	fragment closedDate on ClosedDate {
+		id
+		description
+		start_date
+		end_date
+	}
+`
+
 export const workingHours = gql`
 	fragment workingHours on LocationWorkingHours {
 		sunday {

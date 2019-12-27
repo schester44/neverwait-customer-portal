@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { appointment, workingHours } from './fragments'
+import { appointment, workingHours, closedDate } from './fragments'
 
 export const profileQuery = gql`
 	query OnlineProfile {
@@ -33,18 +33,22 @@ export const profileQuery = gql`
 `
 
 export const basicLocationInfoQuery = gql`
-	query LocationInfo($uuid: String!) {
+	query LocationInfo($uuid: String!, $startDate: DateTime!, $endDate: DateTime!) {
 		locationByUUID(input: { uuid: $uuid }) {
 			id
 			name
 			address
 			contactNumber
 			photo(transformations: { ar: "16-9", h: "250" })
+			closed_dates(input: { start_date: $startDate, end_date: $endDate }) {
+				...closedDate
+			}
 			working_hours {
 				...workingHours
 			}
 		}
 	}
+	${closedDate}
 	${workingHours}
 `
 

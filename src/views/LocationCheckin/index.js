@@ -10,10 +10,11 @@ import { format, isAfter, addMinutes, startOfDay, endOfDay, isWithinRange } from
 import pling from '../../components/Pling'
 import FormFooter from '../../components/FormFooter'
 import Button from '../../components/Button'
-import LoadingScreen from '../LoadingScreen'
-
+import NavFooter from '../../components/NavFooter'
 import ProviderSelector from '../../components/ProviderSelector'
 import ServiceSelector from '../../components/ServiceSelector'
+import LoadingScreen from '../LoadingScreen'
+
 import useEnhancedLocationSubscription from '../../components/useEnhancedLocationSubscription'
 import { LOCATION_OVERVIEW } from '../../routes'
 
@@ -22,7 +23,6 @@ import { sequentialUpsertMutation } from '../../graphql/mutations'
 import Success from '../LocationAppointment/Success'
 import Review from './Review'
 import { dateFromTimeString } from '../../helpers/date-from'
-import NavFooter from '../HomeScreen/NavFooter'
 
 const renderTitle = ({ step, isFinished }) => {
 	if (isFinished) return null

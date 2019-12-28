@@ -1,11 +1,11 @@
 import React from 'react'
 import { Switch, Route, Link, Redirect } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
+import { FiEdit, FiLogOut, FiLock } from 'react-icons/fi'
 
 import { customerLogout } from '../../graphql/mutations'
 
-import NavFooter from '../HomeScreen/NavFooter'
-import { FiEdit, FiLogOut, FiLock } from 'react-icons/fi'
+import NavFooter from '../../components/NavFooter'
 
 import {
 	USER_SETTINGS_EDIT_ACCOUNT,

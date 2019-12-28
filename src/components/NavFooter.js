@@ -10,8 +10,8 @@ import {
 	LOCATION_CHECKIN,
 	LOCATION_SEARCH,
 	LOCATION_APPOINTMENT
-} from '../../routes'
-import { profileQuery } from '../../graphql/queries'
+} from '../routes'
+import { profileQuery } from '../graphql/queries'
 
 const popUp = keyframes`
 	from {

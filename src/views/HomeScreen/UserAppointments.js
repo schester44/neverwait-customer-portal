@@ -3,8 +3,9 @@ import { generatePath, Switch, Route, Redirect, useLocation } from 'react-router
 import styled, { css } from 'styled-components'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import Appointments from './UserAppointmentList'
-import NavFooter from './NavFooter'
-import { NavBar } from './Header'
+
+import NavFooter from '../../components/NavFooter'
+import NavBar from './NavBar'
 
 import { USER_APPOINTMENTS, APPOINTMENT_OVERVIEW } from '../../routes'
 

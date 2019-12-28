@@ -2,17 +2,19 @@ import React from 'react'
 import styled, { keyframes } from 'styled-components'
 import { useParams, useHistory, Link } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks'
-import { basicLocationInfoQuery } from '../../graphql/queries'
-import { FiArrowLeft } from 'react-icons/fi'
-import { FiPhone } from 'react-icons/fi'
-import NavFooter from '../HomeScreen/NavFooter'
 import { format, addDays, isWithinRange, startOfDay, endOfDay } from 'date-fns'
 import clsx from 'clsx'
 import { MobileView } from 'react-device-detect'
 
+import { FiArrowLeft } from 'react-icons/fi'
+import { FiPhone } from 'react-icons/fi'
+import NavFooter from '../../components/NavFooter'
+import Button from '../../components/Button'
+
+import { basicLocationInfoQuery } from '../../graphql/queries'
+
 import ClosingSoon from './ClosingSoon'
 import WorkingHour from './WorkingHour'
-import Button from '../../components/Button'
 import LocationDrawerHeader from './LocationDrawerHeader'
 
 const slideDown = keyframes`

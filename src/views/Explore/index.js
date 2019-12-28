@@ -1,7 +1,7 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
 
-import NavFooter from '../HomeScreen/NavFooter'
+import NavFooter from '../../components/NavFooter'
 
 import Location from './components/Location'
 

@@ -64,7 +64,7 @@ const App = () => {
 
 	return (
 		<React.Suspense fallback={<LoadingScreen />}>
-			<div className="container mx-auto h-screen">
+			<div className="container mx-auto h-full">
 				<AddToHomeScreen />
 
 				{profile ? (

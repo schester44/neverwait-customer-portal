@@ -239,7 +239,7 @@ const LocationAppointment = () => {
 	}
 
 	return (
-		<div>
+		<div className="h-full">
 			{!state.createdAppointment && (
 				<div className="px-4 mb-2 bg-gray-900 pb-12">
 					<div className="flex justify-between items-center pt-2 pb-4">

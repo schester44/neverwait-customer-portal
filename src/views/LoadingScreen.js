@@ -1,5 +1,14 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
+
+const spin = keyframes`
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
+`
 
 const Container = styled('div')`
 	overflow: hidden;
@@ -16,6 +25,7 @@ const Container = styled('div')`
 		width: 5em;
 		height: 5em;
 	}
+
 	.loader {
 		font-size: 10px;
 		position: relative;
@@ -24,25 +34,7 @@ const Container = styled('div')`
 		border-right: 0.6em solid rgba(104, 109, 230, 0.2);
 		border-bottom: 0.6em solid rgba(104, 109, 230, 0.2);
 		border-left: 0.6em solid rgba(104, 109, 230, 1);
-		transform: translateZ(0);
-		animation: load8 1.1s infinite linear;
-	}
-
-	@-webkit-keyframes load8 {
-		0% {
-			transform: rotate(0deg);
-		}
-		100% {
-			transform: rotate(360deg);
-		}
-	}
-	@keyframes load8 {
-		0% {
-			transform: rotate(0deg);
-		}
-		100% {
-			transform: rotate(360deg);
-		}
+		animation: ${spin} 1.1s infinite linear;
 	}
 `
 

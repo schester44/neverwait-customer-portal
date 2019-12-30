@@ -92,7 +92,7 @@ const LocationOverview = () => {
 	const isClosedToday = !!closedDate || !location.working_hours[todaysName]?.open
 
 	return (
-		<div className="h-screen flex flex-col">
+		<div className="h-full flex flex-col">
 			<div
 				className={clsx('overflow-hidden w-full bg-indigo-700', {
 					'h-0': !location.photo,

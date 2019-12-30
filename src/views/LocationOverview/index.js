@@ -52,13 +52,13 @@ const Hours = styled('div')`
 		background: rgba(242, 242, 242, 1);
 
 		.location-hours-details {
-			animation: ${slideDown} 0.5s ease forwards;
+			animation: ${slideDown} 0.25s ease forwards;
 		}
 	}
 
 	&.hide {
 		.location-hours-details {
-			animation: ${slideUp} 0.5s ease forwards;
+			animation: ${slideUp} 0.25s ease forwards;
 		}
 	}
 `

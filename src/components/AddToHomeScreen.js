@@ -48,7 +48,7 @@ const AddToHomeScreen = () => {
 				Save this page as an app for quicker access! Just tap the share button (
 				<img
 					alt="Add to home screen"
-					className="w-2 h-2 align-top inline"
+					className="w-4 h-4 align-middle inline"
 					src={`data:image/png;base64,${iOSShareBase64}`}
 				/>
 				) down below then find and tap the 'Add to Home Screen' button.

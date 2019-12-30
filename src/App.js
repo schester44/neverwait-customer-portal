@@ -52,7 +52,7 @@ const App = () => {
 		ReactGA.set({ userId: profile.id })
 	}, [profile])
 
-	if (loading) return <LoadingScreen />
+	if (!loading) return <LoadingScreen />
 
 	if (process.env.REACT_APP_MAINTENANCE_MODE) {
 		return (

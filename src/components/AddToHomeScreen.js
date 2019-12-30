@@ -27,7 +27,12 @@ const AddToHomeScreen = () => {
 	if (!visible) return null
 
 	return (
-		<div className="fixed opacity-25 top-0 left-0 w-full z-50 bg-gray-900 pt-8 px-4 pb-4 text-white shadow-lg">
+		<div
+			style={{
+				background: 'rgba(32,32,32,0.8)'
+			}}
+			className="fixed top-0 left-0 w-full z-50 pt-8 px-4 pb-4 text-white shadow-lg"
+		>
 			<FiX
 				onClick={() => setVisible(false)}
 				style={{

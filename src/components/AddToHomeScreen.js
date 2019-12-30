@@ -27,7 +27,7 @@ const AddToHomeScreen = () => {
 	if (!visible) return null
 
 	return (
-		<div className="fixed top-0 left-0 w-full z-50 bg-gray-900 pt-8 px-4 pb-4 text-white shadow-lg">
+		<div className="fixed opacity-25 top-0 left-0 w-full z-50 bg-gray-900 pt-8 px-4 pb-4 text-white shadow-lg">
 			<FiX
 				onClick={() => setVisible(false)}
 				style={{
@@ -43,7 +43,7 @@ const AddToHomeScreen = () => {
 				Save this page as an app for quicker access! Just tap the share button (
 				<img
 					alt="Add to home screen"
-					style={{ verticalAlign: 'top', width: 16, height: 16 }}
+					className="w-2 h-2 align-top inline"
 					src={`data:image/png;base64,${iOSShareBase64}`}
 				/>
 				) down below then find and tap the 'Add to Home Screen' button.

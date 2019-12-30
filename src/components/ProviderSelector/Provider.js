@@ -109,6 +109,8 @@ const Provider = ({ provider, isSelected, isAppointmentSelector, onClick }) => {
 									: 'Available Now'
 								: nextShift
 								? `Check-ins start at ${format(dateFromTimeString(nextShift.start_time), 'h:mma')}`
+								: provider.currentShift
+								? 'Unavailable (Fully Booked)'
 								: 'Unavailable'}
 						</p>
 					</div>

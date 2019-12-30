@@ -37,7 +37,7 @@ const LoginPage = ({ action, isAttemptingAction }) => {
 	}
 
 	return (
-		<div className="container mx-auto px-4">
+		<div className="mx-auto px-4 max-w-2xl">
 			<h1 className="mt-4 mb-6 mx-auto text-center font-black">LOG IN</h1>
 
 			<LoginForm

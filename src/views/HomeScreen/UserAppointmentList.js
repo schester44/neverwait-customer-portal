@@ -4,12 +4,10 @@ import Swipe from 'react-easy-swipe'
 
 import { USER_APPOINTMENTS, APPOINTMENT_OVERVIEW } from '../../routes'
 import Appointment from './Appointment'
+import useWindowDimensions from '../../hooks/useWindowDimensions'
 
-const placeholder = type => (
-	<div
-		style={{ height: 'calc(100vh - 210px)' }}
-		className="flex flex-col justify-center items-center"
-	>
+const Placeholder = ({ type, windowHeight }) => (
+	<div style={{ height: windowHeight - 220 }} className="flex flex-col justify-center items-center">
 		<p className="text-sm text-center text-gray-900 font-bold">You have no {type} appointments.</p>
 		<p className="text-sm text-center text-gray-900 font-bold">
 			{type === 'upcoming' && 'Lets get you cleaned up!'}
@@ -36,28 +34,32 @@ const UserAppointmentList = ({ profileAppointments }) => {
 		}
 	}
 
+	const { height } = useWindowDimensions()
+
 	return (
 		<Swipe
-			style={{ maxHeight: 'calc(100vh - 90px)' }}
+			style={{ maxHeight: height - 90 }}
 			className="container pb-24 h-full mx-auto px-2 py-4 overflow-auto scrolling-touch"
 			onSwipeLeft={onSwipeLeft}
 			onSwipeRight={onSwipeRight}
 		>
-			{appointments.length === 0
-				? placeholder(type)
-				: appointments.map((appointment, index) => {
-						return (
-							<Link
-								to={{
-									pathname: generatePath(APPOINTMENT_OVERVIEW, { id: appointment.id }),
-									state: { type, from: location.pathname }
-								}}
-								key={index}
-							>
-								<Appointment key={index} appointment={appointment} />
-							</Link>
-						)
-				  })}
+			{appointments.length === 0 ? (
+				<Placeholder type={type} windowHeight={height} />
+			) : (
+				appointments.map((appointment, index) => {
+					return (
+						<Link
+							to={{
+								pathname: generatePath(APPOINTMENT_OVERVIEW, { id: appointment.id }),
+								state: { type, from: location.pathname }
+							}}
+							key={index}
+						>
+							<Appointment key={index} appointment={appointment} />
+						</Link>
+					)
+				})
+			)}
 		</Swipe>
 	)
 }

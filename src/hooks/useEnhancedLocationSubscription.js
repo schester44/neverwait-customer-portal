@@ -110,7 +110,7 @@ const useEnhancedLocationSubscription = ({ queryOptions, computeEmployeeAvailabi
 			setState(() => {
 				let hasWorkingEmployees = false
 
-				const enhancedEmployees = computeEmployeeAvailability
+				const enhancedEmployees = !computeEmployeeAvailability
 					? employees
 					: employees.map(employee => {
 							const schedule = scheduleRangeFromDate({

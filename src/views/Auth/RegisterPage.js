@@ -78,8 +78,8 @@ const CreateAccount = () => {
 	}
 
 	return (
-		<div className="container mx-auto px-4 pb-4">
-			<Link to="/" className="absolute top-0 left-0 mt-4 ml-4 text-3xl text-gray-900">
+		<div className="relative mx-auto px-4 pb-4 max-w-2xl">
+			<Link to="/" className="absolute top-0 left-0 mt-2 ml-4 text-3xl text-gray-900">
 				<div className="back">
 					<FiArrowLeft />
 				</div>

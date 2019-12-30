@@ -49,7 +49,7 @@
 		"build:style": "postcss src/styles/index.css -o src/styles/tailwind.css",
 		"start:app": "react-app-rewired start",
 		"start:all": "npm-run-all -p watch:style start:app",
-		"start": "yarn start:app",
+		"start": "yarn build:style && yarn start:app",
 		"build": "NODE_ENV=production npm run build:style && react-app-rewired build",
 		"test": "cypress open"
 	},

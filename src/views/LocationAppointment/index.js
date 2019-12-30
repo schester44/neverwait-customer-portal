@@ -20,7 +20,7 @@ import ServiceSelector from '../../components/ServiceSelector'
 import Loading from '../LoadingScreen'
 import FormFooter from '../../components/FormFooter'
 import Button from '../../components/Button'
-import useEnhancedLocationSubscription from '../../components/useEnhancedLocationSubscription'
+import useEnhancedLocationSubscription from '../../hooks/useEnhancedLocationSubscription'
 import DateSelector from './DateSelector'
 import TimeSelector from './TimeSelector'
 

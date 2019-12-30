@@ -15,7 +15,7 @@ import ProviderSelector from '../../components/ProviderSelector'
 import ServiceSelector from '../../components/ServiceSelector'
 import LoadingScreen from '../LoadingScreen'
 
-import useEnhancedLocationSubscription from '../../components/useEnhancedLocationSubscription'
+import useEnhancedLocationSubscription from '../../hooks/useEnhancedLocationSubscription'
 import { LOCATION_OVERVIEW } from '../../routes'
 
 import { profileQuery } from '../../graphql/queries'
@@ -38,6 +38,8 @@ const renderTitle = ({ step, isFinished }) => {
 			break
 	}
 }
+
+const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 
 const LocationCheckin = () => {
 	const { uuid } = useParams()
@@ -114,8 +116,6 @@ const LocationCheckin = () => {
 			isWithinRange(new Date(), startOfDay(date.start_date), endOfDay(date.end_date))
 		)
 	}, [location])
-
-	const isClosedToday = !!closedDate
 
 	if (loading) return <LoadingScreen />
 
@@ -210,6 +210,20 @@ const LocationCheckin = () => {
 
 	const isWaitTimeLongEnough = employee?.waitTime > 20
 
+	const today = new Date()
+	const workHours = location.working_hours[days[today.getDay()]]
+
+	const isLocationClosed =
+		!workHours?.open ||
+		(workHours?.open &&
+			!isWithinRange(
+				today,
+				addMinutes(startOfDay(today), workHours.startTime),
+				addMinutes(startOfDay(today), workHours.endTime)
+			))
+
+	const isClosedToday = !!closedDate || isLocationClosed
+
 	return (
 		<div>
 			{!state.createdAppointment && (
@@ -264,7 +278,8 @@ const LocationCheckin = () => {
 					{isClosedToday && (
 						<>
 							<p className="text-lg text-center mt-12">
-								This location is closed today. ({closedDate.description})
+								This location is closed today.{' '}
+								{closedDate?.description && `(${closedDate.description})`}
 							</p>
 							<NavFooter />
 						</>
@@ -304,7 +319,18 @@ const LocationCheckin = () => {
 				/>
 			)}
 
-			{!state.createdAppointment && employee && !isWaitTimeLongEnough && (
+			{!state.createdAppointment && employee && !employee.isSchedulable && (
+				<FormFooter>
+					<div className="py-12">
+						<p className="text-center text-lg">
+							{state.selectedProvider.firstName} cannot be scheduled at the moment. Please select a
+							different provider.
+						</p>
+					</div>
+				</FormFooter>
+			)}
+
+			{!state.createdAppointment && employee?.isSchedulable && !isWaitTimeLongEnough && (
 				<FormFooter>
 					<div className="py-12">
 						<p className="text-center text-xl font-bold">

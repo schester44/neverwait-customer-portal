@@ -10,22 +10,24 @@
 	font-weight: 700;
 }
 
-
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
 }
 
-html{height:100%}
+html {
+	height: 100%;
+}
 
-body, html, #root {
+body,
+html,
+#root {
 	width: 100%;
 	height: 100%;
 	font-family: Muli, -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto,
 		'Helvetica Neue', Arial, sans-serif;
 }
-
 
 body {
 	-webkit-touch-callout: none;

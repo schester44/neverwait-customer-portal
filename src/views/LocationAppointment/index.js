@@ -158,7 +158,7 @@ const LocationAppointment = () => {
 		setShiftSlots(employeeSchedule.employeeSchedule, state.selectedDate)
 	}, [employeeSchedule, setShiftSlots, state.selectedDate])
 
-	if (loading) return <div>Loading...</div>
+	if (loading) return <Loading />
 
 	// TODO: This redirects when there is a network error.
 	if (!loading && !location) return <Redirect to="/" />

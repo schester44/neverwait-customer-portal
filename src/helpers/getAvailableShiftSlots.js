@@ -3,13 +3,12 @@ import SchedulerCreator from './ScheduleCreator'
 
 const scheduler = new SchedulerCreator()
 
-const getAvailableShiftSlots = (schedule, date, duration = 0) => {
+const getAvailableShiftSlots = (schedule, date, duration = 0, timeSlotInterval = 5) => {
 	const workDay = scheduler.find(schedule.schedule_ranges, date)
 
-	console.log('getAvailableShiftSlots')
 	if (!workDay) return []
 
-	let shiftSlots = scheduler.getShiftSlots(workDay.schedule_shifts, 5, date)
+	let shiftSlots = scheduler.getShiftSlots(workDay.schedule_shifts, timeSlotInterval, date)
 
 	const slots = shiftSlots.filter(slot => {
 		// Create slots based on the time this person works.

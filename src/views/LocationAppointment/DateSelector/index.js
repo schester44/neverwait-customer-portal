@@ -1,7 +1,7 @@
 import React from 'react'
 import SchedulerCreator from '../../../helpers/ScheduleCreator'
-import { isSameDay } from 'date-fns'
-
+import { isSameDay, startOfDay } from 'date-fns'
+import memoize from 'memoize-one'
 import DateCell from './DateCell'
 
 const isMobileCheck = () => {
@@ -17,21 +17,24 @@ const isMobileCheck = () => {
 const isMobile = isMobileCheck()
 const scheduler = new SchedulerCreator()
 
-const dates = scheduler.datesFrom(new Date(), 7)
+const createDates = memoize(scheduler.datesFrom)
 
-const DatePicker = ({ scheduleRanges, value, onSelect }) => {
+const DatePicker = ({ maxDays, scheduleRanges, closedDates = [], value, onSelect }) => {
 	const cellsRef = React.useRef()
+
+	const dates = createDates(startOfDay(new Date()), maxDays || 7)
 
 	return (
 		<div className="appearance-none flex w-full h-auto items-center border-b border-gray-200">
 			<div
-				className="w-full sm:justify-center flex overflow-x-auto overflow-y-hidden whitespace-no-wrap"
+				className="w-full flex overflow-x-auto overflow-y-hidden whitespace-no-wrap"
 				ref={cellsRef}
 			>
 				{dates.map((date, idx) => {
 					return (
 						<DateCell
 							key={idx}
+							closedDates={closedDates}
 							scheduleRanges={scheduleRanges}
 							width={50}
 							isDesktop={!isMobile}

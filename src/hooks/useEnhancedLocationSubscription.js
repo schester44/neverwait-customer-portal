@@ -11,10 +11,15 @@ import { locationDataQuery, employeeScheduleQuery } from '../graphql/queries'
 import { appointmentsSubscription } from '../graphql/subscriptions'
 import getSourcesNextShifts from '../helpers/getSourcesNextShifts'
 
-const useEnhancedLocationSubscription = ({ queryOptions, computeEmployeeAvailability = true }) => {
+const useEnhancedLocationSubscription = ({
+	queryOptions,
+	computeEmployeeAvailability = true,
+	skip = false,
+	employeeScheduleEndDateOffset = 7
+}) => {
 	const client = useApolloClient()
 
-	const { data, loading } = useQuery(locationDataQuery, { variables: queryOptions })
+	const { data, loading } = useQuery(locationDataQuery, { variables: queryOptions, skip })
 
 	const location = data?.locationByUUID
 
@@ -73,7 +78,7 @@ const useEnhancedLocationSubscription = ({ queryOptions, computeEmployeeAvailabi
 							employeeId,
 							input: {
 								start_date: startOfDay(new Date()),
-								end_date: endOfDay(addDays(new Date(), 7))
+								end_date: endOfDay(addDays(new Date(), employeeScheduleEndDateOffset))
 							}
 						}
 					})
@@ -85,7 +90,7 @@ const useEnhancedLocationSubscription = ({ queryOptions, computeEmployeeAvailabi
 							employeeId,
 							input: {
 								start_date: startOfDay(new Date()),
-								end_date: endOfDay(addDays(new Date(), 7))
+								end_date: endOfDay(addDays(new Date(), employeeScheduleEndDateOffset))
 							}
 						},
 						data: produce(employeeSchedule, draftState => {
@@ -174,7 +179,7 @@ const useEnhancedLocationSubscription = ({ queryOptions, computeEmployeeAvailabi
 			window.clearInterval(timer)
 			subscription.unsubscribe()
 		}
-	}, [client, location, computeEmployeeAvailability, queryOptions])
+	}, [client, location, computeEmployeeAvailability, employeeScheduleEndDateOffset, queryOptions])
 
 	return {
 		loading,

@@ -2,16 +2,15 @@ import React from 'react'
 import { produce } from 'immer'
 import { startOfDay, endOfDay, addDays, isEqual } from 'date-fns'
 import { Redirect, Link, useParams, generatePath, useHistory } from 'react-router-dom'
-import { useMutation, useLazyQuery } from '@apollo/react-hooks'
+import { useMutation, useLazyQuery, useQuery } from '@apollo/react-hooks'
 import { format } from 'date-fns'
 import memoize from 'memoize-one'
 import { FaStore } from 'react-icons/fa'
 import { FiArrowLeft } from 'react-icons/fi'
 
-import { employeeScheduleQuery, profileQuery } from '../../graphql/queries'
+import { employeeScheduleQuery, profileQuery, locationSettingsQuery } from '../../graphql/queries'
 import { createProfileAppointmentMutation } from '../../graphql/mutations'
 
-import SchedulerCreator from '../../helpers/ScheduleCreator'
 import getAvailableShiftSlots from '../../helpers/getAvailableShiftSlots'
 import { LOCATION_OVERVIEW } from '../../routes'
 
@@ -42,8 +41,6 @@ const renderTitle = ({ step }) => {
 	}
 }
 
-const scheduler = new SchedulerCreator()
-
 const _memoizedGetAvailableShiftSlots = memoize(getAvailableShiftSlots)
 
 const LocationAppointment = () => {
@@ -58,7 +55,6 @@ const LocationAppointment = () => {
 		selectedProvider: undefined,
 		selectedDate: undefined,
 		selectedTime: undefined,
-		visibleDates: scheduler.datesFrom(new Date(), 7),
 		shiftSlots: [],
 		schedule: {
 			appointments: [],
@@ -78,9 +74,50 @@ const LocationAppointment = () => {
 		)
 	}, [state.selectedServices, state.providerServicesById])
 
+	const {
+		data: { locationByUUID: { settings: locationSettings } = {} } = {},
+		loading: locationSettingsLoading
+	} = useQuery(locationSettingsQuery, { variables: { uuid } })
+
+	const queryOptions = React.useMemo(() => {
+		if (!locationSettings) return
+
+		return {
+			startTime: startOfDay(new Date()),
+			endTime: endOfDay(addDays(new Date(), locationSettings.onlineBooking.advanceBookingMaxDays)),
+			uuid,
+			sourceType: 'onlineappointment'
+		}
+	}, [uuid, locationSettings])
+
+	const { employees, location, loading } = useEnhancedLocationSubscription({
+		skip: !locationSettings,
+		queryOptions,
+		employeeScheduleEndDateOffset: locationSettings?.onlineBooking?.advanceBookingMaxDays,
+		computeEmployeeAvailability: false
+	})
+
+	const [createProfileAppointment, { loading: createLoading }] = useMutation(
+		createProfileAppointmentMutation
+	)
+
+	const [fetchSchedule, { data: employeeSchedule, loading: fetchLoading }] = useLazyQuery(
+		employeeScheduleQuery,
+		{
+			onCompleted: data => {
+				setShiftSlots(data.employeeSchedule, state.selectedDate || new Date())
+			}
+		}
+	)
+
 	const setShiftSlots = React.useCallback(
 		(schedule, date) => {
-			const shiftSlots = _memoizedGetAvailableShiftSlots(schedule, date, selectedServicesDuration)
+			const shiftSlots = _memoizedGetAvailableShiftSlots(
+				schedule,
+				date,
+				selectedServicesDuration,
+				locationSettings.onlineBooking.timeSlotInterval
+			)
 
 			const slotStillExists = !state.selectedTime
 				? false
@@ -94,35 +131,7 @@ const LocationAppointment = () => {
 				selectedTime: slotStillExists ? prev.selectedTime : undefined
 			}))
 		},
-		[selectedServicesDuration, state.selectedTime]
-	)
-
-	const queryOptions = React.useMemo(() => {
-		return {
-			startTime: startOfDay(new Date()),
-			endTime: endOfDay(addDays(new Date(), 7)),
-			uuid,
-			sourceType: 'onlineappointment'
-		}
-	}, [uuid])
-
-	const { employees, location, loading } = useEnhancedLocationSubscription({
-		queryOptions,
-		computeEmployeeAvailability: false
-	})
-
-	const [createProfileAppointment, { loading: createLoading }] = useMutation(
-		createProfileAppointmentMutation
-	)
-
-	const [fetchSchedule, { data: employeeSchedule, loading: fetchLoading }] = useLazyQuery(
-		employeeScheduleQuery,
-		{
-			onCompleted: data => {
-				console.log('shift slots')
-				setShiftSlots(data.employeeSchedule, state.selectedDate || new Date())
-			}
-		}
+		[selectedServicesDuration, state.selectedTime, locationSettings]
 	)
 
 	const locationId = location?.id
@@ -158,10 +167,10 @@ const LocationAppointment = () => {
 		setShiftSlots(employeeSchedule.employeeSchedule, state.selectedDate)
 	}, [employeeSchedule, setShiftSlots, state.selectedDate])
 
-	if (loading) return <Loading />
+	if (loading || locationSettingsLoading) return <Loading />
 
 	// TODO: This redirects when there is a network error.
-	if (!loading && !location) return <Redirect to="/" />
+	if (!loading && !locationSettingsLoading && !location) return <Redirect to="/" />
 
 	const handleProviderSelection = selectedProvider => {
 		const providerServicesById = selectedProvider.services.reduce((acc, service) => {
@@ -318,9 +327,11 @@ const LocationAppointment = () => {
 					) : (
 						<div className="pb-24">
 							<DateSelector
+								maxDays={locationSettings?.onlineBooking?.advanceBookingMaxDays}
 								value={state.selectedDate}
 								isDisabled={state.selectedServices.length === 0}
 								onSelect={handleDateSelection}
+								closedDates={location?.closed_dates}
 								scheduleRanges={employeeSchedule.employeeSchedule.schedule_ranges || []}
 								appointments={employeeSchedule.employeeSchedule.appointments || []}
 							/>

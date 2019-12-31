@@ -15,19 +15,19 @@ const Appointment = ({ appointment }) => {
 					{format(appointment.startTime, 'dddd, MMM Do')}
 				</p>
 
-				<p className="font-bold text-sm text-gray-600 mt-1 leading-tight">
+				<p className="font-bold text-sm text-gray-900 mt-1 leading-tight">
 					{appointment.location.name}
 				</p>
-				<p className="font-bold text-sm text-gray-600 mt-1 leading-tight">
+				<p className="font-bold text-sm text-gray-900 mt-1 leading-tight">
 					{appointment.location.address}
 				</p>
 
-				<p className="font-bold text-sm text-gray-600 mt-1 leading-tight">${appointment.price}</p>
+				<p className="font-bold text-sm text-gray-900 mt-1 leading-tight">${appointment.price}</p>
 			</div>
 
 			<p
 				className={clsx('text-2xl pl-1 font-black', {
-					'text-gray-700': !isApptToday,
+					'text-gray-900': !isApptToday,
 					'text-indigo-500': isApptToday
 				})}
 			>

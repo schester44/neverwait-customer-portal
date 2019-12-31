@@ -52,6 +52,20 @@ export const basicLocationInfoQuery = gql`
 	${workingHours}
 `
 
+export const locationSettingsQuery = gql`
+	query Location($uuid: String!) {
+		locationByUUID(input: { uuid: $uuid }) {
+			settings {
+				onlineBooking {
+					advanceBookingMaxDays
+					timeSlotInterval
+					cancellationThreshold
+				}
+			}
+		}
+	}
+`
+
 export const locationDataQuery = gql`
 	query Location(
 		$uuid: String!

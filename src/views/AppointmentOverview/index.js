@@ -2,8 +2,8 @@ import React from 'react'
 import clsx from 'clsx'
 import { produce } from 'immer'
 import { Redirect, useParams, useHistory, Link, generatePath } from 'react-router-dom'
-import { format, differenceInHours } from 'date-fns'
-import { useMutation } from '@apollo/react-hooks'
+import { format, differenceInMinutes } from 'date-fns'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import { MobileView } from 'react-device-detect'
 import { FiArrowLeft, FiPhone } from 'react-icons/fi'
 import { FaStore } from 'react-icons/fa'
@@ -17,6 +17,8 @@ import { profileQuery } from '../../graphql/queries'
 import pling from '../../components/Pling'
 import Modal from '../../components/Modal'
 import Button from '../../components/Button'
+
+import { locationSettingsQuery } from '../../graphql/queries'
 
 const AppointmentOverview = ({ profile }) => {
 	const history = useHistory()
@@ -40,6 +42,17 @@ const AppointmentOverview = ({ profile }) => {
 
 		return profile.appointments.upcoming.find(compare) || profile.appointments.past.find(compare)
 	}, [profile, appointmentId])
+
+	const { data: locationSettings, loading: locationSettingsLoading } = useQuery(
+		locationSettingsQuery,
+		{
+			skip: !appointment,
+			variables: { uuid: appointment?.location?.uuid }
+		}
+	)
+
+	const cancellationThreshold =
+		locationSettings?.locationByUUID.settings.onlineBooking.cancellationThreshold
 
 	if (!appointment) return <Redirect to={USER_DASHBOARD} />
 
@@ -167,7 +180,8 @@ const AppointmentOverview = ({ profile }) => {
 						)}
 
 						{appointment.status === 'confirmed' &&
-							differenceInHours(appointment.startTime, new Date()) > 3 && (
+							!locationSettingsLoading &&
+							differenceInMinutes(appointment.startTime, new Date()) > cancellationThreshold && (
 								<Button
 									type="ghost"
 									className="w-full mt-4"

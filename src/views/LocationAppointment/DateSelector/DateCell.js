@@ -1,18 +1,24 @@
 import React from 'react'
 import clsx from 'clsx'
-import { format } from 'date-fns'
+import { format, isWithinRange } from 'date-fns'
 
 import ScheduleCreator from '../../../helpers/ScheduleCreator'
 
 const scheduler = new ScheduleCreator()
 
 const DateCell = React.forwardRef(
-	({ date, isDesktop, scheduleRanges, isSelected, onClick }, ref) => {
+	({ date, scheduleRanges, closedDates, isSelected, onClick }, ref) => {
 		const canSchedule = React.useMemo(() => {
 			const schedule = scheduler.get(scheduleRanges, date)
 
+			const isClosedOnDate = closedDates.some(event =>
+				isWithinRange(date, event.start_date, event.end_date)
+			)
+
+			if (isClosedOnDate) return false
+
 			return schedule && schedule.schedule_shifts.some(shift => !!shift.acceptingAppointments)
-		}, [scheduleRanges, date])
+		}, [scheduleRanges, closedDates, date])
 
 		const handleClick = e => {
 			if (!canSchedule) return

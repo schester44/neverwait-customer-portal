@@ -2,7 +2,7 @@ import React from 'react'
 import ReactGA from 'react-ga'
 import { produce } from 'immer'
 import { Redirect, Link, generatePath, useParams, useHistory, useLocation } from 'react-router-dom'
-import { useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { FaStore } from 'react-icons/fa'
 import { FiArrowLeft } from 'react-icons/fi'
 import { format, isAfter, addMinutes, startOfDay, endOfDay, isWithinRange } from 'date-fns'
@@ -18,7 +18,7 @@ import LoadingScreen from '../LoadingScreen'
 import useEnhancedLocationSubscription from '../../hooks/useEnhancedLocationSubscription'
 import { LOCATION_OVERVIEW } from '../../routes'
 
-import { profileQuery } from '../../graphql/queries'
+import { profileQuery, locationSettingsQuery } from '../../graphql/queries'
 import { sequentialUpsertMutation } from '../../graphql/mutations'
 import Success from '../LocationAppointment/Success'
 import Review from './Review'
@@ -59,6 +59,11 @@ const LocationCheckin = () => {
 		selectedProvider: undefined
 	})
 
+	const { data: locationSettings } = useQuery(locationSettingsQuery, {
+		variables: { uuid },
+		skip: !uuid
+	})
+
 	const queryOptions = React.useMemo(() => {
 		return {
 			uuid,
@@ -69,7 +74,9 @@ const LocationCheckin = () => {
 	}, [uuid])
 
 	const { employees, location, loading } = useEnhancedLocationSubscription({
-		queryOptions
+		queryOptions,
+		defaultDuration:
+			locationSettings?.locationByUUID?.settings?.onlineCheckins?.leadMinWaitTime || 20
 	})
 
 	const employee = React.useMemo(
@@ -208,7 +215,9 @@ const LocationCheckin = () => {
 		})
 	}
 
-	const isWaitTimeLongEnough = employee?.waitTime > 20
+	const isWaitTimeLongEnough =
+		locationSettings &&
+		employee?.waitTime > locationSettings?.locationByUUID.settings.onlineCheckins.leadMinWaitTime
 
 	const today = new Date()
 	const workHours = location.working_hours[days[today.getDay()]]

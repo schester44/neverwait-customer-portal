@@ -6,10 +6,18 @@ import waitTimeInMinutes from '../helpers/waitTimeInMinutes'
 import isScheduledToWork from '../helpers/isScheduledToWork'
 import { scheduleRangeFromDate } from '../helpers/scheduleRangesByDate'
 import { shiftFromTime } from '../helpers/shifts'
-import { startOfDay, endOfDay, addDays } from 'date-fns'
+import {
+	startOfDay,
+	endOfDay,
+	addDays,
+	isAfter,
+	addMinutes,
+	differenceInMinutes
+} from 'date-fns'
 import { locationDataQuery, employeeScheduleQuery } from '../graphql/queries'
 import { appointmentsSubscription } from '../graphql/subscriptions'
 import getSourcesNextShifts from '../helpers/getSourcesNextShifts'
+import { dateFromTimeString } from '../helpers/date-from'
 
 const useEnhancedLocationSubscription = ({
 	queryOptions,
@@ -127,6 +135,11 @@ const useEnhancedLocationSubscription = ({
 								return { ...employee, isSchedulable: false }
 							}
 
+							const currentShift = shiftFromTime({
+								schedule,
+								time: new Date()
+							})
+
 							const firstAvailableTime = getFirstAvailableTime({
 								appointments: employee.appointments,
 								// TODO: 20 mins should be configurable
@@ -137,13 +150,27 @@ const useEnhancedLocationSubscription = ({
 
 							const sourcesNextShifts = getSourcesNextShifts({ schedule, firstAvailableTime })
 
-							const currentShift = shiftFromTime({
-								schedule,
-								time: new Date()
-							})
-
 							if (!firstAvailableTime) {
 								return { ...employee, isSchedulable: false, currentShift, sourcesNextShifts }
+							}
+
+							// If we're within 30 minutes of the end of the current shift, don't let the user check-in.
+							// TODO: What to do if there is a next shift?
+							if (
+								currentShift &&
+								isAfter(addMinutes(new Date(), 30), dateFromTimeString(currentShift.end_time))
+							) {
+								if (
+									!sourcesNextShifts.acceptingCheckins ||
+									differenceInMinutes(
+										dateFromTimeString(sourcesNextShifts.acceptingCheckins.start_time),
+										new Date()
+									) >= 60
+								) {
+									return { ...employee, isSchedulable: false, currentShift, sourcesNextShifts }
+								}
+
+								// FIXME: It's possible for the UI to say "No Wait" when there isn't enough time to book an appointment. This is misleading to the customer because it indicates there's no wait even though the barber's shift is done in X minutes. The code above tries to fix it if there isn't a next shift within 60 minutes but falls short in completely preventing it.
 							}
 
 							const isSchedulable = isScheduledToWork(employee, firstAvailableTime)

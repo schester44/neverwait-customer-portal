@@ -56,6 +56,9 @@ export const locationSettingsQuery = gql`
 	query Location($uuid: String!) {
 		locationByUUID(input: { uuid: $uuid }) {
 			settings {
+				onlineCheckins {
+					leadMinWaitTime
+				}
 				onlineBooking {
 					advanceBookingMaxDays
 					timeSlotInterval

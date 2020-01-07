@@ -118,7 +118,7 @@ const NavFooter = () => {
 	}, [profile])
 
 	const shouldRedirectToLastAppointment =
-		filteredLocations.length === 1 || filteredLocations.length <= profile.locations.length
+		filteredLocations.length === 1 || filteredLocations.length < profile.locations.length
 
 	const handleCheckin = () => {
 		if (shouldRedirectToLastAppointment) {

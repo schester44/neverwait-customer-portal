@@ -80,14 +80,13 @@ const Success = ({ type = 'appointment', appointment, totalPrice }) => {
 			<div className="px-2 pt-10">
 				{type === 'appointment' ? (
 					<p className="text-center mb-4">
-						Appointment booked with {appointment.employee.firstName} for{' '}
+						You have successfully booked an appointment with {appointment.employee.firstName} for{' '}
 						{format(appointment.startTime, 'dddd MMMM Do, YYYY')} at{' '}
 						{format(appointment.startTime, 'h:mma')}.
 					</p>
 				) : (
 					<p className="text-center mb-4">
-						Checked in with for today at {format(appointment.startTime, 'h:mma')}with{' '}
-						{appointment.employee.firstName} .
+						You have successfully checked in with {appointment.employee.firstName} for today at {format(appointment.startTime, 'h:mma')}.
 					</p>
 				)}
 

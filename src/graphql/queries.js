@@ -55,6 +55,7 @@ export const basicLocationInfoQuery = gql`
 export const locationSettingsQuery = gql`
 	query Location($uuid: String!) {
 		locationByUUID(input: { uuid: $uuid }) {
+			id
 			settings {
 				onlineCheckins {
 					leadMinWaitTime

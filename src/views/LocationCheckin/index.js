@@ -233,15 +233,6 @@ const LocationCheckin = () => {
 
 	const isClosedToday = !!closedDate || isLocationClosed
 
-	if (employee && locationSettings) {
-		console.log(
-			employee?.isSchedulable,
-			!isWaitTimeLongEnough,
-			employee.waitTime,
-			locationSettings?.locationByUUID.settings.onlineCheckins.leadMinWaitTime
-		)
-	}
-
 	return (
 		<div>
 			{!state.createdAppointment && (

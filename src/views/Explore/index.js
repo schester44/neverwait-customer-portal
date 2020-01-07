@@ -36,7 +36,7 @@ const Explore = ({ locations, profile }) => {
 			<h1 className="text-center mt-2 text-2xl">Explore</h1>
 
 			<h4 className="my-4 text-gray-700 text-center">
-				The perfect barber or stylist is just ahead.
+				The perfect barbers andd stylists are just ahead.
 			</h4>
 
 			{filteredLocations.map(location => {

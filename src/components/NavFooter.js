@@ -118,7 +118,8 @@ const NavFooter = () => {
 	}, [profile])
 
 	const shouldRedirectToLastAppointment =
-		filteredLocations.length === 1 || filteredLocations.length < profile.locations.length
+		profile &&
+		(filteredLocations.length === 1 || filteredLocations.length < profile.locations.length)
 
 	const handleCheckin = () => {
 		if (shouldRedirectToLastAppointment) {
@@ -129,7 +130,7 @@ const NavFooter = () => {
 				{ from: history.location.pathname }
 			)
 		} else {
-			history.push(LOCATION_SEARCH, { action: 'checkin' }, { from: history.location.pathname })
+			history.push(LOCATION_SEARCH, { action: 'checkin', from: history.location.pathname })
 		}
 	}
 

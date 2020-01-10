@@ -16,17 +16,11 @@ ReactGA.initialize(process.env.REACT_APP_GATRACKINGID, {
 	debug: process.env.NODE_ENV !== 'production'
 })
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' && window.SENTRY_RELEASE) {
 	Sentry.init({
 		environment: process.env.NODE_ENV,
 		dsn: process.env.REACT_APP_SENTRY_DSN,
-		integrations(integrations) {
-			if (process.env.NODE_ENV !== 'production') {
-				return integrations.filter(integration => integration.name !== 'Breadcrumbs')
-			}
-
-			return integrations
-		}
+		release: window.SENTRY_RELEASE.id
 	})
 }
 

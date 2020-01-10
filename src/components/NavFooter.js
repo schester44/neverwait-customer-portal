@@ -98,7 +98,7 @@ const NavFooter = () => {
 	const profile = data?.profile
 
 	const filteredLocations = React.useMemo(() => {
-		if (!profile) return []
+		if (!profile?.locations) return []
 
 		if (profile.appointments.upcoming.length === 0 && profile.appointments.past.length === 0) {
 			return profile.locations
@@ -118,7 +118,7 @@ const NavFooter = () => {
 	}, [profile])
 
 	const shouldRedirectToLastAppointment =
-		profile &&
+		profile?.locations &&
 		(filteredLocations.length === 1 || filteredLocations.length < profile.locations.length)
 
 	const handleCheckin = () => {

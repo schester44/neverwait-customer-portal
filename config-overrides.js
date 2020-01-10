@@ -11,7 +11,7 @@ function addSentry(config) {
 
 	config.plugins.push(
 		new SentryCliPlugin({
-			release: process.env.COMMIT_REF,
+			release: `portal-${process.env.COMMIT_REF}`,
 			urlPrefix: '~/static/js',
 			include: path.resolve(__dirname, 'src'),
 			ignore: ['node_modules'],

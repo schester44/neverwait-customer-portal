@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === 'production' && window.SENTRY_RELEASE) {
 	Sentry.init({
 		environment: process.env.NODE_ENV,
 		dsn: process.env.REACT_APP_SENTRY_DSN,
-		release: window.SENTRY_RELEASE.id
+		release: `portal-${window.SENTRY_RELEASE.id}`
 	})
 }
 

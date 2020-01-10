@@ -17,6 +17,7 @@ ReactGA.initialize(process.env.REACT_APP_GATRACKINGID, {
 })
 
 if (process.env.NODE_ENV === 'production' && window.SENTRY_RELEASE) {
+	console.log('Sentry initialized', `portal-${window.SENTRY_RELEASE.id}`)
 	Sentry.init({
 		environment: process.env.NODE_ENV,
 		dsn: process.env.REACT_APP_SENTRY_DSN,

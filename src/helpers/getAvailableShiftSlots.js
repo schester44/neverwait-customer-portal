@@ -28,11 +28,11 @@ const getAvailableShiftSlots = (schedule, date, duration = 0, timeSlotInterval =
 			const slotWithAddedDurationOverlapsAppointment = isWithinRange(
 				appointment.startTime,
 				slot.start_time,
-				addMinutes(slot.start_time, duration > 0 ? duration - 1 : 0)
+				addMinutes(slot.start_time, duration > 0 ? duration : 0)
 			)
 
 			const appointmentExceedsSchedule = isAfter(
-				addMinutes(slot.start_time, duration > 0 ? duration - 1 : 0),
+				addMinutes(slot.start_time, duration > 0 ? duration : 0),
 				slot.shiftEnd
 			)
 

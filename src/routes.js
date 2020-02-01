@@ -17,3 +17,8 @@ export const AUTH_REGISTER = '/auth/register'
 export const AUTH_LOGIN = '/auth/login'
 
 export const AUTH_FORGOT_PASSWORD = '/auth/forgot-password'
+
+
+export const EMPLOYEE_OVERVIEW = '/me/:uuid'
+export const EMPLOYEE_APPOINTMENT = '/me/:uuid/appointment'
+export const EMPLOYEE_CHECKIN = '/me/:uuid/checkin'

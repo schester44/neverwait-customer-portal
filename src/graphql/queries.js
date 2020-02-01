@@ -32,6 +32,45 @@ export const profileQuery = gql`
 	${appointment}
 `
 
+export const employeeByUUIDQuery = gql`
+	query employee($uuid: String, $startTime: DateTime!, $endTime: DateTime!) {
+		employee(input: { uuid: $uuid }) {
+			id
+			firstName
+			lastName
+			phoneNumber
+			photo(transformations: { ar: "4-3", h: "150" })
+			locations {
+				id
+				name
+				uuid
+				closed_dates(input: { start_date: $startTime, end_date: $endTime }) {
+					...closedDate
+				}
+				working_hours {
+				...workingHours
+			}
+			}
+			schedule_ranges(input: { where: { start_date: $startTime, end_date: $endTime } }) {
+				locationId
+				start_date
+				end_date
+				day_of_week
+				schedule_shifts {
+					start_time
+					end_time
+					acceptingAppointments
+					acceptingCheckins
+					acceptingWalkins
+				}
+			}
+		}
+	}
+
+	${closedDate}
+	${workingHours}
+`
+
 export const basicLocationInfoQuery = gql`
 	query LocationInfo($uuid: String!, $startDate: DateTime!, $endDate: DateTime!) {
 		locationByUUID(input: { uuid: $uuid }) {

@@ -184,7 +184,7 @@ const NavFooter = () => {
 					<FiCalendar />
 				</Action>
 
-				{match.path === '/l/:uuid' ? (
+				{match.path === '/l/:uuid' || match.path === '/me/:uuid' ? (
 					//  hide the action btn when on the location page since it shows those primary action btns
 					<span />
 				) : (

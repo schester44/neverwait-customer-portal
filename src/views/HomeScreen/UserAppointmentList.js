@@ -38,6 +38,7 @@ const UserAppointmentList = ({ profileAppointments }) => {
 
 	return (
 		<Swipe
+			tolerance={100}
 			style={{ maxHeight: height - 90 }}
 			className="container pb-24 h-full mx-auto px-2 py-4 overflow-auto scrolling-touch"
 			onSwipeLeft={onSwipeLeft}

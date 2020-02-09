@@ -10,7 +10,6 @@ import { FaStore } from 'react-icons/fa'
 
 import Swipe from 'react-easy-swipe'
 import { USER_DASHBOARD, LOCATION_OVERVIEW } from '../../routes'
-import isRecentAppointment from '../../helpers/isRecentAppointment'
 import { cancelAppointmentMutation } from '../../graphql/mutations'
 import { profileQuery } from '../../graphql/queries'
 
@@ -29,19 +28,22 @@ const AppointmentOverview = ({ profile }) => {
 	const [cancelAppointment, { loading: cancelLoading }] = useMutation(cancelAppointmentMutation)
 
 	const appointment = React.useMemo(() => {
-		if (appointmentId === 'recent') {
-			const appointment = JSON.parse(localStorage.getItem('last-appt'))
-			const isRecent = isRecentAppointment(appointment)
-			if (isRecent) return appointment
-
-			// when we return undefiend, we need to redirect the user back to the overview screen. tehy're trying to view a recent appointment but there isn't one.
-			return isRecent ? appointment : undefined
-		}
-
 		const compare = appt => Number(appt.id) === Number(appointmentId)
 
 		return profile.appointments.upcoming.find(compare) || profile.appointments.past.find(compare)
 	}, [profile, appointmentId])
+
+	const appointmentServices = React.useMemo(() => {
+		if (!appointment) return []
+
+		return appointment.services.reduce((acc, service) => {
+			for (let i = 0; i < service.quantity; i++) {
+				acc.push({ ...service })
+			}
+
+			return acc
+		}, [])
+	}, [appointment])
 
 	const { data: locationSettings, loading: locationSettingsLoading } = useQuery(
 		locationSettingsQuery,
@@ -153,19 +155,21 @@ const AppointmentOverview = ({ profile }) => {
 					<div className="border-t border-gray-200 pt-4 mt-4 mb-4">
 						<p className="text-sm font-bold leading-none mb-2">Service Details</p>
 
-						{appointment.services.length > 0 &&
-							appointment.services.map((service, index) => (
+						{appointmentServices.length > 0 &&
+							appointmentServices.map((service, index) => (
 								<div className="flex mb-2 justify-between items-center" key={index}>
-									<p className="text-lg text-gray-900">{service.name}</p>
-									<p className="text-lg text-gray-900">with {appointment.employee.firstName}</p>
+									<p className="text-lg">{service.name}</p>
+									<p className="text-lg">${service.price}</p>
 								</div>
 							))}
 
-						<div className="flex justify-between mt-2">
-							<p className="font-black">Total</p>
+						{appointmentServices.length > 1 && (
+							<div className="flex justify-between mt-2 border-t border-gray-200 pt-2">
+								<p className="font-black">Total</p>
 
-							<p className="font-black">${appointment.price}</p>
-						</div>
+								<p className="font-black">${appointment.price}</p>
+							</div>
+						)}
 					</div>
 
 					<div className="actions mt-8">

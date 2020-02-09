@@ -20,6 +20,10 @@ export const appointment = gql`
 			photo
 		}
 		services {
+			id
+			price
+			duration
+			quantity
 			name
 		}
 	}

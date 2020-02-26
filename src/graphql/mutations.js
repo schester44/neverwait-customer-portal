@@ -55,12 +55,14 @@ export const createProfileAppointmentMutation = gql`
 				address
 				uuid
 				contactNumber
+				photo
 			}
 			services {
 				id
 				name
 				price
 				duration
+				quantity
 			}
 			employee {
 				firstName
@@ -86,6 +88,7 @@ export const sequentialUpsertMutation = gql`
 				address
 				uuid
 				contactNumber
+				photo
 			}
 			services {
 				id
@@ -93,6 +96,7 @@ export const sequentialUpsertMutation = gql`
 				serviceGroupId
 				price
 				duration
+				quantity
 				sourceId
 			}
 			employee {

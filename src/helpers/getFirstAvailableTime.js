@@ -11,6 +11,7 @@ const getFirstAvailableTime = ({
 }) => {
 	const now = new Date()
 	// sort by startTime so appointments are in the order of which they occur
+	// FIXME: This sorting doesn't work if two events start at the same time
 	const sortedAppointments = [...blockedTimes, ...appointments]
 		.filter(
 			({ status, endTime, __typename }) =>

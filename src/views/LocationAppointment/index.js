@@ -84,7 +84,9 @@ const LocationAppointment = () => {
 
 		return {
 			startTime: startOfDay(new Date()),
-			endTime: endOfDay(addDays(new Date(), locationSettings.onlineBooking.advanceBookingMaxDays)),
+			endTime: endOfDay(
+				addDays(new Date(), locationSettings.onlineBooking?.advanceBookingMaxDays || 0)
+			),
 			uuid,
 			sourceType: 'onlineappointment'
 		}
@@ -93,7 +95,7 @@ const LocationAppointment = () => {
 	const { employees, location, loading } = useEnhancedLocationSubscription({
 		skip: !locationSettings,
 		queryOptions,
-		employeeScheduleEndDateOffset: locationSettings?.onlineBooking?.advanceBookingMaxDays,
+		employeeScheduleEndDateOffset: locationSettings?.onlineBooking?.advanceBookingMaxDays || 0,
 		computeEmployeeAvailability: false
 	})
 

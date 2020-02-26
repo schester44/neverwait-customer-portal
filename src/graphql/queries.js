@@ -121,6 +121,14 @@ export const locationDataQuery = gql`
 						serviceId
 					}
 				}
+				blockedTimes(
+					input: { where: { startTime: { gte: $startTime }, endTime: { lte: $endTime } } }
+				) {
+					id
+					startTime
+					endTime
+				}
+
 				appointments(
 					input: {
 						where: {
@@ -145,7 +153,13 @@ export const locationDataQuery = gql`
 
 export const employeeScheduleQuery = gql`
 	query($locationId: ID!, $employeeId: ID!, $input: EmployeeScheduleInput!) {
-		employeeSchedule(locationId: $locationId, employeeId: $employeeId, input: $input) {
+		employeeSchedule(locationId: $locationId, employeeId: $employeeId, input: $input)
+			@connection(key: "employeeSchedule", filter: ["employeeId"]) {
+			blockedTimes {
+				id
+				startTime
+				endTime
+			}
 			appointments {
 				id
 				startTime

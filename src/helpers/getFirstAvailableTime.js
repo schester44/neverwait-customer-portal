@@ -4,14 +4,18 @@ import isWorkingAtTime from './isWorking'
 
 const getFirstAvailableTime = ({
 	appointments,
+	blockedTimes,
 	duration,
 	schedule,
 	sourceType = 'acceptingCheckins'
 }) => {
 	const now = new Date()
 	// sort by startTime so appointments are in the order of which they occur
-	const sortedAppointments = appointments
-		.filter(({ status, endTime }) => status === 'confirmed' && isAfter(endTime, now))
+	const sortedAppointments = [...blockedTimes, ...appointments]
+		.filter(
+			({ status, endTime, __typename }) =>
+				(status === 'confirmed' || __typename === 'BlockedTime') && isAfter(endTime, now)
+		)
 		.sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
 
 	const isWorkingRightNow = isWorkingAtTime({

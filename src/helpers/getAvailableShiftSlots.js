@@ -12,7 +12,7 @@ const getAvailableShiftSlots = (schedule, date, duration = 0, timeSlotInterval =
 
 	const slots = shiftSlots.filter(slot => {
 		// Create slots based on the time this person works.
-		const isAvailable = schedule.appointments.every(appointment => {
+		const isAvailable = [...schedule.appointments, ...schedule.blockedTimes].every(appointment => {
 			const slotStartOverlapsAppt = isWithinRange(
 				slot.start_time,
 				appointment.startTime,

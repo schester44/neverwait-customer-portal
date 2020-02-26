@@ -6,18 +6,71 @@ import waitTimeInMinutes from '../helpers/waitTimeInMinutes'
 import isScheduledToWork from '../helpers/isScheduledToWork'
 import { scheduleRangeFromDate } from '../helpers/scheduleRangesByDate'
 import { shiftFromTime } from '../helpers/shifts'
-import {
-	startOfDay,
-	endOfDay,
-	addDays,
-	isAfter,
-	addMinutes,
-	differenceInMinutes
-} from 'date-fns'
+import { isAfter, addMinutes, differenceInMinutes } from 'date-fns'
 import { locationDataQuery, employeeScheduleQuery } from '../graphql/queries'
 import { appointmentsSubscription } from '../graphql/subscriptions'
 import getSourcesNextShifts from '../helpers/getSourcesNextShifts'
 import { dateFromTimeString } from '../helpers/date-from'
+
+function updateEmployeeSchedule({
+	client,
+	employeeId,
+	locationId,
+	isDeleted,
+	blockedTime,
+	appointment
+}) {
+	try {
+		const employeeSchedule = client.readQuery({
+			query: employeeScheduleQuery,
+			variables: {
+				locationId,
+				employeeId
+			}
+		})
+
+		client.writeQuery({
+			query: employeeScheduleQuery,
+			variables: {
+				locationId,
+				employeeId
+			},
+			data: produce(employeeSchedule, draftState => {
+				if (isDeleted) {
+					if (appointment) {
+						const index = employeeSchedule.employeeSchedule.appointments.findIndex(
+							({ id }) => id === appointment.id
+						)
+
+						if (index >= 0) {
+							draftState.employeeSchedule.appointments.splice(index, 1)
+						}
+					}
+
+					if (blockedTime) {
+						const index = employeeSchedule.employeeSchedule.blockedTimes.findIndex(
+							({ id }) => id === blockedTime.id
+						)
+
+						if (index >= 0) {
+							draftState.employeeSchedule.blockedTimes.splice(index, 1)
+						}
+					}
+				} else {
+					if (appointment) {
+						draftState.employeeSchedule.appointments.push(appointment)
+					}
+
+					if (blockedTime) {
+						draftState.employeeSchedule.blockedTimes.push(blockedTime)
+					}
+				}
+			})
+		})
+	} catch (error) {
+		console.error('useEnhancedLocationSubscription', error)
+	}
+}
 
 const useEnhancedLocationSubscription = ({
 	queryOptions,
@@ -48,75 +101,65 @@ const useEnhancedLocationSubscription = ({
 				variables: { locationId: location.id }
 			})
 			.subscribe(({ data }) => {
-				if (!data.AppointmentsChange?.appointment) return
+				if (!data.SchedulingChange) return
 
 				const locationData = client.readQuery({ query: locationDataQuery, variables: queryOptions })
 
-				const { appointment, employeeId, isNewRecord } = data.AppointmentsChange
+				const { payload, action, employeeId, locationId } = data.SchedulingChange
+				const { appointment, blockedTime } = payload
 
-				const isDeleted = appointment.status === 'deleted' || appointment.status === 'canceled'
+				const isDeleted = appointment
+					? appointment.status === 'deleted' ||
+					  appointment.status === 'canceled' ||
+					  appointment.status === 'noshow'
+					: action === 'DELETED'
 
-				// let apollo handle updates.
-				if (!isNewRecord && !isDeleted) return
+				if (action === 'UPDATED' && !isDeleted) {
+					return
+				}
 
-				const employees = locationData.locationByUUID.employees.map(employee => {
-					if (+employeeId !== +employee.id) return employee
-
-					return {
-						...employee,
-						appointments: isDeleted
-							? employee.appointments.filter(appt => appt.id !== appointment.id)
-							: employee.appointments.concat(appointment)
-					}
+				updateEmployeeSchedule({
+					employeeId,
+					locationId,
+					client,
+					isDeleted,
+					appointment,
+					blockedTime
 				})
 
 				client.writeQuery({
 					query: locationDataQuery,
 					variables: queryOptions,
 					data: produce(locationData, draftState => {
-						draftState.locationByUUID.employees = employees
-					})
-				})
+						const employeeIndex = draftState.locationByUUID.employees.findIndex(
+							({ id }) => parseInt(id, 10) === parseInt(employeeId, 10)
+						)
 
-				try {
-					const employeeSchedule = client.readQuery({
-						query: employeeScheduleQuery,
-						variables: {
-							locationId: location.id,
-							employeeId,
-							input: {
-								start_date: startOfDay(new Date()),
-								end_date: endOfDay(addDays(new Date(), employeeScheduleEndDateOffset))
+						if (employeeIndex < 0) return
+
+						const employee = draftState.locationByUUID.employees[employeeIndex]
+
+						if (appointment) {
+							if (isDeleted) {
+								draftState.locationByUUID.employees[
+									employeeIndex
+								].appointments = employee.appointments.filter(({ id }) => id !== appointment.id)
+							} else {
+								draftState.locationByUUID.employees[employeeIndex].appointments.push(appointment)
+							}
+						}
+
+						if (blockedTime) {
+							if (isDeleted) {
+								draftState.locationByUUID.employees[
+									employeeIndex
+								].blockedTimes = employee.blockedTimes.filter(({ id }) => id !== blockedTime.id)
+							} else {
+								draftState.locationByUUID.employees[employeeIndex].blockedTimes.push(blockedTime)
 							}
 						}
 					})
-
-					client.writeQuery({
-						query: employeeScheduleQuery,
-						variables: {
-							locationId: location.id,
-							employeeId,
-							input: {
-								start_date: startOfDay(new Date()),
-								end_date: endOfDay(addDays(new Date(), employeeScheduleEndDateOffset))
-							}
-						},
-						data: produce(employeeSchedule, draftState => {
-							if (isDeleted) {
-								draftState.employeeSchedule.appointments.slice(
-									employeeSchedule.employeeSchedule.appointments.findIndex(
-										appt => appt.id === appointment.id
-									),
-									1
-								)
-							} else {
-								draftState.employeeSchedule.appointments.push(appointment)
-							}
-						})
-					})
-				} catch (error) {
-					console.error('useEnhancedLocationSubscription', error)
-				}
+				})
 			})
 
 		const updateEmployeeWaitTimes = () => {
@@ -142,6 +185,7 @@ const useEnhancedLocationSubscription = ({
 
 							const firstAvailableTime = getFirstAvailableTime({
 								appointments: employee.appointments,
+								blockedTimes: employee.blockedTimes,
 								// TODO: 20 mins should be configurable
 								duration: 20,
 								schedule,

@@ -1,16 +1,27 @@
 import gql from 'graphql-tag'
 
 export const appointmentsSubscription = gql`
-	subscription onAppointmentsChange($locationId: ID!) {
-		AppointmentsChange(locationId: $locationId) {
+	subscription onScheduleChange($locationId: ID!) {
+		SchedulingChange(locationId: $locationId) {
 			employeeId
-			isNewRecord
-			appointment {
-				id
-				status
-				duration
-				startTime
-				endTime
+			locationId
+			action
+			payload {
+				appointment {
+					id
+					status
+					duration
+					startTime
+					endTime
+				}
+				blockedTime {
+					id
+					startTime
+					endTime
+					locationId
+					employeeId
+					description
+				}
 			}
 		}
 	}

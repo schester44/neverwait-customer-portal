@@ -34,7 +34,7 @@ const Review = ({
 				</div>
 
 				<div className="md:w-3/5">
-					<h1 className="md:text-2xl">{location.name}</h1>
+					<h1 className="text-lg font-bold md:text-2xl">{location.name}</h1>
 					<p className="text-sm md:text-sm text-gray-600">{location.address}</p>
 					<p className="font-black text-xl">
 						{format(selectedTime, 'dddd MMMM Do')} at {format(selectedTime, 'h:mma')} with{' '}

@@ -1,13 +1,14 @@
 import React from 'react'
 import Service from './Service'
 
-const ServiceSelector = ({ services = [], selected = {}, onSelect }) => {
+const ServiceSelector = ({ services = [], selected = {}, shouldShowDuration, onSelect }) => {
 	return (
 		<div>
-			{services.map(service => {
+			{services.map((service) => {
 				return (
 					<Service
 						key={service.id}
+						shouldShowDuration={shouldShowDuration}
 						isSelected={selected.includes(service.id)}
 						service={service}
 						onClick={() => onSelect(service)}

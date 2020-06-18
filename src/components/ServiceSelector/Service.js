@@ -2,7 +2,7 @@ import React from 'react'
 import clsx from 'clsx'
 import { FiCheck } from 'react-icons/fi'
 
-const Service = ({ isSelected, service, onClick }) => {
+const Service = ({ isSelected, shouldShowDuration, service, onClick }) => {
 	return (
 		<div
 			className="flex px-2 hover:bg-gray-100 py-4 items-center border-b border-gray-200 cursor-pointer"
@@ -22,7 +22,12 @@ const Service = ({ isSelected, service, onClick }) => {
 				<div className="flex items-center justify-between">
 					<div className="left">
 						<p className="font-bold text-lg leading-none">{service.name}</p>
-						<p className="text-gray-600 text-sm">{service.duration} min</p>
+						<p className="text-gray-600 text-sm">
+							{/* TODO: Convert to human readable, should something exceed 1 hour (salons) */}
+							{shouldShowDuration && `${service.duration} min`}
+							{service.description && shouldShowDuration && ' - '}
+							{service.description}
+						</p>
 					</div>
 					<p className="font-bold text-lg">${service.price}</p>
 				</div>

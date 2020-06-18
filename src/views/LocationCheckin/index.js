@@ -56,12 +56,12 @@ const LocationCheckin = () => {
 		createdAppointment: undefined,
 		providerServicesById: {},
 		selectedServices: [],
-		selectedProvider: undefined
+		selectedProvider: undefined,
 	})
 
 	const { data: locationSettings } = useQuery(locationSettingsQuery, {
 		variables: { uuid },
-		skip: !uuid
+		skip: !uuid,
 	})
 
 	const queryOptions = React.useMemo(() => {
@@ -69,21 +69,21 @@ const LocationCheckin = () => {
 			uuid,
 			sourceType: 'onlinecheckin',
 			startTime: startOfDay(new Date()),
-			endTime: endOfDay(new Date())
+			endTime: endOfDay(new Date()),
 		}
 	}, [uuid])
 
 	const { employees, location, loading } = useEnhancedLocationSubscription({
 		queryOptions,
 		defaultDuration:
-			locationSettings?.locationByUUID?.settings?.onlineCheckins?.leadMinWaitTime || 20
+			locationSettings?.locationByUUID?.settings?.onlineCheckins?.leadMinWaitTime || 20,
 	})
 
 	const employee = React.useMemo(
 		() =>
 			!state.selectedProvider
 				? undefined
-				: employees.find(emp => emp.id === state.selectedProvider.id),
+				: employees.find((emp) => emp.id === state.selectedProvider.id),
 		[state.selectedProvider, employees]
 	)
 
@@ -103,23 +103,23 @@ const LocationCheckin = () => {
 		update: (proxy, { data: { checkinOnline } }) => {
 			const cache = proxy.readQuery({
 				query: profileQuery,
-				variables: { skip: false }
+				variables: { skip: false },
 			})
 
 			proxy.writeQuery({
 				query: profileQuery,
 				variables: { skip: false },
-				data: produce(cache, draftState => {
+				data: produce(cache, (draftState) => {
 					draftState.profile.appointments.upcoming.unshift(checkinOnline)
-				})
+				}),
 			})
-		}
+		},
 	})
 
 	const closedDate = React.useMemo(() => {
 		if (!location) return
 
-		return location.closed_dates.find(date =>
+		return location.closed_dates.find((date) =>
 			isWithinRange(new Date(), startOfDay(date.start_date), endOfDay(date.end_date))
 		)
 	}, [location])
@@ -129,10 +129,10 @@ const LocationCheckin = () => {
 	// TODO: This redirects when there is a network error.
 	if (!loading && !location) return <Redirect to="/" />
 
-	const handleProviderSelection = selectedProvider => {
+	const handleProviderSelection = (selectedProvider) => {
 		if (!selectedProvider.isSchedulable) {
 			if (state.selectedProvider && selectedProvider.id !== state.selectedProvider) {
-				setState(prev => ({ ...prev, selectedProvider: undefined }))
+				setState((prev) => ({ ...prev, selectedProvider: undefined }))
 			}
 
 			return
@@ -140,7 +140,7 @@ const LocationCheckin = () => {
 
 		const providerServicesById = selectedProvider.services.reduce((acc, service) => {
 			const source = service.sources.find(
-				source => source.type === 'onlinecheckin' || source.type === 'default'
+				(source) => source.type === 'onlinecheckin' || source.type === 'default'
 			)
 
 			if (!source) return acc
@@ -154,18 +154,18 @@ const LocationCheckin = () => {
 			return acc
 		}, {})
 
-		setState(prev => ({
+		setState((prev) => ({
 			...prev,
 			step: 2,
 			selectedProvider,
 			providerServicesById,
-			selectedServices: prev.selectedServices.filter(id => !!providerServicesById[id])
+			selectedServices: prev.selectedServices.filter((id) => !!providerServicesById[id]),
 		}))
 	}
 
-	const handleServiceSelection = service => {
+	const handleServiceSelection = (service) => {
 		const selectedServices = state.selectedServices.includes(service.id)
-			? state.selectedServices.filter(id => id !== service.id)
+			? state.selectedServices.filter((id) => id !== service.id)
 			: state.selectedServices.concat(service.id)
 
 		const duration = selectedServices.reduce(
@@ -182,14 +182,14 @@ const LocationCheckin = () => {
 			// FIXME: if it exceeds the current shift, does the value fall within nextAvailableShifts.onlineCheckins? if so, then we can still select services since the staff works.
 
 			pling({
-				message: `The provider's work day is almost over. This service item cannot be selected.`
+				message: `The provider's work day is almost over. This service item cannot be selected.`,
 			})
 			return
 		}
 
-		setState(prev => ({
+		setState((prev) => ({
 			...prev,
-			selectedServices
+			selectedServices,
 		}))
 	}
 
@@ -201,17 +201,17 @@ const LocationCheckin = () => {
 				input: {
 					locationId: location.id,
 					userId: state.selectedProvider.id,
-					services: state.selectedServices.map(id => parseInt(id))
-				}
-			}
+					services: state.selectedServices.map((id) => parseInt(id)),
+				},
+			},
 		})
 
-		setState(prev => ({ ...prev, createdAppointment: data.checkinOnline }))
+		setState((prev) => ({ ...prev, createdAppointment: data.checkinOnline }))
 
 		ReactGA.event({
 			category: 'OnlineCheckin',
 			action: 'Created',
-			value: Number(data.checkinOnline.id)
+			value: Number(data.checkinOnline.id),
 		})
 	}
 
@@ -244,7 +244,7 @@ const LocationCheckin = () => {
 								if (state.step === 1) {
 									history.goBack()
 								} else {
-									setState(prev => ({ ...prev, step: prev.step - 1 }))
+									setState((prev) => ({ ...prev, step: prev.step - 1 }))
 								}
 							}}
 						/>
@@ -255,9 +255,9 @@ const LocationCheckin = () => {
 							className="text-3xl text-gray-100"
 							to={{
 								state: {
-									from: history.location.pathname
+									from: history.location.pathname,
 								},
-								pathname: generatePath(LOCATION_OVERVIEW, { uuid })
+								pathname: generatePath(LOCATION_OVERVIEW, { uuid }),
 							}}
 						>
 							<FaStore />
@@ -273,7 +273,7 @@ const LocationCheckin = () => {
 					<h1 className="jaf-domus leading-none text-white font-black mb-4 text-3xl">
 						{renderTitle({
 							step: isWaitTimeLongEnough ? state.step : 1,
-							isFinished: !!state.createdAppointment
+							isFinished: !!state.createdAppointment,
 						})}
 					</h1>
 				</div>
@@ -303,6 +303,7 @@ const LocationCheckin = () => {
 					)}
 					{isWaitTimeLongEnough && state.step === 2 && (
 						<ServiceSelector
+							shouldShowDuration={!!locationSettings.onlineCheckins?.showServiceDuration}
 							selected={state.selectedServices}
 							services={state.selectedProvider?.services}
 							onSelect={handleServiceSelection}
@@ -312,7 +313,7 @@ const LocationCheckin = () => {
 					{isWaitTimeLongEnough && state.step === 3 && !state.createdAppointment && (
 						<Review
 							selectedServicesPrice={selectedServicesPrice}
-							services={state.selectedServices.map(id => state.providerServicesById[id])}
+							services={state.selectedServices.map((id) => state.providerServicesById[id])}
 							provider={employee}
 							location={location}
 						/>
@@ -354,12 +355,12 @@ const LocationCheckin = () => {
 
 						<Button
 							onClick={() => {
-								setState(prev => ({
+								setState((prev) => ({
 									...prev,
 									step: 1,
 									selectedProvider: undefined,
 									providerServicesById: undefined,
-									selectedServices: []
+									selectedServices: [],
 								}))
 							}}
 						>
@@ -378,7 +379,7 @@ const LocationCheckin = () => {
 								if (state.step === 3) {
 									handleSubmit()
 								} else {
-									setState(prev => ({ ...prev, step: 3 }))
+									setState((prev) => ({ ...prev, step: 3 }))
 								}
 							}}
 							style={{ marginLeft: state.step === 3 ? 0 : 10, width: '100%' }}

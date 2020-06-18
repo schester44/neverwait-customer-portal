@@ -65,11 +65,13 @@ export const locationSettingsQuery = gql`
 			settings {
 				onlineCheckins {
 					leadMinWaitTime
+					showServiceDuration
 				}
 				onlineBooking {
 					advanceBookingMaxDays
 					timeSlotInterval
 					cancellationThreshold
+					showServiceDuration
 				}
 			}
 		}
@@ -120,6 +122,7 @@ export const locationDataQuery = gql`
 				services {
 					id
 					name
+					description
 					sources(input: { where: { type: $sourceType } }) {
 						price
 						type

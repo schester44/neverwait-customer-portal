@@ -14,7 +14,6 @@ import {
 	LOCATION_CHECKIN,
 	LOCATION_SEARCH,
 	LOCATION_APPOINTMENT,
-	USER_APPOINTMENTS,
 } from '../routes'
 import { profileQuery } from '../graphql/queries'
 

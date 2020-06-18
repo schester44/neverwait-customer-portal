@@ -141,7 +141,7 @@ const LocationOverview = () => {
 						{location.photos.map((photo) => {
 							return (
 								<div key={photo.path}>
-									<img src={photo.url} style={{ maxHeight: 500 }} />
+									<img src={photo.url} alt={location.name} style={{ maxHeight: 500 }} />
 								</div>
 							)
 						})}

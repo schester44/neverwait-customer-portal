@@ -322,6 +322,7 @@ const LocationAppointment = () => {
 							<ServiceSelector
 								selected={state.selectedServices}
 								services={state.selectedProvider?.services}
+								shouldShowDuration={!!locationSettings.onlineBooking?.showServiceDuration}
 								onSelect={handleServiceSelection}
 							/>
 						</div>

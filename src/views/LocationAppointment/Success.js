@@ -15,13 +15,9 @@ const Success = ({ type = 'appointment', appointment, totalPrice }) => {
 
 	const title = type === 'appointment' ? 'Appointment Created!' : 'Check-in Confirmed!'
 
-	console.log(totalPrice)
 	return (
 		<div className="flex justify-between items-center flex-col">
-			<div
-				className="relative flex flex-col bg-gray-900 w-full h-64"
-				style={{ borderBottomRightRadius: '50%' }}
-			>
+			<div className="relative flex flex-col bg-gray-900 w-full h-64">
 				<div className="flex justify-between items-center pt-1 pb-2 px-2">
 					<FiArrowLeft
 						className="text-3xl text-white"
@@ -35,11 +31,11 @@ const Success = ({ type = 'appointment', appointment, totalPrice }) => {
 						className="text-3xl text-white"
 						to={{
 							state: {
-								from: history.location.pathname
+								from: history.location.pathname,
 							},
 							pathname: generatePath(LOCATION_OVERVIEW, {
-								uuid: appointment.location.uuid
-							})
+								uuid: appointment.location.uuid,
+							}),
 						}}
 					>
 						<FaStore />
@@ -86,7 +82,8 @@ const Success = ({ type = 'appointment', appointment, totalPrice }) => {
 					</p>
 				) : (
 					<p className="text-center mb-4">
-						You have successfully checked in with {appointment.employee.firstName} for today at {format(appointment.startTime, 'h:mma')}.
+						You have successfully checked in with {appointment.employee.firstName} for today at{' '}
+						{format(appointment.startTime, 'h:mma')}.
 					</p>
 				)}
 

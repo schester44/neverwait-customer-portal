@@ -28,7 +28,7 @@ const AppointmentOverview = ({ profile }) => {
 	const [cancelAppointment, { loading: cancelLoading }] = useMutation(cancelAppointmentMutation)
 
 	const appointment = React.useMemo(() => {
-		const compare = appt => Number(appt.id) === Number(appointmentId)
+		const compare = (appt) => Number(appt.id) === Number(appointmentId)
 
 		return profile.appointments.upcoming.find(compare) || profile.appointments.past.find(compare)
 	}, [profile, appointmentId])
@@ -49,7 +49,7 @@ const AppointmentOverview = ({ profile }) => {
 		locationSettingsQuery,
 		{
 			skip: !appointment,
-			variables: { uuid: appointment?.location?.uuid }
+			variables: { uuid: appointment?.location?.uuid },
 		}
 	)
 
@@ -65,55 +65,55 @@ const AppointmentOverview = ({ profile }) => {
 	const handleCancel = async () => {
 		await cancelAppointment({
 			variables: {
-				appointmentId
+				appointmentId,
 			},
-			update: proxy => {
+			update: (proxy) => {
 				const cache = proxy.readQuery({
 					query: profileQuery,
-					variables: { skip: false }
+					variables: { skip: false },
 				})
 
 				proxy.writeQuery({
 					query: profileQuery,
 					variables: { skip: false },
-					data: produce(cache, draftState => {
+					data: produce(cache, (draftState) => {
 						draftState.profile.appointments.upcoming.splice(
 							profile.appointments.upcoming.findIndex(
 								({ id }) => parseInt(id) === parseInt(appointmentId)
 							),
 							1
 						)
-					})
+					}),
 				})
-			}
+			},
 		})
 
 		pling({ message: 'Appointment canceled.', intent: 'info' })
 
-		setState(prev => ({ ...prev, showCancelModal: false }))
+		setState((prev) => ({ ...prev, showCancelModal: false }))
 	}
 
 	return (
 		<Swipe className="swipe-container pb-24" onSwipeRight={onSwipeRight}>
 			<div
 				className={clsx('w-full relative overflow-hidden h-48 bg-gray-900', {
-					'h-48': !!appointment.location.photo,
-					'h-4': !appointment.location.photo
+					'h-64': !!appointment.location.photos[0],
+					'h-4': !appointment.location.photos[0],
 				})}
 			>
 				<div className="absolute z-10 top-0 left-0 w-full flex justify-between items-center px-2 py-2">
 					<Link to={history.location.state?.from || '/'} className="text-3xl text-white">
 						<FiArrowLeft />
 					</Link>
-					<p className="text-lg font-bold text-white">Overview</p>
+					<p className="text-lg font-bold text-white">Appointment Details</p>
 					<Link
 						to={{
 							state: {
-								from: history.location.pathname
+								from: history.location.pathname,
 							},
 							pathname: generatePath(LOCATION_OVERVIEW, {
-								uuid: appointment.location.uuid
-							})
+								uuid: appointment.location.uuid,
+							}),
 						}}
 						className="text-2xl text-white"
 					>
@@ -121,16 +121,16 @@ const AppointmentOverview = ({ profile }) => {
 					</Link>
 				</div>
 
-				{appointment.location.photo && (
+				{appointment.location.photos[0] && (
 					<img
-						src={appointment.location.photo}
+						src={appointment.location.photos[0].url}
 						alt="Location"
 						className="opacity-25 w-full h-full object-cover"
 					/>
 				)}
 			</div>
 
-			<div style={{ borderTopLeftRadius: 35 }} className="-mt-12 bg-white relative z-0">
+			<div className="bg-white relative z-0">
 				<div className="container mx-auto h-full px-4">
 					<h1 className="text-3xl pt-2">{appointment.location.name}</h1>
 					<p className="text-gray-700 text-lg">{appointment.location.address}</p>
@@ -141,25 +141,20 @@ const AppointmentOverview = ({ profile }) => {
 					</div>
 
 					<div className="times mt-2">
-						<p className="text-sm font-bold leading-none">Start Time</p>
+						<p className="text-sm md:text-lg font-bold leading-none">Start Time</p>
 						<p className="mt-1 text-4xl text-gray-900 font-black leading-none">
 							{format(appointment.startTime, 'h:mma')}
-						</p>
-
-						<p className="text-sm mt-4 font-bold leading-none">End Time</p>
-						<p className="mt-1 text-4xl text-gray-900 font-black leading-none">
-							{format(appointment.endTime, 'h:mma')}
 						</p>
 					</div>
 
 					<div className="border-t border-gray-200 pt-4 mt-4 mb-4">
-						<p className="text-sm font-bold leading-none mb-2">Service Details</p>
+						<p className="text-sm md:text-lg font-bold leading-none mb-2">Service Details</p>
 
 						{appointmentServices.length > 0 &&
 							appointmentServices.map((service, index) => (
 								<div className="flex mb-2 justify-between items-center" key={index}>
-									<p className="text-lg">{service.name}</p>
-									<p className="text-lg">${service.price}</p>
+									<p className="text-lg md:text-2xl">{service.name}</p>
+									<p className="text-lg md:text-2xl">${service.price}</p>
 								</div>
 							))}
 
@@ -189,7 +184,7 @@ const AppointmentOverview = ({ profile }) => {
 								<Button
 									type="ghost"
 									className="w-full mt-4"
-									onClick={() => setState(prev => ({ ...prev, showCancelModal: true }))}
+									onClick={() => setState((prev) => ({ ...prev, showCancelModal: true }))}
 								>
 									Cancel Appointment
 								</Button>
@@ -197,7 +192,7 @@ const AppointmentOverview = ({ profile }) => {
 					</div>
 
 					{state.showCancelModal && (
-						<Modal onClose={() => setState(prev => ({ ...prev, showCancelModal: false }))}>
+						<Modal onClose={() => setState((prev) => ({ ...prev, showCancelModal: false }))}>
 							<div>
 								<p className="text-sm text-red-600 font-bold text-center text-gray-700">
 									Are you sure you want to cancel this appointment?
@@ -214,7 +209,7 @@ const AppointmentOverview = ({ profile }) => {
 								<Button
 									type="ghost"
 									className="btn-sm mb-4"
-									onClick={() => setState(prev => ({ ...prev, showCancelModal: false }))}
+									onClick={() => setState((prev) => ({ ...prev, showCancelModal: false }))}
 								>
 									Nevermind
 								</Button>

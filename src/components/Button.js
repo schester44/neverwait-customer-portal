@@ -5,7 +5,8 @@ const types = {
 	ghost: 'btn-ghost',
 	primary: 'btn-primary',
 	disabled: 'btn-disabled',
-	secondary: 'btn-secondary'
+	secondary: 'btn-secondary',
+	dark: 'bg-gray-900 text-white hover:bg-black'
 }
 
 const Button = ({ type = 'primary', children, className, disabled, ...props }) => {

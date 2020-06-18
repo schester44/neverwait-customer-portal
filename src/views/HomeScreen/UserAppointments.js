@@ -8,6 +8,7 @@ import NavFooter from '../../components/NavFooter'
 import NavBar from './NavBar'
 
 import { USER_APPOINTMENTS, APPOINTMENT_OVERVIEW } from '../../routes'
+import { useViewport } from '../../components/ViewportProvider'
 
 const AppointmentOverview = React.lazy(() => import('../AppointmentOverview'))
 
@@ -76,13 +77,14 @@ const Container = styled('div')`
 
 const UserHomeScreen = ({ profile }) => {
 	const location = useLocation()
+	const { isMobile } = useViewport()
 
 	const isShowingOverview = location.pathname.indexOf('/appointments') === -1
 	const isShowingPast = location.pathname.indexOf('/past') !== -1
 
 	return (
-		<Container isShowingPast={isShowingPast} isShowingOverview={isShowingOverview}>
-			{!isShowingOverview && (
+		<Container className="md:pt-16" isShowingPast={isShowingPast} isShowingOverview={isShowingOverview}>
+			{!isShowingOverview && isMobile && (
 				<div className="bg-white border-b border-gray-200">
 					<h1 className="jaf-domus text-center mt-2">NEVERWAIT</h1>
 					<NavBar />

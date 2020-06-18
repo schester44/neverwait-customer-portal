@@ -14,7 +14,10 @@ export const profileQuery = gql`
 				name
 				uuid
 				address
-				photo
+				photos {
+					url
+					key
+				}
 			}
 
 			appointments(limit: 20, where: { status: { in: [confirmed, completed] } }) {
@@ -39,7 +42,10 @@ export const basicLocationInfoQuery = gql`
 			name
 			address
 			contactNumber
-			photo(transformations: { ar: "16-9", h: "250" })
+			photos(transformations: { ar: "16-9", h: "250" }) {
+				url
+				key
+			}
 			closed_dates(input: { start_date: $startDate, end_date: $endDate }) {
 				...closedDate
 			}

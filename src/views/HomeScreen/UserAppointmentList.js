@@ -8,9 +8,8 @@ import useWindowDimensions from '../../hooks/useWindowDimensions'
 
 const Placeholder = ({ type, windowHeight }) => (
 	<div style={{ height: windowHeight - 220 }} className="flex flex-col justify-center items-center">
-		<p className="text-sm text-center text-gray-900 font-bold">You have no {type} appointments.</p>
-		<p className="text-sm text-center text-gray-900 font-bold">
-			{type === 'upcoming' && 'Lets get you cleaned up!'}
+		<p className="text-sm md:text-2xl text-center text-gray-900 font-bold">
+			You have no {type} appointments. :(
 		</p>
 	</div>
 )
@@ -39,7 +38,7 @@ const UserAppointmentList = ({ profileAppointments }) => {
 	return (
 		<Swipe
 			style={{ maxHeight: height - 90 }}
-			className="container pb-24 h-full mx-auto px-2 py-4 overflow-auto scrolling-touch"
+			className="container pb-24 h-full mx-auto px-2 py-4 overflow-auto scrolling-touch md:flex md:flex-wrap"
 			onSwipeLeft={onSwipeLeft}
 			onSwipeRight={onSwipeRight}
 		>
@@ -49,9 +48,10 @@ const UserAppointmentList = ({ profileAppointments }) => {
 				appointments.map((appointment, index) => {
 					return (
 						<Link
+							className="md: w-1/3 p-2"
 							to={{
 								pathname: generatePath(APPOINTMENT_OVERVIEW, { id: appointment.id }),
-								state: { type, from: location.pathname }
+								state: { type, from: location.pathname },
 							}}
 							key={index}
 						>

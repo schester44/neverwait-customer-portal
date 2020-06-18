@@ -55,7 +55,10 @@ export const createProfileAppointmentMutation = gql`
 				address
 				uuid
 				contactNumber
-				photo
+				photos {
+					key
+					url
+				}
 			}
 			services {
 				id

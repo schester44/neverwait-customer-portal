@@ -16,7 +16,7 @@ const PasswordForm = () => {
 	const [values, setValues] = React.useState({
 		currentPassword: '',
 		newPassword: '',
-		confirmNewPassword: ''
+		confirmNewPassword: '',
 	})
 	const [changePassword, { loading }] = useMutation(changePasswordMutation)
 
@@ -33,25 +33,27 @@ const PasswordForm = () => {
 		await changePassword({
 			variables: {
 				currentPassword,
-				newPassword
-			}
+				newPassword,
+			},
 		})
 
 		pling({ message: 'Password updated!', intent: 'info' })
 	}
 
 	const handleChange = ({ target: { name, value } }) =>
-		setValues(prev => ({ ...prev, [name]: value }))
+		setValues((prev) => ({ ...prev, [name]: value }))
 
 	const onBack = () => history.push(USER_PREFERENCES)
 
 	return (
-		<div className="px-4 mx-auto container">
+		<div className="px-4 mx-auto container" style={{ maxWidth: 800 }}>
 			<div className="absolute text-3xl top-0 left-0 mt-2 ml-2 text-gray-900" onClick={onBack}>
 				<FiArrowLeft />
 			</div>
 
-			<h1 className="mt-2 mb-8 mx-auto text-center font-black">Change Password</h1>
+			<h1 className="mt-2 mb-4 mx-auto text-center md:text-left font-black md:text-4xl text-gray-700">
+				Change Password
+			</h1>
 
 			<Input
 				type="password"
@@ -77,7 +79,7 @@ const PasswordForm = () => {
 				onChange={handleChange}
 			/>
 
-			<Button onClick={handleSubmit} className="w-full mt-8" disabled={isDisabled}>
+			<Button onClick={handleSubmit} type="dark" className="w-full mt-8" disabled={isDisabled}>
 				Change Password
 			</Button>
 		</div>

@@ -17,7 +17,10 @@ export const appointment = gql`
 			address
 			contactNumber
 			uuid
-			photo
+			photos {
+				url
+				key
+			}
 		}
 		services {
 			id

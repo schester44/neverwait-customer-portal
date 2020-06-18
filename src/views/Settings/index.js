@@ -10,7 +10,7 @@ import NavFooter from '../../components/NavFooter'
 import {
 	USER_SETTINGS_EDIT_ACCOUNT,
 	USER_SETTINGS_CHANGE_PASSWORD,
-	USER_PREFERENCES
+	USER_PREFERENCES,
 } from '../../routes'
 import PasswordForm from './PasswordForm'
 
@@ -50,8 +50,10 @@ const UserSettingsMenu = ({ profile }) => {
 				</Route>
 
 				<Route exact path={USER_PREFERENCES}>
-					<div className="mx-auto px-2 container">
-						<h1 className="my-4 text-4xl mx-auto text-center font-black">Settings</h1>
+					<div className="mx-auto px-2 container" style={{ maxWidth: 800 }}>
+						<h1 className="mt-2 mb-4 mx-auto text-center md:text-left font-black md:text-4xl text-gray-700">
+							Settings
+						</h1>
 
 						<Link className="text-gray-900" to={USER_SETTINGS_EDIT_ACCOUNT}>
 							<MenuItem icon={FiEdit} text="Edit Account" />

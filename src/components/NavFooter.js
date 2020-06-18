@@ -1,15 +1,20 @@
 import React from 'react'
 import clsx from 'clsx'
 import styled, { keyframes } from 'styled-components'
-import { NavLink, useRouteMatch, useHistory, generatePath } from 'react-router-dom'
+import { NavLink, useRouteMatch, useHistory, generatePath, Link } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks'
 import { FiUser, FiX, FiScissors, FiCalendar } from 'react-icons/fi'
 import { FaCalendarDay, FaCalendarCheck } from 'react-icons/fa'
+
+import { useViewport } from '../components/ViewportProvider'
+import Button from '../components/Button'
+
 import {
 	USER_PREFERENCES,
 	LOCATION_CHECKIN,
 	LOCATION_SEARCH,
-	LOCATION_APPOINTMENT
+	LOCATION_APPOINTMENT,
+	USER_APPOINTMENTS,
 } from '../routes'
 import { profileQuery } from '../graphql/queries'
 
@@ -91,8 +96,10 @@ const NavFooter = () => {
 	const match = useRouteMatch()
 	const history = useHistory()
 
+	const { isMobile } = useViewport()
+
 	const { data } = useQuery(profileQuery, {
-		skip: !localStorage.getItem('nw-portal-sess')
+		skip: !localStorage.getItem('nw-portal-sess'),
 	})
 
 	const profile = data?.profile
@@ -106,15 +113,15 @@ const NavFooter = () => {
 
 		let locationIds = {}
 
-		profile.appointments.upcoming.forEach(appt => {
+		profile.appointments.upcoming.forEach((appt) => {
 			locationIds[appt.location.id] = true
 		})
 
-		profile.appointments.past.forEach(appt => {
+		profile.appointments.past.forEach((appt) => {
 			locationIds[appt.location.id] = true
 		})
 
-		return profile.locations.filter(location => !!locationIds[location.id])
+		return profile.locations.filter((location) => !!locationIds[location.id])
 	}, [profile])
 
 	const shouldRedirectToLastAppointment =
@@ -125,7 +132,7 @@ const NavFooter = () => {
 		if (shouldRedirectToLastAppointment) {
 			history.push(
 				generatePath(LOCATION_CHECKIN, {
-					uuid: filteredLocations[0].uuid
+					uuid: filteredLocations[0].uuid,
 				}),
 				{ from: history.location.pathname }
 			)
@@ -137,11 +144,54 @@ const NavFooter = () => {
 	const handleCreateAppointment = () => {
 		if (shouldRedirectToLastAppointment) {
 			history.push(generatePath(LOCATION_APPOINTMENT, { uuid: filteredLocations[0].uuid }), {
-				from: history.location.pathname
+				from: history.location.pathname,
 			})
 		} else {
 			history.push(LOCATION_SEARCH, { action: 'checkin' }, { from: history.location.pathname })
 		}
+	}
+
+	if (!isMobile) {
+		return (
+			<div className="fixed top-0 left-0 w-full bg-white z-50 border-gray-200 border-b h-16 px-2 py-2">
+				<div className="container mx-auto flex items-center justify-between h-full">
+					<div className="flex items-center">
+						<h1 className="lg:text-3xl jaf-domus leading-none">NEVERWAIT</h1>
+
+						<div className="flex items-center">
+							<Link
+								to="/profile/appointments/upcoming"
+								className="ml-6 mr-4 text-gray-600 font-bold hover:text-gray-700 text-sm cursor-pointer uppercase"
+							>
+								My Appointments
+							</Link>
+
+							<Link
+								to="/profile/appointments/past"
+								className="mr-4 text-gray-600 font-bold hover:text-gray-700 text-sm cursor-pointer uppercase"
+							>
+								Past Appointments
+							</Link>
+							<Link
+								to={USER_PREFERENCES}
+								className="mr-2 text-gray-600 font-bold hover:text-gray-700 text-sm cursor-pointer uppercase"
+							>
+								Settings
+							</Link>
+						</div>
+					</div>
+
+					<div className="flex items-center">
+						<Button className="ml-2" onClick={handleCreateAppointment}>
+							Book Appointment
+						</Button>
+						<Button className="ml-2" onClick={handleCheckin}>
+							Check In
+						</Button>
+					</div>
+				</div>
+			</div>
+		)
 	}
 
 	return (
@@ -149,7 +199,7 @@ const NavFooter = () => {
 			<div
 				className={clsx('action-bar fixed w-full', {
 					'navbar-show-actions': isActionsVisible,
-					'navbar-hide-actions': !isActionsVisible && !!actionsHaveBeenSeenOnce.current
+					'navbar-hide-actions': !isActionsVisible && !!actionsHaveBeenSeenOnce.current,
 				})}
 				style={{ bottom: 110, left: 0 }}
 			>
@@ -191,7 +241,7 @@ const NavFooter = () => {
 					<div
 						onClick={() => {
 							actionsHaveBeenSeenOnce.current = true
-							setActionsVisible(prev => !prev)
+							setActionsVisible((prev) => !prev)
 						}}
 						className={clsx(
 							'main-action-btn rounded text-2xl flex items-center justify-center -mt-12 bg-indigo-500 rounded-full w-16 h-16 border-8 border-white text-white'

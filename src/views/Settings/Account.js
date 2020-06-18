@@ -34,26 +34,28 @@ const Account = ({ profile }) => {
 				input: {
 					firstName,
 					lastName,
-					phoneNumber
-				}
-			}
+					phoneNumber,
+				},
+			},
 		})
 
 		pling({ message: 'Account updated!', intent: 'info' })
 	}
 
 	const handleChange = ({ target: { name, value } }) =>
-		setValues(prev => ({ ...prev, [name]: value }))
+		setValues((prev) => ({ ...prev, [name]: value }))
 
 	const onBack = () => history.push(USER_PREFERENCES)
 
 	return (
-		<div className="container mx-auto px-4">
+		<div className="container mx-auto px-4" style={{ maxWidth: 800 }}>
 			<div className="absolute text-3xl top-0 left-0 mt-2 ml-2 text-gray-900" onClick={onBack}>
 				<FiArrowLeft />
 			</div>
 
-			<h1 className="mt-2 mb-8 mx-auto text-center font-black">Account</h1>
+			<h1 className="mt-2 mb-4 mx-auto text-center md:text-left font-black md:text-4xl text-gray-700">
+				Account Settings
+			</h1>
 
 			<Input
 				type="text"
@@ -79,7 +81,7 @@ const Account = ({ profile }) => {
 				onChange={handleChange}
 			/>
 
-			<Button className="w-full mt-8" onClick={handleSubmit} disabled={isDisabled}>
+			<Button className="w-full mt-8" type="dark" onClick={handleSubmit} disabled={isDisabled}>
 				Update Account
 			</Button>
 		</div>

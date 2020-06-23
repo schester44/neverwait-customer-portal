@@ -7,7 +7,7 @@ import Appointment from './Appointment'
 import useWindowDimensions from '../../hooks/useWindowDimensions'
 
 const Placeholder = ({ type, windowHeight }) => (
-	<div style={{ height: windowHeight - 220 }} className="flex flex-col justify-center items-center">
+	<div style={{ height: windowHeight - 220 }} className="flex flex-col w-full justify-center items-center">
 		<p className="text-sm md:text-2xl text-center text-gray-900 font-bold">
 			You have no {type} appointments. :(
 		</p>

@@ -53,7 +53,7 @@ const Account = ({ profile }) => {
 				<FiArrowLeft />
 			</div>
 
-			<h1 className="mt-2 mb-4 mx-auto text-center md:text-left font-black md:text-4xl text-gray-700">
+			<h1 className="mt-2 mb-4 mx-auto text-center md:text-left font-black md:text-4xl md:pt-20 text-gray-700">
 				Account Settings
 			</h1>
 

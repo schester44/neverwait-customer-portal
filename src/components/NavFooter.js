@@ -155,7 +155,9 @@ const NavFooter = () => {
 			<div className="fixed top-0 left-0 w-full bg-white z-50 border-gray-200 border-b h-16 px-2 py-2">
 				<div className="container mx-auto flex items-center justify-between h-full">
 					<div className="flex items-center">
-						<h1 className="lg:text-3xl jaf-domus leading-none">NEVERWAIT</h1>
+						<h1 className="lg:text-3xl jaf-domus leading-none">
+							<Link className="text-gray-900" to="/profile/appointments/upcoming">NEVERWAIT</Link>
+						</h1>
 
 						<div className="flex items-center">
 							<Link
@@ -182,7 +184,8 @@ const NavFooter = () => {
 
 					<div className="flex items-center">
 						<Button className="ml-2" onClick={handleCreateAppointment}>
-							Book Appointment
+							Book <span className="hidden lg:inline">Appointment</span>{' '}
+							<span className="lg:hidden">Now</span>
 						</Button>
 						<Button className="ml-2" onClick={handleCheckin}>
 							Check In

@@ -1,38 +1,44 @@
 import React from 'react'
-import clsx from 'clsx'
+import { FiChevronRight } from 'react-icons/fi'
 import { format, isToday, isAfter } from 'date-fns'
 
 const Appointment = ({ appointment }) => {
 	const isApptToday = isToday(appointment.startTime) && isAfter(appointment.endTime, new Date())
 
+	console.log(appointment)
 	return (
-		<div
-			className="bg-gray-200 w-full px-4 py-4 flex items-center justify-between rounded-lg overflow-hidden mb-2"
-			style={{ minHeight: 80 }}
-		>
-			<div>
-				<p className="text-gray-900 text-lg font-black">
-					{format(appointment.startTime, 'dddd, MMM Do')}
-				</p>
+		<div className="w-full px-1" style={{ minHeight: 80 }}>
+			<div className="flex items-center justify-between overflow-hidden border-b w-full pb-4">
+				<div className="flex items-center">
+					<div className="w-12 h-12 overflow-hidden rounded-lg mr-3">
+						<img
+							className="w-full h-full object-cover"
+							src={appointment.location.photos[0].url}
+							title={appointment.location.name}
+						/>
+					</div>
+					<div>
+						<p className="text-gray-900 text-lg font-black leading-none">
+							<span className={`${isApptToday ? 'text-indigo-500' : ''}`}>
+								{format(appointment.startTime, 'h:mma')}
+							</span>{' '}
+							&#8226; {format(appointment.startTime, 'ddd, MMM Do')}
+						</p>
 
-				<p className="font-bold text-sm text-gray-900 mt-1 leading-tight">
-					{appointment.location.name}
-				</p>
-				<p className="font-bold text-sm text-gray-900 mt-1 leading-tight">
-					{appointment.location.address}
-				</p>
+						<p className="font-bold text-sm text-gray-900 mt-1 leading-none">
+							{appointment.location.name}
+						</p>
 
-				<p className="font-bold text-sm text-gray-900 mt-1 leading-tight">${appointment.price}</p>
+						<p className="font-bold text-sm text-gray-900 mt-1 leading-none">
+							${appointment.price}
+						</p>
+					</div>
+				</div>
+
+				<div className="text-3xl text-gray-600">
+					<FiChevronRight />
+				</div>
 			</div>
-
-			<p
-				className={clsx('text-2xl pl-1 font-black', {
-					'text-gray-900': !isApptToday,
-					'text-indigo-500': isApptToday
-				})}
-			>
-				{format(appointment.startTime, 'h:mma')}
-			</p>
 		</div>
 	)
 }

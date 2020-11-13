@@ -7,9 +7,12 @@ import Appointment from './Appointment'
 import useWindowDimensions from '../../hooks/useWindowDimensions'
 
 const Placeholder = ({ type, windowHeight }) => (
-	<div style={{ height: windowHeight - 220 }} className="flex flex-col w-full justify-center items-center">
-		<p className="text-sm md:text-2xl text-center text-gray-900 font-bold">
-			You have no {type} appointments. :(
+	<div
+		style={{ height: windowHeight - 220 }}
+		className="flex flex-col w-full justify-center items-center"
+	>
+		<p className="text-md md:text-2xl text-center text-gray-900 font-bold">
+			No {type} appointments.
 		</p>
 	</div>
 )
@@ -48,7 +51,7 @@ const UserAppointmentList = ({ profileAppointments }) => {
 				appointments.map((appointment, index) => {
 					return (
 						<Link
-							className="md: w-1/3 p-2"
+							className={`w-full p-2 ${appointments.length >= 3 ? 'md:w-1/3' : ''} `}
 							to={{
 								pathname: generatePath(APPOINTMENT_OVERVIEW, { id: appointment.id }),
 								state: { type, from: location.pathname },

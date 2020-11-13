@@ -56,7 +56,7 @@ const UserSettingsMenu = ({ profile }) => {
 						</h1>
 
 						<Link className="text-gray-900" to={USER_SETTINGS_EDIT_ACCOUNT}>
-							<MenuItem icon={FiEdit} text="Edit Account" />
+							<MenuItem icon={FiEdit} text="Edit Profile" />
 						</Link>
 
 						<Link className="text-gray-900" to={USER_SETTINGS_CHANGE_PASSWORD}>

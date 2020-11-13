@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, generatePath, useHistory } from 'react-router-dom'
 import { format } from 'date-fns'
 import { FaStore } from 'react-icons/fa'
-import { FiArrowLeft, FiPhone } from 'react-icons/fi'
+import { FiArrowLeft, FiPhone, FiX } from 'react-icons/fi'
 import { MobileView } from 'react-device-detect'
 
 import { USER_APPOINTMENTS, LOCATION_OVERVIEW } from '../../routes'
@@ -19,7 +19,7 @@ const Success = ({ type = 'appointment', appointment, totalPrice }) => {
 		<div className="flex justify-between items-center flex-col">
 			<div className="relative flex flex-col bg-gray-900 w-full h-64">
 				<div className="flex justify-between items-center pt-1 pb-2 px-2">
-					<FiArrowLeft
+					<FiX
 						className="text-3xl text-white"
 						onClick={() => {
 							history.push('/profile/appointments')
@@ -44,7 +44,7 @@ const Success = ({ type = 'appointment', appointment, totalPrice }) => {
 				<div className="flex flex-1 flex-col items-center justify-center text-white text-4xl font-black pb-12 leading-snug">
 					{format(appointment.startTime, 'MMM Do, YYYY')}
 					<br />
-					{format(appointment.startTime, 'h:mma')} - {format(appointment.endTime, 'h:mma')}
+					at {format(appointment.startTime, 'h:mma')}
 				</div>
 
 				<div
@@ -55,7 +55,7 @@ const Success = ({ type = 'appointment', appointment, totalPrice }) => {
 						<img
 							src={appointment.employee.photo}
 							alt="Provider"
-							className="w-full h-full object-cover"
+							className="w-full h-full object-fill"
 						/>
 					) : (
 						appointment.employee.firstName.charAt(0)
@@ -97,7 +97,7 @@ const Success = ({ type = 'appointment', appointment, totalPrice }) => {
 						</div>
 					)
 				})}
-				<p className="pl-1 font-black flex justify-between">
+				<p className="pl-1 text-sm font-black flex justify-between">
 					<span>Total</span>
 					<span>${totalPrice}</span>
 				</p>

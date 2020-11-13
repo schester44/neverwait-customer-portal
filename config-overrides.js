@@ -16,7 +16,7 @@ function addSentry(config) {
 			include: path.resolve(__dirname, 'src'),
 			ignore: ['node_modules'],
 			debug: true,
-			configFile: path.resolve(__dirname, '.sentry.properties')
+			configFile: path.resolve(__dirname, '.sentry.properties'),
 		})
 	)
 
@@ -26,5 +26,5 @@ function addSentry(config) {
 module.exports = override(
 	addSentry,
 	process.env.ANALYZE_BUNDLE && addBundleVisualizer(),
-	addBabelPlugins('@babel/plugin-proposal-optional-chaining', 'date-fns')
+	addBabelPlugins('date-fns')
 )

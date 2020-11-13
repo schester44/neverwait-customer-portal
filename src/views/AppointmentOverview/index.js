@@ -19,6 +19,17 @@ import Button from '../../components/Button'
 
 import { locationSettingsQuery } from '../../graphql/queries'
 
+function formatPhoneNumber(phoneNumberString) {
+	var cleaned = ('' + phoneNumberString).replace(/\D/g, '')
+	var match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/)
+
+	if (match) {
+		return '(' + match[1] + ') ' + match[2] + '-' + match[3]
+	}
+
+	return phoneNumberString
+}
+
 const AppointmentOverview = ({ profile }) => {
 	const history = useHistory()
 	const { id: appointmentId } = useParams()
@@ -132,9 +143,24 @@ const AppointmentOverview = ({ profile }) => {
 
 			<div className="bg-white relative z-0">
 				<div className="container mx-auto h-full px-4">
-					<h1 className="text-3xl pt-2">{appointment.location.name}</h1>
+					<Link
+						to={{
+							state: {
+								from: history.location.pathname,
+							},
+							pathname: generatePath(LOCATION_OVERVIEW, {
+								uuid: appointment.location.uuid,
+							}),
+						}}
+						className="text-gray-900"
+					>
+						<h1 className="text-3xl pt-2">{appointment.location.name}</h1>
+					</Link>
+
 					<p className="text-gray-700 text-lg">{appointment.location.address}</p>
-					<p className="text-gray-700 text-lg">{appointment.location.contactNumber}</p>
+					<p className="text-gray-700 text-lg">
+						{formatPhoneNumber(appointment.location.contactNumber)}
+					</p>
 
 					<div className="mt-2 mb-3 text-2xl font-black text-indigo-500">
 						{format(appointment.startTime, 'dddd MMM Do, YYYY')}

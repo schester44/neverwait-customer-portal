@@ -54,7 +54,7 @@ const Account = ({ profile }) => {
 			</div>
 
 			<h1 className="mt-2 mb-4 mx-auto text-center md:text-left font-black md:text-4xl md:pt-20 text-gray-700">
-				Account Settings
+				Profile Settings
 			</h1>
 
 			<Input

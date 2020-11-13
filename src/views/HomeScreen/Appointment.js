@@ -10,13 +10,15 @@ const Appointment = ({ appointment }) => {
 		<div className="w-full px-1" style={{ minHeight: 80 }}>
 			<div className="flex items-center justify-between overflow-hidden border-b w-full pb-4">
 				<div className="flex items-center">
-					<div className="w-12 h-12 overflow-hidden rounded-lg mr-3">
-						<img
-							className="w-full h-full object-cover"
-							src={appointment.location.photos[0].url}
-							title={appointment.location.name}
-						/>
-					</div>
+					{appointment.location.photos[0] && (
+						<div className="w-12 h-12 overflow-hidden rounded-lg mr-3">
+							<img
+								className="w-full h-full object-cover"
+								src={appointment.location.photos[0].url}
+								title={appointment.location.name}
+							/>
+						</div>
+					)}
 					<div>
 						<p className="text-gray-900 text-lg font-black leading-none">
 							<span className={`${isApptToday ? 'text-indigo-500' : ''}`}>

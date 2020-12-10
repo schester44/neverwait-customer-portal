@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import styled, { keyframes } from 'styled-components'
 import { NavLink, useRouteMatch, useHistory, generatePath, Link } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks'
-import { FiUser, FiX, FiScissors, FiCalendar } from 'react-icons/fi'
+import { FiUser, FiX, FiScissors, FiCalendar, FiSearch } from 'react-icons/fi'
 import { FaCalendarDay, FaCalendarCheck } from 'react-icons/fa'
 
 import { useViewport } from '../components/ViewportProvider'
@@ -34,7 +34,7 @@ const disappear = keyframes`
 		opacity: 1;
 	} 
 	to {
-		transform: translateY(50px);
+		transform: translateY(30px);
 		opacity: 0;
 	}
 `
@@ -64,7 +64,7 @@ const Container = styled('div')`
 	}
 
 	.navbar-show-actions {
-		animation: ${popUp} 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.575) forwards;
+		animation: ${popUp} 0.3s ease forwards;
 		pointer-events: inherit;
 	}
 
@@ -156,7 +156,9 @@ const NavFooter = () => {
 				<div className="container mx-auto flex items-center justify-between h-full">
 					<div className="flex items-center">
 						<h1 className="lg:text-3xl jaf-domus leading-none">
-							<Link className="text-gray-900" to="/profile/appointments/upcoming">NEVERWAIT</Link>
+							<Link className="text-gray-900" to="/profile/appointments/upcoming">
+								NEVERWAIT
+							</Link>
 						</h1>
 
 						<div className="flex items-center">
@@ -203,7 +205,7 @@ const NavFooter = () => {
 					'navbar-show-actions': isActionsVisible,
 					'navbar-hide-actions': !isActionsVisible && !!actionsHaveBeenSeenOnce.current,
 				})}
-				style={{ bottom: 110, left: 0 }}
+				style={{ bottom: 60, left: 0 }}
 			>
 				<div
 					style={{ borderRadius: 50 }}
@@ -236,17 +238,19 @@ const NavFooter = () => {
 					<FiCalendar />
 				</Action>
 
-				{match.path === '/l/:uuid' ? (
-					//  hide the action btn when on the location page since it shows those primary action btns
-					<span />
-				) : (
+				{match.path !== '/l/:uuid' && (
 					<div
 						onClick={() => {
 							actionsHaveBeenSeenOnce.current = true
 							setActionsVisible((prev) => !prev)
 						}}
+						style={{ transition: 'margin .3s ease' }}
 						className={clsx(
-							'main-action-btn rounded text-2xl flex items-center justify-center -mt-12 bg-indigo-500 rounded-full w-16 h-16 border-8 border-white text-white'
+							'main-action-btn text-2xl flex items-center justify-center bg-indigo-500 rounded-full w-16 h-16 text-white absolute top-0 shadow-lg',
+							{
+								'-mt-20': !isActionsVisible,
+								'-mt-4': isActionsVisible,
+							}
 						)}
 					>
 						{isActionsVisible ? (
@@ -258,6 +262,20 @@ const NavFooter = () => {
 						)}
 					</div>
 				)}
+
+				<Action
+					buttonClassName={
+						match.path === LOCATION_SEARCH ? 'text-indigo-500 bg-gray-100' : 'text-gray-700'
+					}
+					to={{
+						pathname: LOCATION_SEARCH,
+						state: {
+							bypassRedirect: true,
+						},
+					}}
+				>
+					<FiSearch />
+				</Action>
 
 				<Action
 					buttonClassName={

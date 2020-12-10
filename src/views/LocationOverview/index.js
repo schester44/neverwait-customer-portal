@@ -98,7 +98,7 @@ const LocationOverview = () => {
 	const isClosedToday = !!closedDate || !location.working_hours[todaysName]?.open
 
 	return (
-		<div className="flex flex-col w-full md:pt-20">
+		<div className="flex flex-col w-full md:pt-20 pb-20 md:pb-0">
 			<div className="flex flex-wrap md:pt-2 md:mb-2 w-full flex-col-reverse md:flex-row">
 				<div
 					className="md:bg-gray-200 pt-6 px-6 md:pb-6 w-full md:w-2/5 flex flex-col items-center justify-center"

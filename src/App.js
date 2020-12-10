@@ -18,8 +18,10 @@ import {
 	AUTH_LOGIN,
 	AUTH_FORGOT_PASSWORD,
 	APPOINTMENT_OVERVIEW,
-	USER_PREFERENCES
+	USER_PREFERENCES,
 } from './routes'
+
+import { impt } from './apollo-client'
 
 const LoginPage = React.lazy(() => import('./views/Auth/LoginPage'))
 const RegisterPage = React.lazy(() => import('./views/Auth/RegisterPage'))
@@ -41,7 +43,7 @@ const App = () => {
 	}, [location.pathname])
 
 	const { data, loading } = useQuery(profileQuery, {
-		skip: !localStorage.getItem('nw-portal-sess')
+		skip: !impt && !localStorage.getItem('nw-portal-sess'),
 	})
 
 	const profile = data && data.profile ? data.profile : undefined

@@ -5,7 +5,6 @@ import { format, isToday, isAfter } from 'date-fns'
 const Appointment = ({ appointment }) => {
 	const isApptToday = isToday(appointment.startTime) && isAfter(appointment.endTime, new Date())
 
-	console.log(appointment)
 	return (
 		<div className="w-full px-1" style={{ minHeight: 80 }}>
 			<div className="flex items-center justify-between overflow-hidden border-b w-full pb-4">

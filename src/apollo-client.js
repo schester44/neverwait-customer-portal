@@ -13,7 +13,6 @@ import { SubscriptionClient } from 'subscriptions-transport-ws'
 function getImpt() {
 	let { impt } = qs.parse(window.location.search)
 
-	console.log(qs.parse(window.location.search), window.location.search)
 	if (impt) {
 		window.sessionStorage.impt = impt
 
@@ -25,12 +24,9 @@ function getImpt() {
 
 export const impt = getImpt()
 
-console.log({ impt, s: window.location.search })
-
 const onErrorLink = onError(({ graphQLErrors = [] }) => {
 	if (graphQLErrors.length > 0) {
 		for (let error of graphQLErrors) {
-			console.error(error)
 			pling({ message: error.message })
 		}
 	}
@@ -54,8 +50,6 @@ let headers = {}
 if (impt) {
 	headers['X-NWPROFILEIMPT'] = impt
 }
-
-console.log(headers)
 
 export const httpLink = ApolloLink.from([
 	onErrorLink,

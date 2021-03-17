@@ -10,7 +10,6 @@ const getAvailableShiftSlots = (schedule, date, duration = 0, timeSlotInterval =
 
 	let shiftSlots = scheduler.getShiftSlots(workDay.schedule_shifts, timeSlotInterval, date)
 
-	console.log(shiftSlots, schedule.appointments)
 	const slots = shiftSlots.filter((slot) => {
 		// Create slots based on the time this person works.
 		const isAvailable = [...schedule.appointments, ...schedule.blockedTimes].every(

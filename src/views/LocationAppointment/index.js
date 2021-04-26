@@ -140,6 +140,7 @@ const LocationAppointment = () => {
 	)
 
 	const locationId = location?.id
+	const advanceBookingMaxDays = locationSettings.onlineBooking?.advanceBookingMaxDays
 
 	React.useEffect(() => {
 		if (!locationId || !state.selectedProvider) return
@@ -151,11 +152,11 @@ const LocationAppointment = () => {
 				employeeId: state.selectedProvider.id,
 				input: {
 					start_date: startOfDay(new Date()),
-					end_date: endOfDay(addDays(new Date(), 7)),
+					end_date: endOfDay(addDays(new Date(), advanceBookingMaxDays || 0)),
 				},
 			},
 		})
-	}, [fetchSchedule, locationId, state.selectedProvider])
+	}, [fetchSchedule, locationId, state.selectedProvider, advanceBookingMaxDays])
 
 	const employee = React.useMemo(
 		() =>

@@ -140,10 +140,10 @@ const LocationAppointment = () => {
 	)
 
 	const locationId = location?.id
-	const advanceBookingMaxDays = locationSettings.onlineBooking?.advanceBookingMaxDays
+	const advanceBookingMaxDays = locationSettings?.onlineBooking?.advanceBookingMaxDays
 
 	React.useEffect(() => {
-		if (!locationId || !state.selectedProvider) return
+		if (!locationId || !state.selectedProvider || !advanceBookingMaxDays) return
 
 		// Grab the providers schedule if the provider changes
 		fetchSchedule({

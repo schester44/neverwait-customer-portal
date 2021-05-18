@@ -1,5 +1,6 @@
 import React from 'react'
 import { format } from 'date-fns'
+import { CardElement } from '@stripe/react-stripe-js'
 
 const Review = ({
 	selectedServicesPrice,
@@ -10,6 +11,7 @@ const Review = ({
 	location,
 	customerNote,
 	setCustomerNote,
+	onCardInfoChange,
 }) => {
 	return (
 		<div className="container mx-auto px-2 pb-32">
@@ -61,6 +63,43 @@ const Review = ({
 					<div className="flex justify-between mt-4 border-t border-gray-200 pt-2">
 						<p className="font-black text-sm">Total</p>
 						<p className="font-black text-sm">${selectedServicesPrice}</p>
+					</div>
+
+					<div className="mt-4 md:max-w-lg">
+						<div className="md:hidden bg-gray-300 w-full mt-4 mb-4" style={{ height: 1 }} />
+
+						<div className="p-3 bg-gray-100 rounded">
+							<h1 className="text-lg font-bold">Payment</h1>
+							<p className="text-sm text-gray-600 mb-2">
+								All transactions are secure and encrypted.
+							</p>
+
+							<CardElement
+								onChange={onCardInfoChange}
+								className="p-3 rounded border bg-white"
+								options={{
+									style: {
+										base: {
+											fontSize: '16px',
+											color: '#424770',
+											'::placeholder': {
+												color: '#718096',
+											},
+										},
+										invalid: {
+											color: '#9e2146',
+										},
+									},
+								}}
+							/>
+
+							<label className="flex items-center mt-3">
+								<input type="checkbox" className="form-checkbox text-indigo-600 h-6 w-6" />
+								<span className="ml-2 text-sm text-gray-700">
+									Save card info for faster checkouts in the future
+								</span>
+							</label>
+						</div>
 					</div>
 				</div>
 			</div>

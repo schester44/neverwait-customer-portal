@@ -22,6 +22,10 @@ import {
 } from './routes'
 
 import { impt } from './apollo-client'
+import { Elements } from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY)
 
 const LoginPage = React.lazy(() => import('./views/Auth/LoginPage'))
 const RegisterPage = React.lazy(() => import('./views/Auth/RegisterPage'))
@@ -76,7 +80,9 @@ const App = () => {
 						</Route>
 
 						<Route path={LOCATION_APPOINTMENT}>
-							<LocationAppointment profileId={profile.id} />
+							<Elements stripe={stripePromise}>
+								<LocationAppointment profileId={profile.id} />
+							</Elements>
 						</Route>
 
 						<Route path={USER_PREFERENCES}>

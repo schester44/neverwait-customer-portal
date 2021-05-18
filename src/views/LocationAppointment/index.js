@@ -7,7 +7,7 @@ import { format } from 'date-fns'
 import memoize from 'memoize-one'
 import { FaStore } from 'react-icons/fa'
 import { FiArrowLeft } from 'react-icons/fi'
-
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { employeeScheduleQuery, profileQuery, locationSettingsQuery } from '../../graphql/queries'
 import { createProfileAppointmentMutation } from '../../graphql/mutations'
 
@@ -44,6 +44,8 @@ const renderTitle = ({ step }) => {
 const _memoizedGetAvailableShiftSlots = memoize(getAvailableShiftSlots)
 
 const LocationAppointment = () => {
+	const stripe = useStripe()
+	const elements = useElements()
 	const history = useHistory()
 	const { uuid } = useParams()
 
@@ -57,6 +59,7 @@ const LocationAppointment = () => {
 		selectedProvider: undefined,
 		selectedDate: undefined,
 		selectedTime: undefined,
+		confirmBtnDisabled: true,
 		customerNote: '',
 		shiftSlots: [],
 		schedule: {
@@ -224,6 +227,37 @@ const LocationAppointment = () => {
 	}
 
 	const handleConfirm = async () => {
+		if (state.confirmBtnDisabled) return
+
+		if (!stripe || !elements) {
+			// Stripe.js has not loaded yet. Make sure to disable
+			// form submission until Stripe.js has loaded.
+			return
+		}
+
+		// Get a reference to a mounted CardElement. Elements knows how
+		// to find your CardElement because there can only ever be one of
+		// each type of element.
+		const cardElement = elements.getElement(CardElement)
+		let paymentMethodId
+
+		// Use your card Element with other Stripe.js APIs
+		const { error, paymentMethod } = await stripe.createPaymentMethod({
+			type: 'card',
+			card: cardElement,
+		})
+
+		if (paymentMethod?.id) {
+			paymentMethodId = paymentMethod.id
+		}
+
+		// TODO: Handle error
+		if (error) {
+			console.log('[error]', error)
+		} else {
+			console.log('[PaymentMethod]', paymentMethod)
+		}
+
 		const { data } = await createProfileAppointment({
 			variables: {
 				input: {
@@ -232,6 +266,7 @@ const LocationAppointment = () => {
 					services: state.selectedServices.map((id) => parseInt(id)),
 					startTime: state.selectedTime,
 					customerNote: state.customerNote,
+					paymentMethodId,
 				},
 			},
 			update: (proxy, { data }) => {
@@ -367,6 +402,9 @@ const LocationAppointment = () => {
 							location={location}
 							customerNote={state.customerNote}
 							setCustomerNote={(customerNote) => setState((prev) => ({ ...prev, customerNote }))}
+							onCardInfoChange={({ error }) => {
+								setState((prev) => ({ ...prev, confirmBtnDisabled: !!error }))
+							}}
 						/>
 					)}
 				</div>
@@ -433,8 +471,8 @@ const LocationAppointment = () => {
 			{state.step === 4 && !state.createdAppointment && (
 				<FormFooter
 					action={
-						<Button className="w-full" onClick={handleConfirm}>
-							Confirm
+						<Button disabled={state.confirmBtnDisabled} className="w-full" onClick={handleConfirm}>
+							Pay & Confirm
 						</Button>
 					}
 				/>

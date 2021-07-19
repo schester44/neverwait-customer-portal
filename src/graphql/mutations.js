@@ -91,7 +91,10 @@ export const sequentialUpsertMutation = gql`
 				address
 				uuid
 				contactNumber
-				photo
+				photos {
+					key
+					url
+				}
 			}
 			services {
 				id
